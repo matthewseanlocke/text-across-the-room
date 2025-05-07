@@ -20,19 +20,19 @@ const DisplayText: React.FC = () => {
   const isEmergency = preset === 'emergency';
   const isParty = preset === 'party';
   
-  const [fontSize, setFontSize] = useState('150vh');
+  const [fontSize, setFontSize] = useState('120vh');
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Update font size based on window size
   useEffect(() => {
     const updateFontSize = () => {
       if (isLandscape) {
-        // For landscape: much larger font size (150% of viewport height)
-        setFontSize('150vh');
+        // For landscape: reduced from 150% to 120% of viewport height
+        setFontSize('120vh');
       } else {
-        // For portrait: larger font size based on text length
+        // For portrait: also reduce proportionally
         const charCount = Math.max(5, displayText.length);
-        const heightPercentage = Math.min(150, 600 / charCount);
+        const heightPercentage = Math.min(120, 500 / charCount);
         setFontSize(`${heightPercentage}vh`);
       }
     };
