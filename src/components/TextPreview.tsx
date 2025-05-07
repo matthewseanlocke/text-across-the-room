@@ -118,14 +118,22 @@ const TextPreview: React.FC = () => {
       }}
       >
         {isLandscape ? (
-          // For landscape: display text that takes full width
-          <span className="inline-block w-full">{displayText}</span>
+          // For landscape: display text with additional padding on both sides to ensure off-screen start/end
+          <span className="inline-block w-full" style={{ paddingLeft: '150%', paddingRight: '150%' }}>{displayText}</span>
         ) : (
           // For portrait: wrap all characters in a single container for consistent animation
+          // Add extra empty spaces before and after to ensure off-screen start/end
           <div className="flex flex-col items-center" style={{ animationDuration: `${scrollDuration}s` }}>
+            {/* Add empty spaces at the top for off-screen start */}
+            {[...Array(15)].map((_, i) => <div key={`pre-${i}`} className="my-0">&nbsp;</div>)}
+            
+            {/* Display the actual characters */}
             {portraitChars.map((char, index) => (
               <div key={index} className="my-0">{char === ' ' ? '\u00A0' : char}</div>
             ))}
+            
+            {/* Add empty spaces at the bottom for off-screen end */}
+            {[...Array(15)].map((_, i) => <div key={`post-${i}`} className="my-0">&nbsp;</div>)}
           </div>
         )}
       </div>
