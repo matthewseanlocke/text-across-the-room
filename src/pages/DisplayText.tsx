@@ -20,15 +20,29 @@ const DisplayText: React.FC = () => {
   const isEmergency = preset === 'emergency';
   const isParty = preset === 'party';
   
-  // For portrait mode, split the text into individual characters
-  const portraitText = displayText.split('');
-
   const fontClasses = {
     display: 'font-display',
     handwriting: 'font-handwriting',
     monospace: 'font-monospace',
     serif: 'font-serif',
   };
+
+  // For portrait mode, split the text into words and then characters
+  const words = displayText.split(' ');
+  const portraitChars = [];
+  
+  // Process words to add spaces between them
+  words.forEach((word, wordIndex) => {
+    // Add each character of the word
+    word.split('').forEach((char, charIndex) => {
+      portraitChars.push(char);
+    });
+    
+    // Add a space character between words (except after the last word)
+    if (wordIndex < words.length - 1) {
+      portraitChars.push(' ');
+    }
+  });
 
   // Lock orientation to stay active
   useEffect(() => {
@@ -70,23 +84,26 @@ const DisplayText: React.FC = () => {
       onClick={() => navigate('/')}
     >
       <div className={cn(
-        "absolute text-8xl font-bold",
+        "absolute",
         isLandscape 
-          ? "animate-scroll-x whitespace-nowrap w-max" 
+          ? "animate-scroll-x whitespace-nowrap w-full text-center" 
           : "animate-scroll-y flex flex-col items-center w-full",
         isParty && "animate-flash",
         fontClasses[font]
       )}
-      style={{ color: textColor }}
+      style={{ 
+        color: textColor,
+        fontSize: isLandscape ? "min(20vw, 20vh)" : "min(20vw, 20vh)"
+      }}
       >
         {isLandscape ? (
           // For landscape: single line of text that takes full width
-          <span className="inline-block">{displayText}</span>
+          <span className="inline-block w-full">{displayText}</span>
         ) : (
-          // For portrait: each character on its own line
+          // For portrait: each character on its own line with spaces between words
           <>
-            {portraitText.map((char, index) => (
-              <div key={index} className="my-1">{char}</div>
+            {portraitChars.map((char, index) => (
+              <div key={index} className="my-1">{char === ' ' ? '\u00A0' : char}</div>
             ))}
           </>
         )}

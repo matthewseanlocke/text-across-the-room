@@ -25,8 +25,22 @@ const TextPreview: React.FC = () => {
     serif: 'font-serif',
   };
 
-  // For portrait mode, split the text into individual characters
-  const portraitText = displayText.split('');
+  // For portrait mode, split the text into words and then characters
+  const words = displayText.split(' ');
+  const portraitChars = [];
+  
+  // Process words to add spaces between them
+  words.forEach((word, wordIndex) => {
+    // Add each character of the word
+    word.split('').forEach((char, charIndex) => {
+      portraitChars.push(char);
+    });
+    
+    // Add a space character between words (except after the last word)
+    if (wordIndex < words.length - 1) {
+      portraitChars.push(' ');
+    }
+  });
 
   return (
     <div 
@@ -40,20 +54,25 @@ const TextPreview: React.FC = () => {
       } as React.CSSProperties}
     >
       <div className={cn(
-        isLandscape ? "whitespace-nowrap text-2xl absolute animate-scroll-x" : "text-2xl absolute animate-scroll-y w-full text-center",
+        isLandscape 
+          ? "whitespace-nowrap absolute animate-scroll-x w-full text-center" 
+          : "absolute animate-scroll-y w-full text-center",
         isParty && "animate-flash",
         fontClasses[font]
       )}
-      style={{ color: textColor }}
+      style={{ 
+        color: textColor,
+        fontSize: isLandscape ? '2rem' : '1.5rem'
+      }}
       >
         {isLandscape ? (
-          // For landscape: display text that takes full width and doesn't repeat until fully scrolled
-          <span className="inline-block">{displayText}</span>
+          // For landscape: display text that takes full width
+          <span className="inline-block w-full">{displayText}</span>
         ) : (
-          // For portrait: each character on its own line
+          // For portrait: each character on its own line with spaces between words
           <div className="flex flex-col items-center">
-            {portraitText.map((char, index) => (
-              <div key={index} className="my-1">{char}</div>
+            {portraitChars.map((char, index) => (
+              <div key={index} className="my-1">{char === ' ' ? '\u00A0' : char}</div>
             ))}
           </div>
         )}
