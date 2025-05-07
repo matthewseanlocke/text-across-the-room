@@ -103,11 +103,13 @@ const TextPreview: React.FC = () => {
         '--scroll-duration': `${scrollDuration}s`
       } as React.CSSProperties}
     >
-      {/* Static display for the preview to ensure text is always visible */}
       <div className={cn(
-        "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full text-center",
-        fontClasses[font],
-        isParty && "animate-flash"
+        "absolute",
+        isLandscape 
+          ? "whitespace-nowrap animate-scroll-x w-full text-center" 
+          : "animate-scroll-y w-full text-center",
+        isParty && "animate-flash",
+        fontClasses[font]
       )}
       style={{ 
         color: textColor,
@@ -115,7 +117,24 @@ const TextPreview: React.FC = () => {
         lineHeight: '0.8'
       }}
       >
-        {displayText}
+        {isLandscape ? (
+          // For landscape: display text with additional padding on both sides
+          <span className="inline-block w-full" style={{ paddingLeft: '150%', paddingRight: '150%' }}>{displayText}</span>
+        ) : (
+          // For portrait: wrap all characters in a single container for consistent animation
+          <div className="flex flex-col items-center" style={{ animationDuration: `${scrollDuration}s` }}>
+            {/* Add empty spaces at the top for off-screen start */}
+            {[...Array(15)].map((_, i) => <div key={`pre-${i}`} className="my-0">&nbsp;</div>)}
+            
+            {/* Display the actual characters */}
+            {portraitChars.map((char, index) => (
+              <div key={index} className="my-0">{char === ' ' ? '\u00A0' : char}</div>
+            ))}
+            
+            {/* Add empty spaces at the bottom for off-screen end */}
+            {[...Array(15)].map((_, i) => <div key={`post-${i}`} className="my-0">&nbsp;</div>)}
+          </div>
+        )}
       </div>
     </div>
   );

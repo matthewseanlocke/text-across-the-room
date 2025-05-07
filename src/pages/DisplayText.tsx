@@ -115,7 +115,6 @@ const DisplayText: React.FC = () => {
   }, []);
 
   // Calculate scroll duration consistently for both orientations
-  // Using a higher duration multiplier for portrait to slow it down
   const scrollDuration = isLandscape ? (30 - scrollSpeed) : (30 - scrollSpeed) * 3;
 
   return (
