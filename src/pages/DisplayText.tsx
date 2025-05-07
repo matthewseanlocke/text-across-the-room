@@ -145,13 +145,13 @@ const DisplayText: React.FC = () => {
       }}
       >
         {isLandscape ? (
-          // For landscape: use a container large enough to ensure text scrolls fully off-screen
-          <div className="inline-block w-full" style={{ paddingLeft: '200%', paddingRight: '200%' }}>
+          // For landscape orientation
+          <div style={{ display: 'inline-block', width: '100%', paddingLeft: '100%' }}>
             {displayText}
           </div>
         ) : (
-          // For portrait: use a container large enough to ensure text scrolls fully off-screen
-          <div className="flex flex-col items-center" style={{ paddingTop: '200%', paddingBottom: '200%', animationDuration: `${scrollDuration}s` }}>
+          // For portrait orientation
+          <div className="flex flex-col items-center" style={{ paddingTop: '100%' }}>
             {portraitChars.map((char, index) => (
               <div key={index} className="my-0">{char === ' ' ? '\u00A0' : char}</div>
             ))}
