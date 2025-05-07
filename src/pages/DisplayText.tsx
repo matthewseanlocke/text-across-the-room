@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTextDisplay } from '@/context/TextDisplayContext';
@@ -19,29 +20,28 @@ const DisplayText: React.FC = () => {
   const isEmergency = preset === 'emergency';
   const isParty = preset === 'party';
   
-  const [fontSize, setFontSize] = useState('80vw');
+  const [fontSize, setFontSize] = useState('80vh');
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Update font size based on window size
   useEffect(() => {
     const updateFontSize = () => {
-      if (containerRef.current) {
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-        
-        // Dynamically calculate font size based on viewport dimensions and text length
-        const textLength = displayText.length;
-        const scaleFactor = textLength > 10 ? 0.8 / Math.sqrt(textLength / 10) : 0.8;
-        
-        if (isLandscape) {
-          // For landscape: size based on viewport width
-          setFontSize(`${viewportWidth * scaleFactor}px`);
-        } else {
-          // For portrait: each character gets a portion of the viewport height
-          const charCount = displayText.split('').length;
-          const sizePerChar = viewportHeight / (charCount * 1.2); // Add some spacing
-          setFontSize(`${Math.min(viewportWidth * 0.7, sizePerChar * 2)}px`);
-        }
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      
+      // Calculate text length adjustment factor - longer text gets smaller
+      const textLength = displayText.length;
+      const lengthAdjustment = textLength > 10 ? 10 / textLength : 1;
+      
+      if (isLandscape) {
+        // For landscape: use percentage of viewport height with adjustment for text length
+        const heightPercentage = 70 * lengthAdjustment; // 70% of viewport height as base, adjusted by text length
+        setFontSize(`${heightPercentage}vh`);
+      } else {
+        // For portrait: use percentage of viewport height, divided by approximate character count
+        const charCount = Math.max(5, displayText.length); // Minimum of 5 chars for calculation
+        const heightPercentage = Math.min(90, 400 / charCount); // Up to 90% of height, scaled by character count
+        setFontSize(`${heightPercentage}vh`);
       }
     };
 
