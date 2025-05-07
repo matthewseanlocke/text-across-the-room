@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTextDisplay } from '@/context/TextDisplayContext';
 import { cn } from '@/lib/utils';
 
@@ -13,6 +13,22 @@ const TextPreview: React.FC = () => {
     isLandscape,
     preset 
   } = useTextDisplay();
+
+  const [fontSize, setFontSize] = useState(isLandscape ? '3rem' : '2.5rem');
+
+  // Update font size based on container size
+  useEffect(() => {
+    const updateFontSize = () => {
+      setFontSize(isLandscape ? '3rem' : '2.5rem');
+    };
+    
+    updateFontSize();
+    window.addEventListener('resize', updateFontSize);
+    
+    return () => {
+      window.removeEventListener('resize', updateFontSize);
+    };
+  }, [isLandscape]);
 
   const displayText = text || "Preview text";
   const isEmergency = preset === 'emergency';
@@ -62,8 +78,8 @@ const TextPreview: React.FC = () => {
       )}
       style={{ 
         color: textColor,
-        fontSize: isLandscape ? '2.5rem' : '2rem',
-        lineHeight: '1'
+        fontSize: fontSize,
+        lineHeight: '0.8'
       }}
       >
         {isLandscape ? (
@@ -73,7 +89,7 @@ const TextPreview: React.FC = () => {
           // For portrait: each character on its own line with spaces between words
           <div className="flex flex-col items-center">
             {portraitChars.map((char, index) => (
-              <div key={index} className="my-1">{char === ' ' ? '\u00A0' : char}</div>
+              <div key={index} className="my-0">{char === ' ' ? '\u00A0' : char}</div>
             ))}
           </div>
         )}

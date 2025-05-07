@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTextDisplay } from '@/context/TextDisplayContext';
 import { cn } from '@/lib/utils';
@@ -19,6 +19,27 @@ const DisplayText: React.FC = () => {
   const displayText = text || "Hello from across the room!";
   const isEmergency = preset === 'emergency';
   const isParty = preset === 'party';
+  
+  const [fontSize, setFontSize] = useState(isLandscape ? '80vw' : '80vw');
+
+  // Update font size based on window size
+  useEffect(() => {
+    const updateFontSize = () => {
+      const size = isLandscape ? '80vw' : '80vw';
+      setFontSize(size);
+    };
+
+    // Initial size
+    updateFontSize();
+
+    // Add event listener
+    window.addEventListener('resize', updateFontSize);
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('resize', updateFontSize);
+    };
+  }, [isLandscape]);
   
   const fontClasses = {
     display: 'font-display',
@@ -93,8 +114,8 @@ const DisplayText: React.FC = () => {
       )}
       style={{ 
         color: textColor,
-        fontSize: isLandscape ? "min(30vw, 30vh)" : "min(30vw, 30vh)",
-        lineHeight: "0.9"
+        fontSize: fontSize,
+        lineHeight: "0.8"
       }}
       >
         {isLandscape ? (
