@@ -131,7 +131,7 @@ const DisplayText: React.FC = () => {
       } as React.CSSProperties}
       onClick={() => navigate('/')}
     >
-      <div className={cn(a
+      <div className={cn(
         "absolute",
         isLandscape 
           ? "animate-scroll-x whitespace-nowrap w-full text-center" 
