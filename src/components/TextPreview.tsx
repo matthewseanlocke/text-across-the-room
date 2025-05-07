@@ -28,11 +28,11 @@ const TextPreview: React.FC = () => {
         const containerHeight = containerRef.current.clientHeight;
         
         if (isLandscape) {
-          // For landscape: reduced font size to ensure visibility
-          setFontSize(`${containerHeight * 0.8}px`);
+          // For landscape: 120% of container height (reduced from 150%)
+          setFontSize(`${containerHeight * 1.2}px`);
         } else {
-          // For portrait: reduced font size to ensure visibility
-          setFontSize(`${containerWidth * 0.7}px`);
+          // For portrait: 120% of container width to match landscape scaling
+          setFontSize(`${containerWidth * 0.95}px`);
         }
       }
     };
@@ -88,6 +88,7 @@ const TextPreview: React.FC = () => {
   });
 
   // Calculate speed duration consistently for both orientations
+  // Using a higher duration multiplier for portrait to slow it down
   const scrollDuration = isLandscape ? (30 - scrollSpeed) : (30 - scrollSpeed) * 3;
 
   return (
@@ -117,13 +118,11 @@ const TextPreview: React.FC = () => {
       }}
       >
         {isLandscape ? (
-          // For landscape orientation
-          <div style={{ display: 'inline-block', width: '100%', paddingLeft: '100%' }}>
-            {displayText}
-          </div>
+          // For landscape: display text that takes full width
+          <span className="inline-block w-full">{displayText}</span>
         ) : (
-          // For portrait orientation
-          <div className="flex flex-col items-center" style={{ paddingTop: '100%' }}>
+          // For portrait: wrap all characters in a single container for consistent animation
+          <div className="flex flex-col items-center" style={{ animationDuration: `${scrollDuration}s` }}>
             {portraitChars.map((char, index) => (
               <div key={index} className="my-0">{char === ' ' ? '\u00A0' : char}</div>
             ))}
