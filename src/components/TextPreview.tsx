@@ -28,11 +28,11 @@ const TextPreview: React.FC = () => {
         const containerHeight = containerRef.current.clientHeight;
         
         if (isLandscape) {
-          // For landscape: 120% of container height (reduced from 150%)
-          setFontSize(`${containerHeight * 1.2}px`);
+          // For landscape: reduced font size to ensure visibility
+          setFontSize(`${containerHeight * 0.8}px`);
         } else {
-          // For portrait: 120% of container width to match landscape scaling
-          setFontSize(`${containerWidth * 0.95}px`);
+          // For portrait: reduced font size to ensure visibility
+          setFontSize(`${containerWidth * 0.7}px`);
         }
       }
     };
@@ -103,13 +103,11 @@ const TextPreview: React.FC = () => {
         '--scroll-duration': `${scrollDuration}s`
       } as React.CSSProperties}
     >
+      {/* Static display for the preview to ensure text is always visible */}
       <div className={cn(
-        "absolute",
-        isLandscape 
-          ? "whitespace-nowrap animate-scroll-x w-full text-center" 
-          : "animate-scroll-y w-full text-center",
-        isParty && "animate-flash",
-        fontClasses[font]
+        "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full text-center",
+        fontClasses[font],
+        isParty && "animate-flash"
       )}
       style={{ 
         color: textColor,
@@ -117,25 +115,7 @@ const TextPreview: React.FC = () => {
         lineHeight: '0.8'
       }}
       >
-        {isLandscape ? (
-          // For landscape: display text with additional padding on both sides to ensure off-screen start/end
-          <span className="inline-block w-full" style={{ paddingLeft: '150%', paddingRight: '150%' }}>{displayText}</span>
-        ) : (
-          // For portrait: wrap all characters in a single container for consistent animation
-          // Add extra empty spaces before and after to ensure off-screen start/end
-          <div className="flex flex-col items-center" style={{ animationDuration: `${scrollDuration}s` }}>
-            {/* Add empty spaces at the top for off-screen start */}
-            {[...Array(15)].map((_, i) => <div key={`pre-${i}`} className="my-0">&nbsp;</div>)}
-            
-            {/* Display the actual characters */}
-            {portraitChars.map((char, index) => (
-              <div key={index} className="my-0">{char === ' ' ? '\u00A0' : char}</div>
-            ))}
-            
-            {/* Add empty spaces at the bottom for off-screen end */}
-            {[...Array(15)].map((_, i) => <div key={`post-${i}`} className="my-0">&nbsp;</div>)}
-          </div>
-        )}
+        {displayText}
       </div>
     </div>
   );
