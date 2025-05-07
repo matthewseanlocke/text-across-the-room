@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTextDisplay } from '@/context/TextDisplayContext';
@@ -17,7 +16,6 @@ const DisplayText: React.FC = () => {
   } = useTextDisplay();
   
   const navigate = useNavigate();
-  // Apply capitalization if needed
   const processedText = isCapitalized ? text.toUpperCase() : text;
   const displayText = processedText || "HELLO";
   const isEmergency = preset === 'emergency';
@@ -30,40 +28,20 @@ const DisplayText: React.FC = () => {
   useEffect(() => {
     const updateFontSize = () => {
       if (isLandscape) {
-        // For landscape: 120% of viewport height
         setFontSize('120vh');
       } else {
-        // For portrait: also use height-based sizing
-        // This will maintain the same size proportions in both orientations
-        setFontSize('120vh');
+        setFontSize('80vh');
       }
     };
 
-    // Initial size calculation
     updateFontSize();
-
-    // Create a resize observer to detect container size changes
-    const resizeObserver = new ResizeObserver(() => {
-      updateFontSize();
-    });
-
-    // Observe the container element
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
-    }
-
-    // Also listen for window resize events
     window.addEventListener('resize', updateFontSize);
     
-    // Clean up
     return () => {
-      if (containerRef.current) {
-        resizeObserver.unobserve(containerRef.current);
-      }
       window.removeEventListener('resize', updateFontSize);
     };
-  }, [isLandscape, displayText]);
-  
+  }, [isLandscape]);
+
   const fontClasses = {
     display: 'font-display',
     handwriting: 'font-handwriting',
@@ -71,34 +49,7 @@ const DisplayText: React.FC = () => {
     serif: 'font-serif',
   };
 
-  // Lock orientation to stay active
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        // Prevent screen from dimming/sleeping
-        try {
-          // @ts-ignore - TypeScript doesn't know about this API yet
-          if (navigator.wakeLock) {
-            // @ts-ignore
-            navigator.wakeLock.request('screen').catch(err => {
-              console.log('Wake Lock error:', err);
-            });
-          }
-        } catch (err) {
-          console.log('Wake Lock API not supported', err);
-        }
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    handleVisibilityChange();
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
-
-  // Calculate scroll duration consistently
+  // Calculate scroll duration based on speed
   const scrollDuration = (30 - scrollSpeed);
 
   return (
@@ -108,24 +59,33 @@ const DisplayText: React.FC = () => {
         "fixed inset-0 flex items-center justify-center overflow-hidden",
         isEmergency && "animate-flash"
       )}
-      style={{ 
-        backgroundColor,
-        '--scroll-duration': `${scrollDuration}s`
-      } as React.CSSProperties}
+      style={{ backgroundColor }}
       onClick={() => navigate('/')}
     >
-      <div className={cn(
-        "absolute whitespace-nowrap animate-scroll-x w-full text-center",
-        isParty && "animate-flash",
-        fontClasses[font]
-      )}
-      style={{ 
-        color: textColor,
-        fontSize: fontSize,
-        lineHeight: "0.8"
-      }}
+      <style>
+        {`
+          @keyframes scrollText {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-150%); }
+          }
+        `}
+      </style>
+      <div 
+        className={cn(
+          "absolute whitespace-nowrap text-center",
+          isParty && "animate-flash",
+          fontClasses[font]
+        )}
+        style={{ 
+          color: textColor,
+          fontSize: fontSize,
+          lineHeight: "0.8",
+          animation: `scrollText ${scrollDuration}s linear infinite`,
+          left: '100%',
+          width: 'max-content'
+        }}
       >
-        <span className="inline-block w-full">{displayText}</span>
+        {displayText}
       </div>
     </div>
   );

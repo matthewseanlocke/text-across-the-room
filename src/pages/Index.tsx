@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from "@/components/ui/input";
@@ -30,7 +29,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4">
+    <div className="min-h-screen bg-background p-4 pb-48">
       <Card className="max-w-md mx-auto">
         <CardContent className="pt-6 space-y-6">
           <h1 className="text-2xl font-bold text-center">Text Across the Room</h1>
@@ -56,11 +55,6 @@ const Index = () => {
           </div>
           
           <div className="space-y-6">
-            <h2 className="text-lg font-semibold">Preview</h2>
-            <TextPreview />
-          </div>
-          
-          <div className="space-y-4">
             <h2 className="text-lg font-semibold">Appearance</h2>
             
             <ColorPicker 
@@ -93,7 +87,7 @@ const Index = () => {
             <SpeedSlider value={scrollSpeed} onChange={setScrollSpeed} />
           </div>
           
-          <div className="space-y-4">
+          <div className="space-y-6">
             <h2 className="text-lg font-semibold">Presets</h2>
             <div className="grid grid-cols-2 gap-2">
               <Button 
@@ -126,6 +120,15 @@ const Index = () => {
               </Button>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      <div className="fixed bottom-0 left-0 right-0 bg-background p-4 border-t">
+        <div className="max-w-md mx-auto space-y-4">
+          <div className="space-y-2">
+            <h2 className="text-lg font-semibold">Preview</h2>
+            <TextPreview />
+          </div>
           
           <Button 
             className="w-full text-lg py-6"
@@ -134,8 +137,8 @@ const Index = () => {
             <Fullscreen className="mr-2 h-5 w-5" />
             DISPLAY
           </Button>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };
