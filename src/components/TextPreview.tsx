@@ -100,9 +100,10 @@ const TextPreview: React.FC = () => {
       } as React.CSSProperties}
     >
       <div className={cn(
+        "absolute",
         isLandscape 
-          ? "whitespace-nowrap absolute animate-scroll-x w-full text-center" 
-          : "absolute animate-scroll-y w-full text-center",
+          ? "whitespace-nowrap animate-scroll-x w-full text-center" 
+          : "animate-scroll-y w-full text-center",
         isParty && "animate-flash",
         fontClasses[font]
       )}
@@ -116,8 +117,8 @@ const TextPreview: React.FC = () => {
           // For landscape: display text that takes full width
           <span className="inline-block w-full">{displayText}</span>
         ) : (
-          // For portrait: each character on its own line with spaces between words
-          <div className="flex flex-col items-center">
+          // For portrait: wrap all characters in a single container for consistent animation
+          <div className="flex flex-col items-center" style={{ animationDuration: `${scrollDuration}s` }}>
             {portraitChars.map((char, index) => (
               <div key={index} className="my-0">{char === ' ' ? '\u00A0' : char}</div>
             ))}

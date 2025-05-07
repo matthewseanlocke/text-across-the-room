@@ -131,7 +131,7 @@ const DisplayText: React.FC = () => {
         "absolute",
         isLandscape 
           ? "animate-scroll-x whitespace-nowrap w-full text-center" 
-          : "animate-scroll-y flex flex-col items-center w-full",
+          : "animate-scroll-y w-full text-center",
         isParty && "animate-flash",
         fontClasses[font]
       )}
@@ -145,12 +145,12 @@ const DisplayText: React.FC = () => {
           // For landscape: single line of text that takes full width
           <span className="inline-block w-full">{displayText}</span>
         ) : (
-          // For portrait: each character on its own line with spaces between words
-          <>
+          // For portrait: wrap all characters in a single container for consistent animation
+          <div className="flex flex-col items-center" style={{ animationDuration: `${scrollDuration}s` }}>
             {portraitChars.map((char, index) => (
               <div key={index} className="my-0">{char === ' ' ? '\u00A0' : char}</div>
             ))}
-          </>
+          </div>
         )}
       </div>
     </div>
