@@ -84,6 +84,9 @@ const TextPreview: React.FC = () => {
     }
   });
 
+  // Calculate speed duration consistently for both orientations
+  const scrollDuration = 30 - scrollSpeed;
+
   return (
     <div 
       ref={containerRef}
@@ -93,7 +96,7 @@ const TextPreview: React.FC = () => {
       )}
       style={{ 
         backgroundColor,
-        '--scroll-duration': `${30 - scrollSpeed}s`
+        '--scroll-duration': `${scrollDuration}s`
       } as React.CSSProperties}
     >
       <div className={cn(

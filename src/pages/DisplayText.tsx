@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTextDisplay } from '@/context/TextDisplayContext';
@@ -110,6 +111,9 @@ const DisplayText: React.FC = () => {
     };
   }, []);
 
+  // Calculate scroll duration consistently for both orientations
+  const scrollDuration = 30 - scrollSpeed;
+
   return (
     <div 
       ref={containerRef}
@@ -119,7 +123,7 @@ const DisplayText: React.FC = () => {
       )}
       style={{ 
         backgroundColor,
-        '--scroll-duration': `${30 - scrollSpeed}s`
+        '--scroll-duration': `${scrollDuration}s`
       } as React.CSSProperties}
       onClick={() => navigate('/')}
     >
