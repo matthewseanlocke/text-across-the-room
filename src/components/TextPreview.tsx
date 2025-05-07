@@ -12,7 +12,8 @@ const TextPreview: React.FC = () => {
     font, 
     scrollSpeed, 
     isLandscape,
-    preset 
+    preset,
+    isCapitalized
   } = useTextDisplay();
 
   const [fontSize, setFontSize] = useState('');
@@ -56,7 +57,9 @@ const TextPreview: React.FC = () => {
     };
   }, [isLandscape]);
 
-  const displayText = text || "Preview text";
+  // Apply capitalization if needed
+  const processedText = isCapitalized ? text.toUpperCase() : text;
+  const displayText = processedText || "HELLO";
   const isEmergency = preset === 'emergency';
   const isParty = preset === 'party';
   
@@ -85,7 +88,8 @@ const TextPreview: React.FC = () => {
   });
 
   // Calculate speed duration consistently for both orientations
-  const scrollDuration = 30 - scrollSpeed;
+  // Using a higher duration multiplier for portrait to slow it down
+  const scrollDuration = isLandscape ? (30 - scrollSpeed) : (30 - scrollSpeed) * 3;
 
   return (
     <div 

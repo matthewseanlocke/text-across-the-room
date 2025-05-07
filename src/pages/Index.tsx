@@ -11,6 +11,7 @@ import SpeedSlider from '@/components/SpeedSlider';
 import TextPreview from '@/components/TextPreview';
 import { useTextDisplay } from '@/context/TextDisplayContext';
 import { Fullscreen } from 'lucide-react';
+import { Checkbox } from "@/components/ui/checkbox";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -20,7 +21,8 @@ const Index = () => {
     backgroundColor, setBackgroundColor,
     font, setFont,
     scrollSpeed, setScrollSpeed,
-    preset, applyPreset
+    preset, applyPreset,
+    isCapitalized, setIsCapitalized
   } = useTextDisplay();
 
   const handleDisplayClick = () => {
@@ -41,6 +43,16 @@ const Index = () => {
               value={text}
               onChange={(e) => setText(e.target.value)}
             />
+            <div className="flex items-center space-x-2 pt-2">
+              <Checkbox 
+                id="capitalize" 
+                checked={isCapitalized}
+                onCheckedChange={(checked) => setIsCapitalized(checked === true)}
+              />
+              <Label htmlFor="capitalize" className="text-sm cursor-pointer">
+                CAPITALIZE TEXT
+              </Label>
+            </div>
           </div>
           
           <div className="space-y-6">

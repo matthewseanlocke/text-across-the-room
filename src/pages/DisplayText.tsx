@@ -12,11 +12,14 @@ const DisplayText: React.FC = () => {
     font, 
     scrollSpeed, 
     isLandscape,
-    preset 
+    preset,
+    isCapitalized
   } = useTextDisplay();
   
   const navigate = useNavigate();
-  const displayText = text || "Hello from across the room!";
+  // Apply capitalization if needed
+  const processedText = isCapitalized ? text.toUpperCase() : text;
+  const displayText = processedText || "HELLO";
   const isEmergency = preset === 'emergency';
   const isParty = preset === 'party';
   
@@ -112,7 +115,8 @@ const DisplayText: React.FC = () => {
   }, []);
 
   // Calculate scroll duration consistently for both orientations
-  const scrollDuration = 30 - scrollSpeed;
+  // Using a higher duration multiplier for portrait to slow it down
+  const scrollDuration = isLandscape ? (30 - scrollSpeed) : (30 - scrollSpeed) * 3;
 
   return (
     <div 
@@ -127,7 +131,7 @@ const DisplayText: React.FC = () => {
       } as React.CSSProperties}
       onClick={() => navigate('/')}
     >
-      <div className={cn(
+      <div className={cn(a
         "absolute",
         isLandscape 
           ? "animate-scroll-x whitespace-nowrap w-full text-center" 
