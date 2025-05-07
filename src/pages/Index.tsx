@@ -10,7 +10,7 @@ import ColorPicker from '@/components/ColorPicker';
 import SpeedSlider from '@/components/SpeedSlider';
 import TextPreview from '@/components/TextPreview';
 import { useTextDisplay } from '@/context/TextDisplayContext';
-import { fullscreen } from 'lucide-react';
+import { Fullscreen } from 'lucide-react';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -119,7 +119,7 @@ const Index = () => {
             className="w-full text-lg py-6"
             onClick={handleDisplayClick}
           >
-            <fullscreen className="mr-2 h-5 w-5" />
+            <Fullscreen className="mr-2 h-5 w-5" />
             DISPLAY
           </Button>
         </CardContent>

@@ -19,6 +19,9 @@ const DisplayText: React.FC = () => {
   const displayText = text || "Hello from across the room!";
   const isEmergency = preset === 'emergency';
   const isParty = preset === 'party';
+  
+  // For portrait mode, split the text into individual characters
+  const portraitText = displayText.split('');
 
   const fontClasses = {
     display: 'font-display',
@@ -67,22 +70,24 @@ const DisplayText: React.FC = () => {
       onClick={() => navigate('/')}
     >
       <div className={cn(
-        "absolute text-8xl font-bold flex items-center",
-        isLandscape ? "animate-scroll-x whitespace-nowrap" : "animate-scroll-y flex-col text-center",
+        "absolute text-8xl font-bold",
+        isLandscape 
+          ? "animate-scroll-x whitespace-nowrap w-max" 
+          : "animate-scroll-y flex flex-col items-center w-full",
         isParty && "animate-flash",
         fontClasses[font]
       )}
       style={{ color: textColor }}
       >
         {isLandscape ? (
-          // For landscape: repeat text to ensure continuous scroll
-          <>
-            {displayText} &nbsp;&nbsp;&nbsp; {displayText} &nbsp;&nbsp;&nbsp; {displayText}
-          </>
+          // For landscape: single line of text that takes full width
+          <span className="inline-block">{displayText}</span>
         ) : (
-          // For portrait: stack text vertically with spacing
+          // For portrait: each character on its own line
           <>
-            {displayText}<br /><br />{displayText}<br /><br />{displayText}
+            {portraitText.map((char, index) => (
+              <div key={index} className="my-1">{char}</div>
+            ))}
           </>
         )}
       </div>

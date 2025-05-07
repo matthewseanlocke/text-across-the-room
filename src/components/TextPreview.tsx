@@ -25,6 +25,9 @@ const TextPreview: React.FC = () => {
     serif: 'font-serif',
   };
 
+  // For portrait mode, split the text into individual characters
+  const portraitText = displayText.split('');
+
   return (
     <div 
       className={cn(
@@ -37,23 +40,22 @@ const TextPreview: React.FC = () => {
       } as React.CSSProperties}
     >
       <div className={cn(
-        "whitespace-nowrap text-2xl absolute",
-        isLandscape ? "animate-scroll-x" : "animate-scroll-y w-full text-center",
+        isLandscape ? "whitespace-nowrap text-2xl absolute animate-scroll-x" : "text-2xl absolute animate-scroll-y w-full text-center",
         isParty && "animate-flash",
         fontClasses[font]
       )}
       style={{ color: textColor }}
       >
         {isLandscape ? (
-          // For landscape: repeat text to ensure continuous scroll
-          <>
-            {displayText} &nbsp; &nbsp; {displayText} &nbsp; &nbsp; {displayText}
-          </>
+          // For landscape: display text that takes full width and doesn't repeat until fully scrolled
+          <span className="inline-block">{displayText}</span>
         ) : (
-          // For portrait: stack text vertically
-          <>
-            {displayText}<br />{displayText}<br />{displayText}
-          </>
+          // For portrait: each character on its own line
+          <div className="flex flex-col items-center">
+            {portraitText.map((char, index) => (
+              <div key={index} className="my-1">{char}</div>
+            ))}
+          </div>
         )}
       </div>
     </div>
