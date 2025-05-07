@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -84,11 +85,32 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'scroll-x': {
+					from: { transform: 'translateX(100%)' },
+					to: { transform: 'translateX(-100%)' }
+				},
+				'scroll-y': {
+					from: { transform: 'translateY(100%)' },
+					to: { transform: 'translateY(-100%)' }
+				},
+				'flash': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.5' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'scroll-x': 'scroll-x var(--scroll-duration, 15s) linear infinite',
+				'scroll-y': 'scroll-y var(--scroll-duration, 15s) linear infinite',
+				'flash': 'flash 1s ease-in-out infinite'
+			},
+			fontFamily: {
+				'display': ['Arial', 'sans-serif'],
+				'handwriting': ['Brush Script MT', 'cursive'],
+				'monospace': ['Courier New', 'monospace'],
+				'serif': ['Times New Roman', 'serif']
 			}
 		}
 	},
