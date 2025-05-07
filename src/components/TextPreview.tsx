@@ -27,11 +27,11 @@ const TextPreview: React.FC = () => {
         const containerHeight = containerRef.current.clientHeight;
         
         if (isLandscape) {
-          // For landscape: 95% of container height
-          setFontSize(`${containerHeight * 0.95}px`);
+          // For landscape: 150% of container height
+          setFontSize(`${containerHeight * 1.5}px`);
         } else {
-          // For portrait: 60% of container height
-          setFontSize(`${containerHeight * 0.6}px`);
+          // For portrait: 100% of container height
+          setFontSize(`${containerHeight * 1.0}px`);
         }
       }
     };
