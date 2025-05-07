@@ -16,7 +16,7 @@ const TextPreview: React.FC = () => {
     isCapitalized
   } = useTextDisplay();
 
-  const [fontSize, setFontSize] = useState('');
+  const [fontSize, setFontSize] = useState(isLandscape ? '120%' : '95%');
   const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -91,6 +91,19 @@ const TextPreview: React.FC = () => {
   // Using a higher duration multiplier for portrait to slow it down
   const scrollDuration = isLandscape ? (30 - scrollSpeed) : (30 - scrollSpeed) * 3;
 
+  // Force immediate rendering by using inline styles for animations
+  const landscapeAnimationStyle = {
+    animation: `scroll-x ${scrollDuration}s linear infinite`,
+    paddingLeft: '100%', 
+    paddingRight: '100%'
+  };
+  
+  const portraitAnimationStyle = {
+    animation: `scroll-y ${scrollDuration}s linear infinite`,
+    paddingTop: '100%',
+    paddingBottom: '100%'
+  };
+
   return (
     <div 
       ref={containerRef}
@@ -98,16 +111,13 @@ const TextPreview: React.FC = () => {
         "w-full h-28 overflow-hidden border rounded-md relative",
         isEmergency && "animate-flash"
       )}
-      style={{ 
-        backgroundColor,
-        '--scroll-duration': `${scrollDuration}s`
-      } as React.CSSProperties}
+      style={{ backgroundColor }}
     >
       <div className={cn(
         "absolute",
         isLandscape 
-          ? "whitespace-nowrap animate-scroll-x w-full text-center" 
-          : "animate-scroll-y w-full text-center",
+          ? "whitespace-nowrap w-full text-center" 
+          : "w-full text-center",
         isParty && "animate-flash",
         fontClasses[font]
       )}
@@ -115,11 +125,7 @@ const TextPreview: React.FC = () => {
         color: textColor,
         fontSize: fontSize,
         lineHeight: '0.8',
-        // Add left and right padding for landscape to ensure text starts and ends off-screen
-        ...(isLandscape && { 
-          paddingLeft: '100%', 
-          paddingRight: '100%' 
-        })
+        ...(isLandscape ? landscapeAnimationStyle : {})
       }}
       >
         {isLandscape ? (
@@ -127,11 +133,7 @@ const TextPreview: React.FC = () => {
           <span className="inline-block w-full">{displayText}</span>
         ) : (
           // For portrait: wrap all characters in a single container for consistent animation
-          <div className="flex flex-col items-center" style={{ 
-            animationDuration: `${scrollDuration}s`,
-            paddingTop: '100%',  // Add padding to start off-screen in portrait mode
-            paddingBottom: '100%'  // Add padding to end off-screen in portrait mode
-          }}>
+          <div className="flex flex-col items-center" style={portraitAnimationStyle}>
             {portraitChars.map((char, index) => (
               <div key={index} className="my-0">{char === ' ' ? '\u00A0' : char}</div>
             ))}
