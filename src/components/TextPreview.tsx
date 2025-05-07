@@ -114,7 +114,12 @@ const TextPreview: React.FC = () => {
       style={{ 
         color: textColor,
         fontSize: fontSize,
-        lineHeight: '0.8'
+        lineHeight: '0.8',
+        // Add left and right padding for landscape to ensure text starts and ends off-screen
+        ...(isLandscape && { 
+          paddingLeft: '100%', 
+          paddingRight: '100%' 
+        })
       }}
       >
         {isLandscape ? (
@@ -122,7 +127,11 @@ const TextPreview: React.FC = () => {
           <span className="inline-block w-full">{displayText}</span>
         ) : (
           // For portrait: wrap all characters in a single container for consistent animation
-          <div className="flex flex-col items-center" style={{ animationDuration: `${scrollDuration}s` }}>
+          <div className="flex flex-col items-center" style={{ 
+            animationDuration: `${scrollDuration}s`,
+            paddingTop: '100%',  // Add padding to start off-screen in portrait mode
+            paddingBottom: '100%'  // Add padding to end off-screen in portrait mode
+          }}>
             {portraitChars.map((char, index) => (
               <div key={index} className="my-0">{char === ' ' ? '\u00A0' : char}</div>
             ))}
