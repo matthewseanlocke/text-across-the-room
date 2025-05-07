@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTextDisplay } from '@/context/TextDisplayContext';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const TextPreview: React.FC = () => {
   const { 
@@ -14,12 +15,17 @@ const TextPreview: React.FC = () => {
     preset 
   } = useTextDisplay();
 
-  const [fontSize, setFontSize] = useState(isLandscape ? '3rem' : '2.5rem');
+  const [fontSize, setFontSize] = useState('');
+  const isMobile = useIsMobile();
 
   // Update font size based on container size
   useEffect(() => {
     const updateFontSize = () => {
-      setFontSize(isLandscape ? '3rem' : '2.5rem');
+      if (isLandscape) {
+        setFontSize('3rem');
+      } else {
+        setFontSize('2.5rem');
+      }
     };
     
     updateFontSize();

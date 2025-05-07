@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTextDisplay } from '@/context/TextDisplayContext';
 import { cn } from '@/lib/utils';
@@ -20,23 +20,41 @@ const DisplayText: React.FC = () => {
   const isEmergency = preset === 'emergency';
   const isParty = preset === 'party';
   
-  const [fontSize, setFontSize] = useState(isLandscape ? '80vw' : '80vw');
+  const [fontSize, setFontSize] = useState('80vw');
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Update font size based on window size
   useEffect(() => {
     const updateFontSize = () => {
-      const size = isLandscape ? '80vw' : '80vw';
-      setFontSize(size);
+      // Calculate the appropriate font size based on container dimensions
+      if (isLandscape) {
+        setFontSize('80vw'); // For landscape orientation
+      } else {
+        setFontSize('80vw'); // For portrait orientation
+      }
     };
 
-    // Initial size
+    // Initial size calculation
     updateFontSize();
 
-    // Add event listener
+    // Create a resize observer to detect container size changes
+    const resizeObserver = new ResizeObserver(() => {
+      updateFontSize();
+    });
+
+    // Observe the container element
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
+    // Also listen for window resize events
     window.addEventListener('resize', updateFontSize);
     
     // Clean up
     return () => {
+      if (containerRef.current) {
+        resizeObserver.unobserve(containerRef.current);
+      }
       window.removeEventListener('resize', updateFontSize);
     };
   }, [isLandscape]);
@@ -94,6 +112,7 @@ const DisplayText: React.FC = () => {
 
   return (
     <div 
+      ref={containerRef}
       className={cn(
         "fixed inset-0 flex items-center justify-center overflow-hidden",
         isEmergency && "animate-flash"
