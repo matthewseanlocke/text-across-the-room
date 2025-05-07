@@ -88,7 +88,6 @@ const TextPreview: React.FC = () => {
   });
 
   // Calculate speed duration consistently for both orientations
-  // Using a higher duration multiplier for portrait to slow it down
   const scrollDuration = isLandscape ? (30 - scrollSpeed) : (30 - scrollSpeed) * 3;
 
   return (
@@ -118,21 +117,16 @@ const TextPreview: React.FC = () => {
       }}
       >
         {isLandscape ? (
-          // For landscape: display text with additional padding on both sides
-          <span className="inline-block w-full" style={{ paddingLeft: '150%', paddingRight: '150%' }}>{displayText}</span>
+          // For landscape: use a container large enough to ensure text scrolls fully off-screen
+          <div className="inline-block w-full" style={{ paddingLeft: '200%', paddingRight: '200%' }}>
+            {displayText}
+          </div>
         ) : (
-          // For portrait: wrap all characters in a single container for consistent animation
-          <div className="flex flex-col items-center" style={{ animationDuration: `${scrollDuration}s` }}>
-            {/* Add empty spaces at the top for off-screen start */}
-            {[...Array(15)].map((_, i) => <div key={`pre-${i}`} className="my-0">&nbsp;</div>)}
-            
-            {/* Display the actual characters */}
+          // For portrait: use a container large enough to ensure text scrolls fully off-screen
+          <div className="flex flex-col items-center" style={{ paddingTop: '200%', paddingBottom: '200%', animationDuration: `${scrollDuration}s` }}>
             {portraitChars.map((char, index) => (
               <div key={index} className="my-0">{char === ' ' ? '\u00A0' : char}</div>
             ))}
-            
-            {/* Add empty spaces at the bottom for off-screen end */}
-            {[...Array(15)].map((_, i) => <div key={`post-${i}`} className="my-0">&nbsp;</div>)}
           </div>
         )}
       </div>

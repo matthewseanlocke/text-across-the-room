@@ -145,22 +145,16 @@ const DisplayText: React.FC = () => {
       }}
       >
         {isLandscape ? (
-          // For landscape: add significant padding on both sides to ensure text starts and ends off-screen
-          <span className="inline-block w-full" style={{ paddingLeft: '150%', paddingRight: '150%' }}>{displayText}</span>
+          // For landscape: use a container large enough to ensure text scrolls fully off-screen
+          <div className="inline-block w-full" style={{ paddingLeft: '200%', paddingRight: '200%' }}>
+            {displayText}
+          </div>
         ) : (
-          // For portrait: wrap all characters in a single container for consistent animation
-          // Add empty spaces before and after to ensure off-screen start/end
-          <div className="flex flex-col items-center" style={{ animationDuration: `${scrollDuration}s` }}>
-            {/* Add empty spaces at the top for off-screen start */}
-            {[...Array(15)].map((_, i) => <div key={`pre-${i}`} className="my-0">&nbsp;</div>)}
-            
-            {/* Display the actual characters */}
+          // For portrait: use a container large enough to ensure text scrolls fully off-screen
+          <div className="flex flex-col items-center" style={{ paddingTop: '200%', paddingBottom: '200%', animationDuration: `${scrollDuration}s` }}>
             {portraitChars.map((char, index) => (
               <div key={index} className="my-0">{char === ' ' ? '\u00A0' : char}</div>
             ))}
-            
-            {/* Add empty spaces at the bottom for off-screen end */}
-            {[...Array(15)].map((_, i) => <div key={`post-${i}`} className="my-0">&nbsp;</div>)}
           </div>
         )}
       </div>
