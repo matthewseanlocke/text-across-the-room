@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
@@ -21,8 +20,8 @@ const SpeedSlider: React.FC<SpeedSliderProps> = ({ value, onChange }) => {
           <span>Slow</span>
           <Slider
             id="speed-slider"
-            min={5}
-            max={30}
+            min={1}
+            max={9}
             step={1}
             value={[value]}
             onValueChange={handleChange}

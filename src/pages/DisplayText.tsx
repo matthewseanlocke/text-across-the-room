@@ -30,7 +30,7 @@ const DisplayText: React.FC = () => {
       if (isLandscape) {
         setFontSize('120vh');
       } else {
-        setFontSize('80vh');
+        setFontSize('120vh');
       }
     };
 
@@ -49,8 +49,32 @@ const DisplayText: React.FC = () => {
     serif: 'font-serif',
   };
 
-  // Calculate scroll duration based on speed
-  const scrollDuration = (30 - scrollSpeed);
+  // Calculate scroll duration based on speed (1-9 range)
+  // Speed 1 = slowest (20s), Speed 9 = fastest (4s)
+  const scrollDuration = 24 - (scrollSpeed * 2);
+  
+  // Debug
+  console.log('Display - Speed:', scrollSpeed, 'Duration:', scrollDuration);
+
+  // Create animation styles directly
+  const scrollTextKeyframes = `
+    @keyframes displayScrollText {
+      from { transform: translateX(100vw) translateY(-50%); }
+      to { transform: translateX(-100%) translateY(-50%); }
+    }
+  `;
+  
+  const animationStyle = {
+    animation: `displayScrollText ${scrollDuration}s linear infinite`,
+    position: 'absolute' as const,
+    whiteSpace: 'nowrap' as const,
+    color: textColor,
+    fontSize: fontSize,
+    lineHeight: "0.8",
+    left: 0,
+    top: '50%',
+    width: 'max-content'
+  };
 
   return (
     <div 
@@ -62,30 +86,17 @@ const DisplayText: React.FC = () => {
       style={{ backgroundColor }}
       onClick={() => navigate('/')}
     >
-      <style>
-        {`
-          @keyframes scrollText {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-150%); }
-          }
-        `}
-      </style>
-      <div 
-        className={cn(
-          "absolute whitespace-nowrap text-center",
-          isParty && "animate-flash",
-          fontClasses[font]
-        )}
-        style={{ 
-          color: textColor,
-          fontSize: fontSize,
-          lineHeight: "0.8",
-          animation: `scrollText ${scrollDuration}s linear infinite`,
-          left: '100%',
-          width: 'max-content'
-        }}
-      >
-        {displayText}
+      <style dangerouslySetInnerHTML={{ __html: scrollTextKeyframes }} />
+      <div className="relative w-full h-full overflow-hidden">
+        <div 
+          className={cn(
+            fontClasses[font],
+            isParty && "animate-flash"
+          )}
+          style={animationStyle}
+        >
+          {displayText}
+        </div>
       </div>
     </div>
   );

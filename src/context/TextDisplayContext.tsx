@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
 type FontOption = 'display' | 'handwriting' | 'monospace' | 'serif';
@@ -33,7 +32,7 @@ const defaultContext: TextDisplayContextType = {
   setBackgroundColor: () => {},
   font: "display",
   setFont: () => {},
-  scrollSpeed: 15,
+  scrollSpeed: 5,
   setScrollSpeed: () => {},
   isLandscape: false,
   preset: "day",
@@ -79,22 +78,22 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
       case 'day':
         setTextColor('#000000');
         setBackgroundColor('#ffffff');
-        setScrollSpeed(15);
+        setScrollSpeed(5);
         break;
       case 'night':
         setTextColor('#ffffff');
         setBackgroundColor('#000000');
-        setScrollSpeed(15);
+        setScrollSpeed(5);
         break;
       case 'emergency':
         setTextColor('#ffffff');
         setBackgroundColor('#ff0000');
-        setScrollSpeed(10);
+        setScrollSpeed(9);
         break;
       case 'party':
         setTextColor('#ffff00');
         setBackgroundColor('#8b5cf6');
-        setScrollSpeed(12);
+        setScrollSpeed(7);
         break;
       case 'custom':
         // Keep current settings
