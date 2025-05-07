@@ -34,8 +34,8 @@ const DisplayText: React.FC = () => {
       const lengthAdjustment = textLength > 10 ? 10 / textLength : 1;
       
       if (isLandscape) {
-        // For landscape: use percentage of viewport height with adjustment for text length
-        const heightPercentage = 70 * lengthAdjustment; // 70% of viewport height as base, adjusted by text length
+        // For landscape: use 95% of viewport height with adjustment for text length
+        const heightPercentage = 95 * lengthAdjustment; // 95% of viewport height as base, adjusted by text length
         setFontSize(`${heightPercentage}vh`);
       } else {
         // For portrait: use percentage of viewport height, divided by approximate character count
