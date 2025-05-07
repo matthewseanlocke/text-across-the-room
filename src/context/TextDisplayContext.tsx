@@ -21,6 +21,8 @@ interface TextDisplayContextType {
   applyPreset: (preset: PresetType) => void;
   isCapitalized: boolean;
   setIsCapitalized: (capitalized: boolean) => void;
+  setRainbowText: () => void;
+  isRainbowText: boolean;
 }
 
 const defaultContext: TextDisplayContextType = {
@@ -40,6 +42,8 @@ const defaultContext: TextDisplayContextType = {
   applyPreset: () => {},
   isCapitalized: true,
   setIsCapitalized: () => {},
+  setRainbowText: () => {},
+  isRainbowText: false,
 };
 
 const TextDisplayContext = createContext<TextDisplayContextType>(defaultContext);
@@ -55,6 +59,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [isLandscape, setIsLandscape] = useState<boolean>(defaultContext.isLandscape);
   const [preset, setPreset] = useState<PresetType>(defaultContext.preset);
   const [isCapitalized, setIsCapitalized] = useState<boolean>(defaultContext.isCapitalized);
+  const [isRainbowText, setIsRainbowText] = useState<boolean>(defaultContext.isRainbowText);
 
   useEffect(() => {
     const handleOrientationChange = () => {
@@ -72,28 +77,42 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
     };
   }, []);
 
+  const setRainbowText = () => {
+    setIsRainbowText(true);
+    setPreset('custom'); // Set to custom preset when selecting rainbow
+  };
+
+  // When setting a regular color, turn off rainbow mode
+  const handleSetTextColor = (color: string) => {
+    setTextColor(color);
+    setIsRainbowText(false);
+  };
+
   const applyPreset = (newPreset: PresetType) => {
     setPreset(newPreset);
     switch (newPreset) {
       case 'day':
         setTextColor('#000000');
         setBackgroundColor('#ffffff');
-        setScrollSpeed(5);
+        setIsRainbowText(false);
+        // Keep current scroll speed
         break;
       case 'night':
         setTextColor('#ffffff');
         setBackgroundColor('#000000');
-        setScrollSpeed(5);
+        setIsRainbowText(false);
+        // Keep current scroll speed
         break;
       case 'emergency':
         setTextColor('#ffffff');
         setBackgroundColor('#ff0000');
-        setScrollSpeed(9);
+        setIsRainbowText(false);
+        // Keep current scroll speed
         break;
       case 'party':
-        setTextColor('#ffff00');
-        setBackgroundColor('#8b5cf6');
-        setScrollSpeed(7);
+        setIsRainbowText(true);
+        setBackgroundColor('#000000');
+        // Keep current scroll speed
         break;
       case 'custom':
         // Keep current settings
@@ -107,7 +126,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         text,
         setText,
         textColor,
-        setTextColor,
+        setTextColor: handleSetTextColor,
         backgroundColor,
         setBackgroundColor,
         font,
@@ -120,6 +139,8 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         applyPreset,
         isCapitalized,
         setIsCapitalized,
+        setRainbowText,
+        isRainbowText,
       }}
     >
       {children}

@@ -12,7 +12,8 @@ const DisplayText: React.FC = () => {
     scrollSpeed, 
     isLandscape,
     preset,
-    isCapitalized
+    isCapitalized,
+    isRainbowText
   } = useTextDisplay();
   
   const navigate = useNavigate();
@@ -50,8 +51,8 @@ const DisplayText: React.FC = () => {
   };
 
   // Calculate scroll duration based on speed (1-9 range)
-  // Speed 1 = slowest (20s), Speed 9 = fastest (4s)
-  const scrollDuration = 24 - (scrollSpeed * 2);
+  // Speed 1 = slowest (16s), Speed 9 = fastest (2s)
+  const scrollDuration = 18 - (scrollSpeed * 1.8);
   
   // Debug
   console.log('Display - Speed:', scrollSpeed, 'Duration:', scrollDuration);
@@ -62,13 +63,23 @@ const DisplayText: React.FC = () => {
       from { transform: translateX(100vw) translateY(-50%); }
       to { transform: translateX(-100%) translateY(-50%); }
     }
+    
+    @keyframes rainbowText {
+      0% { color: #ff0000; }
+      16.6% { color: #ffff00; }
+      33.3% { color: #00ff00; }
+      50% { color: #00ffff; }
+      66.6% { color: #0000ff; }
+      83.3% { color: #ff00ff; }
+      100% { color: #ff0000; }
+    }
   `;
   
   const animationStyle = {
-    animation: `displayScrollText ${scrollDuration}s linear infinite`,
+    animation: `displayScrollText ${scrollDuration}s linear infinite${isRainbowText ? ', rainbowText 2s linear infinite' : ''}`,
     position: 'absolute' as const,
     whiteSpace: 'nowrap' as const,
-    color: textColor,
+    color: isRainbowText ? undefined : textColor,
     fontSize: fontSize,
     lineHeight: "0.8",
     left: 0,

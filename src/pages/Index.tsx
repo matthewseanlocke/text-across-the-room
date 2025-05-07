@@ -21,7 +21,8 @@ const Index = () => {
     font, setFont,
     scrollSpeed, setScrollSpeed,
     preset, applyPreset,
-    isCapitalized, setIsCapitalized
+    isCapitalized, setIsCapitalized,
+    setRainbowText, isRainbowText
   } = useTextDisplay();
 
   const handleDisplayClick = () => {
@@ -59,8 +60,9 @@ const Index = () => {
             
             <ColorPicker 
               label="Text Color" 
-              value={textColor} 
+              value={isRainbowText ? 'rainbow' : textColor} 
               onChange={setTextColor} 
+              onSelectRainbow={setRainbowText}
             />
             
             <ColorPicker 
@@ -91,32 +93,52 @@ const Index = () => {
             <h2 className="text-lg font-semibold">Presets</h2>
             <div className="grid grid-cols-2 gap-2">
               <Button 
-                variant={preset === 'day' ? "default" : "outline"} 
+                variant="outline"
                 onClick={() => applyPreset('day')}
-                className="w-full"
+                className={`w-full transition-all ${preset === 'day' ? 'bg-blue-100 text-blue-800 ring-2 ring-blue-400 ring-offset-2' : 'hover:bg-blue-50'}`}
               >
                 Day
               </Button>
               <Button 
-                variant={preset === 'night' ? "default" : "outline"} 
+                variant="outline"
                 onClick={() => applyPreset('night')}
-                className="w-full"
+                className={`w-full transition-all ${preset === 'night' ? 'bg-indigo-900 text-white ring-2 ring-indigo-400 ring-offset-2' : 'hover:bg-indigo-50'}`}
               >
                 Night
               </Button>
               <Button 
-                variant={preset === 'emergency' ? "default" : "outline"} 
+                variant="outline"
                 onClick={() => applyPreset('emergency')}
-                className="w-full bg-red-500 hover:bg-red-600"
+                className={`w-full transition-all ${preset === 'emergency' ? 'bg-red-600 text-white ring-2 ring-red-300 ring-offset-2' : 'text-red-600 hover:bg-red-50'}`}
               >
                 Emergency
               </Button>
               <Button 
-                variant={preset === 'party' ? "default" : "outline"} 
+                variant="outline"
                 onClick={() => applyPreset('party')}
-                className="w-full bg-purple-500 hover:bg-purple-600"
+                className={`w-full transition-all ${preset === 'party' ? 'bg-black text-white ring-2 ring-cyan-400 ring-offset-2' : 'hover:bg-gray-50'}`}
               >
-                Party
+                {preset === 'party' ? (
+                  <>
+                    <style>
+                      {`
+                        @keyframes rainbowButtonText {
+                          0% { color: #ff0000; }
+                          16.6% { color: #ffff00; }
+                          33.3% { color: #00ff00; }
+                          50% { color: #00ffff; }
+                          66.6% { color: #0000ff; }
+                          83.3% { color: #ff00ff; }
+                          100% { color: #ff0000; }
+                        }
+                        .rainbow-text {
+                          animation: rainbowButtonText 2s linear infinite;
+                        }
+                      `}
+                    </style>
+                    <span className="rainbow-text">Party</span>
+                  </>
+                ) : 'Party'}
               </Button>
             </div>
           </div>
