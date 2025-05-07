@@ -62,7 +62,8 @@ const TextPreview: React.FC = () => {
       )}
       style={{ 
         color: textColor,
-        fontSize: isLandscape ? '2rem' : '1.5rem'
+        fontSize: isLandscape ? '2.5rem' : '2rem',
+        lineHeight: '1'
       }}
       >
         {isLandscape ? (

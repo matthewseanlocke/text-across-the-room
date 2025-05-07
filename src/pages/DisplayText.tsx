@@ -93,7 +93,8 @@ const DisplayText: React.FC = () => {
       )}
       style={{ 
         color: textColor,
-        fontSize: isLandscape ? "min(20vw, 20vh)" : "min(20vw, 20vh)"
+        fontSize: isLandscape ? "min(30vw, 30vh)" : "min(30vw, 30vh)",
+        lineHeight: "0.9"
       }}
       >
         {isLandscape ? (
@@ -103,7 +104,7 @@ const DisplayText: React.FC = () => {
           // For portrait: each character on its own line with spaces between words
           <>
             {portraitChars.map((char, index) => (
-              <div key={index} className="my-1">{char === ' ' ? '\u00A0' : char}</div>
+              <div key={index} className="my-0">{char === ' ' ? '\u00A0' : char}</div>
             ))}
           </>
         )}
