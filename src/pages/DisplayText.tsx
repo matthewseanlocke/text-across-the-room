@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTextDisplay } from '@/context/TextDisplayContext';
@@ -26,11 +25,23 @@ const DisplayText: React.FC = () => {
   // Update font size based on window size
   useEffect(() => {
     const updateFontSize = () => {
-      // Calculate the appropriate font size based on container dimensions
-      if (isLandscape) {
-        setFontSize('80vw'); // For landscape orientation
-      } else {
-        setFontSize('80vw'); // For portrait orientation
+      if (containerRef.current) {
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        
+        // Dynamically calculate font size based on viewport dimensions and text length
+        const textLength = displayText.length;
+        const scaleFactor = textLength > 10 ? 0.8 / Math.sqrt(textLength / 10) : 0.8;
+        
+        if (isLandscape) {
+          // For landscape: size based on viewport width
+          setFontSize(`${viewportWidth * scaleFactor}px`);
+        } else {
+          // For portrait: each character gets a portion of the viewport height
+          const charCount = displayText.split('').length;
+          const sizePerChar = viewportHeight / (charCount * 1.2); // Add some spacing
+          setFontSize(`${Math.min(viewportWidth * 0.7, sizePerChar * 2)}px`);
+        }
       }
     };
 
@@ -57,7 +68,7 @@ const DisplayText: React.FC = () => {
       }
       window.removeEventListener('resize', updateFontSize);
     };
-  }, [isLandscape]);
+  }, [isLandscape, displayText]);
   
   const fontClasses = {
     display: 'font-display',

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTextDisplay } from '@/context/TextDisplayContext';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -17,21 +17,41 @@ const TextPreview: React.FC = () => {
 
   const [fontSize, setFontSize] = useState('');
   const isMobile = useIsMobile();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Update font size based on container size
   useEffect(() => {
     const updateFontSize = () => {
-      if (isLandscape) {
-        setFontSize('3rem');
-      } else {
-        setFontSize('2.5rem');
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.clientWidth;
+        const containerHeight = containerRef.current.clientHeight;
+        
+        if (isLandscape) {
+          // For landscape: size based on container width
+          setFontSize(`${containerWidth * 0.4}px`);
+        } else {
+          // For portrait: size based on container height
+          setFontSize(`${containerHeight * 0.4}px`);
+        }
       }
     };
     
     updateFontSize();
+    
+    const resizeObserver = new ResizeObserver(() => {
+      updateFontSize();
+    });
+    
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+    
     window.addEventListener('resize', updateFontSize);
     
     return () => {
+      if (containerRef.current) {
+        resizeObserver.unobserve(containerRef.current);
+      }
       window.removeEventListener('resize', updateFontSize);
     };
   }, [isLandscape]);
@@ -66,6 +86,7 @@ const TextPreview: React.FC = () => {
 
   return (
     <div 
+      ref={containerRef}
       className={cn(
         "w-full h-28 overflow-hidden border rounded-md relative",
         isEmergency && "animate-flash"
