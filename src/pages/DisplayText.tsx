@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTextDisplay } from '@/context/TextDisplayContext';
@@ -27,13 +26,11 @@ const DisplayText: React.FC = () => {
   useEffect(() => {
     const updateFontSize = () => {
       if (isLandscape) {
-        // For landscape: reduced from 150% to 120% of viewport height
+        // For landscape: 120% of viewport height
         setFontSize('120vh');
       } else {
-        // For portrait: also reduce proportionally
-        const charCount = Math.max(5, displayText.length);
-        const heightPercentage = Math.min(120, 500 / charCount);
-        setFontSize(`${heightPercentage}vh`);
+        // For portrait: 95% of viewport width to maximize character size
+        setFontSize('95vw');
       }
     };
 

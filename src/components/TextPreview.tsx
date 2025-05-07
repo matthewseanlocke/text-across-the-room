@@ -30,8 +30,8 @@ const TextPreview: React.FC = () => {
           // For landscape: 120% of container height (reduced from 150%)
           setFontSize(`${containerHeight * 1.2}px`);
         } else {
-          // For portrait: 80% of container height (reduced from 100%)
-          setFontSize(`${containerHeight * 0.8}px`);
+          // For portrait: 120% of container width to match landscape scaling
+          setFontSize(`${containerWidth * 0.95}px`);
         }
       }
     };
