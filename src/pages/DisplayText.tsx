@@ -33,8 +33,9 @@ const DisplayText: React.FC = () => {
         // For landscape: 120% of viewport height
         setFontSize('120vh');
       } else {
-        // For portrait: 95% of viewport width to maximize character size
-        setFontSize('95vw');
+        // For portrait: also use height-based sizing
+        // This will maintain the same size proportions in both orientations
+        setFontSize('120vh');
       }
     };
 
@@ -70,23 +71,6 @@ const DisplayText: React.FC = () => {
     serif: 'font-serif',
   };
 
-  // For portrait mode, split the text into words and then characters
-  const words = displayText.split(' ');
-  const portraitChars = [];
-  
-  // Process words to add spaces between them
-  words.forEach((word, wordIndex) => {
-    // Add each character of the word
-    word.split('').forEach((char, charIndex) => {
-      portraitChars.push(char);
-    });
-    
-    // Add a space character between words (except after the last word)
-    if (wordIndex < words.length - 1) {
-      portraitChars.push(' ');
-    }
-  });
-
   // Lock orientation to stay active
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -114,9 +98,8 @@ const DisplayText: React.FC = () => {
     };
   }, []);
 
-  // Calculate scroll duration consistently for both orientations
-  // Using a higher duration multiplier for portrait to slow it down
-  const scrollDuration = isLandscape ? (30 - scrollSpeed) : (30 - scrollSpeed) * 3;
+  // Calculate scroll duration consistently
+  const scrollDuration = (30 - scrollSpeed);
 
   return (
     <div 
@@ -132,10 +115,7 @@ const DisplayText: React.FC = () => {
       onClick={() => navigate('/')}
     >
       <div className={cn(
-        "absolute",
-        isLandscape 
-          ? "animate-scroll-x whitespace-nowrap w-full text-center" 
-          : "animate-scroll-y w-full text-center",
+        "absolute whitespace-nowrap animate-scroll-x w-full text-center",
         isParty && "animate-flash",
         fontClasses[font]
       )}
@@ -145,17 +125,7 @@ const DisplayText: React.FC = () => {
         lineHeight: "0.8"
       }}
       >
-        {isLandscape ? (
-          // For landscape: single line of text that takes full width
-          <span className="inline-block w-full">{displayText}</span>
-        ) : (
-          // For portrait: wrap all characters in a single container for consistent animation
-          <div className="flex flex-col items-center" style={{ animationDuration: `${scrollDuration}s` }}>
-            {portraitChars.map((char, index) => (
-              <div key={index} className="my-0">{char === ' ' ? '\u00A0' : char}</div>
-            ))}
-          </div>
-        )}
+        <span className="inline-block w-full">{displayText}</span>
       </div>
     </div>
   );
