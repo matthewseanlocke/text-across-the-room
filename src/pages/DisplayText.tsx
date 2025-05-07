@@ -23,7 +23,7 @@ const DisplayText: React.FC = () => {
   const isEmergency = preset === 'emergency';
   const isParty = preset === 'party';
   
-  const [fontSize, setFontSize] = useState(isLandscape ? '120vh' : '95vw');
+  const [fontSize, setFontSize] = useState('120vh');
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Update font size based on window size
@@ -118,19 +118,6 @@ const DisplayText: React.FC = () => {
   // Using a higher duration multiplier for portrait to slow it down
   const scrollDuration = isLandscape ? (30 - scrollSpeed) : (30 - scrollSpeed) * 3;
 
-  // Force immediate rendering by using inline styles for animations
-  const landscapeAnimationStyle = {
-    animation: `scroll-x ${scrollDuration}s linear infinite`,
-    paddingLeft: '100vw', 
-    paddingRight: '100vw'
-  };
-  
-  const portraitAnimationStyle = {
-    animation: `scroll-y ${scrollDuration}s linear infinite`,
-    paddingTop: '100vh',
-    paddingBottom: '100vh'
-  };
-
   return (
     <div 
       ref={containerRef}
@@ -140,22 +127,22 @@ const DisplayText: React.FC = () => {
       )}
       style={{ 
         backgroundColor,
-      }}
+        '--scroll-duration': `${scrollDuration}s`
+      } as React.CSSProperties}
       onClick={() => navigate('/')}
     >
       <div className={cn(
         "absolute",
         isLandscape 
-          ? "whitespace-nowrap w-full text-center" 
-          : "w-full text-center",
+          ? "animate-scroll-x whitespace-nowrap w-full text-center" 
+          : "animate-scroll-y w-full text-center",
         isParty && "animate-flash",
         fontClasses[font]
       )}
       style={{ 
         color: textColor,
         fontSize: fontSize,
-        lineHeight: "0.8",
-        ...(isLandscape ? landscapeAnimationStyle : {})
+        lineHeight: "0.8"
       }}
       >
         {isLandscape ? (
@@ -163,7 +150,7 @@ const DisplayText: React.FC = () => {
           <span className="inline-block w-full">{displayText}</span>
         ) : (
           // For portrait: wrap all characters in a single container for consistent animation
-          <div className="flex flex-col items-center" style={portraitAnimationStyle}>
+          <div className="flex flex-col items-center" style={{ animationDuration: `${scrollDuration}s` }}>
             {portraitChars.map((char, index) => (
               <div key={index} className="my-0">{char === ' ' ? '\u00A0' : char}</div>
             ))}
