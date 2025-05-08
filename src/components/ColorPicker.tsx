@@ -11,6 +11,7 @@ interface ColorPickerProps {
   onSelectSirenBackground?: () => void;
   onSelectHeartbeatBackground?: () => void;
   simple?: boolean;
+  disabled?: boolean;
 }
 
 const ColorPicker: React.FC<ColorPickerProps> = ({ 
@@ -22,7 +23,8 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
   onSelectLightningBackground,
   onSelectSirenBackground,
   onSelectHeartbeatBackground,
-  simple = false
+  simple = false,
+  disabled = false
 }) => {
   const colorOptions = [
     "#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff", 
@@ -40,10 +42,11 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
               type="button"
               className={`w-8 h-8 rounded-full border-2 ${
                 color === value ? 'border-primary' : 'border-gray-300 dark:border-gray-600'
-              }`}
+              } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
               style={{ backgroundColor: color }}
-              onClick={() => onChange(color)}
+              onClick={() => !disabled && onChange(color)}
               aria-label={`${color} color`}
+              disabled={disabled}
             />
           ))}
           <input
@@ -51,7 +54,8 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
             type="color"
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="w-8 h-8 dark:bg-gray-700"
+            className={`w-8 h-8 dark:bg-gray-700 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={disabled}
           />
         </div>
       </div>
@@ -68,10 +72,11 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
             type="button"
             className={`w-8 h-8 rounded-full border-2 ${
               color === value ? 'border-primary' : 'border-gray-300 dark:border-gray-600'
-            }`}
+            } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             style={{ backgroundColor: color }}
-            onClick={() => onChange(color)}
+            onClick={() => !disabled && onChange(color)}
             aria-label={`${color} color`}
+            disabled={disabled}
           />
         ))}
         {onSelectRainbow && (

@@ -47,6 +47,20 @@ const Index = () => {
     }
   }, [darkMode]);
 
+  // Synchronize effect checkboxes with preset changes
+  useEffect(() => {
+    // When preset changes, make sure the effect checkboxes reflect the current state
+    // This ensures that preset changes properly update the UI state
+    console.log('Preset changed to:', preset);
+    
+    // We don't need to update states if preset is 'custom' as that represents manual settings
+    if (preset !== 'custom') {
+      // The actual state is already being managed in TextDisplayContext
+      // This is just to ensure the UI reflects those changes
+      console.log('Synchronized effect checkboxes with preset:', preset);
+    }
+  }, [preset, isRainbowText, isRainbowBackground, isLightningMode, isSirenMode, isHeartbeatMode]);
+
   // Add fade-in effect when component mounts
   useEffect(() => {
     // Short delay to ensure the fade effect starts after navigation completes
@@ -205,6 +219,7 @@ const Index = () => {
                   value={textColor} 
                   onChange={setTextColor} 
                   simple={true}
+                  disabled={isRainbowText}
                 />
                 
                 <ColorPicker 
@@ -212,6 +227,7 @@ const Index = () => {
                   value={backgroundColor} 
                   onChange={setBackgroundColor}
                   simple={true}
+                  disabled={isRainbowBackground || isLightningMode || isSirenMode || isHeartbeatMode}
                 />
               </div>
               

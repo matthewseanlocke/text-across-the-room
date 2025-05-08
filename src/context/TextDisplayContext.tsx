@@ -120,17 +120,12 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   const setRainbowText = () => {
     setIsRainbowText(true);
-    setIsRainbowBackground(false);
-    setIsLightningMode(false);
-    setIsSirenMode(false);
-    setIsHeartbeatMode(false);
     setPreset('custom'); // Set to custom preset when selecting rainbow
   };
   
   const setRainbowBackground = (enabled: boolean) => {
     setIsRainbowBackground(enabled);
     if (enabled) {
-      setIsRainbowText(false);
       setIsLightningMode(false);
       setIsSirenMode(false);
       setIsHeartbeatMode(false);
@@ -141,7 +136,6 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const setLightningMode = (enabled: boolean) => {
     setIsLightningMode(enabled);
     if (enabled) {
-      setIsRainbowText(false);
       setIsRainbowBackground(false);
       setIsSirenMode(false);
       setIsHeartbeatMode(false);
@@ -152,7 +146,6 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const setSirenMode = (enabled: boolean) => {
     setIsSirenMode(enabled);
     if (enabled) {
-      setIsRainbowText(false);
       setIsRainbowBackground(false);
       setIsLightningMode(false);
       setIsHeartbeatMode(false);
@@ -163,7 +156,6 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const setHeartbeatMode = (enabled: boolean) => {
     setIsHeartbeatMode(enabled);
     if (enabled) {
-      setIsRainbowText(false);
       setIsRainbowBackground(false);
       setIsLightningMode(false);
       setIsSirenMode(false);
@@ -228,8 +220,9 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         // Keep current scroll speed
         break;
       case 'party':
-        setIsRainbowText(true);
+        setTextColor('#ffffff'); // Set a default text color that will be overridden by rainbow
         setBackgroundColor('#000000');
+        setIsRainbowText(true); // Enable rainbow text for party
         setIsRainbowBackground(false);
         setIsLightningMode(false);
         setIsSirenMode(false);
@@ -237,47 +230,47 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         // Keep current scroll speed
         break;
       case 'disco':
-        setTextColor('#ffffff');
+        // For disco preset, we keep the current text color or rainbow text state
+        // and only change the background to rainbow
         setBackgroundColor('#000000'); 
-        setIsRainbowText(false);
-        setIsRainbowBackground(true);
+        setIsRainbowBackground(true); // This one should be true for disco
         setIsLightningMode(false);
         setIsSirenMode(false);
         setIsHeartbeatMode(false);
-        // Keep current scroll speed
+        // Keep current scroll speed and text effects
         break;
       case 'lightning':
-        setTextColor('#ffffff');
+        // For lightning preset, we keep the current text color or rainbow text state
+        // and only change the background effect
         setBackgroundColor('#000000'); 
-        setIsRainbowText(false);
         setIsRainbowBackground(false);
-        setIsLightningMode(true);
+        setIsLightningMode(true); // This one should be true for lightning
         setIsSirenMode(false);
         setIsHeartbeatMode(false);
-        // Keep current scroll speed
+        // Keep current scroll speed and text effects
         break;
       case 'siren':
-        setTextColor('#ffffff');
+        // For siren preset, we keep the current text color or rainbow text state
+        // and only change the background effect
         setBackgroundColor('#000000'); 
-        setIsRainbowText(false);
         setIsRainbowBackground(false);
         setIsLightningMode(false);
-        setIsSirenMode(true);
+        setIsSirenMode(true); // This one should be true for siren
         setIsHeartbeatMode(false);
-        // Keep current scroll speed
+        // Keep current scroll speed and text effects
         break;
       case 'heartbeat':
-        setTextColor('#ffffff');
+        // For heartbeat preset, we keep the current text color or rainbow text state
+        // and only change the background effect
         setBackgroundColor('#8B0000'); // Dark red
-        setIsRainbowText(false);
         setIsRainbowBackground(false);
         setIsLightningMode(false);
         setIsSirenMode(false);
-        setIsHeartbeatMode(true);
-        // Keep current scroll speed
+        setIsHeartbeatMode(true); // This one should be true for heartbeat
+        // Keep current scroll speed and text effects
         break;
       case 'custom':
-        // Keep current settings
+        // Keep current settings - do not modify anything
         break;
     }
   };
