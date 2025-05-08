@@ -17,7 +17,8 @@ const DisplayText: React.FC = () => {
     isRainbowText,
     dualTextMode,
     isRainbowBackground,
-    isLightningMode
+    isLightningMode,
+    isSirenMode
   } = useTextDisplay();
   
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ const DisplayText: React.FC = () => {
   const isParty = preset === 'party';
   const isDisco = preset === 'disco' || isRainbowBackground;
   const isLightning = preset === 'lightning' || isLightningMode;
+  const isSiren = preset === 'siren' || isSirenMode;
   
   const [fontSize, setFontSize] = useState('120vh');
   const containerRef = useRef<HTMLDivElement>(null);
@@ -178,6 +180,21 @@ const DisplayText: React.FC = () => {
       90%, 93%, 97%, 100% { background-color: #ffffff; }
     }
     
+    @keyframes sirenFlash {
+      0%, 15% { background-color: #0000ff; }
+      15.1%, 17% { background-color: #ffffff; }
+      17.1%, 35% { background-color: #0000ff; }
+      35.1%, 40% { background-color: #000000; }
+      
+      40.1%, 55% { background-color: #ff0000; }
+      55.1%, 57% { background-color: #ffffff; }
+      57.1%, 75% { background-color: #ff0000; }
+      75.1%, 80% { background-color: #000000; }
+      
+      80.1%, 82% { background-color: #ffffff; }
+      82.1%, 100% { background-color: #000000; }
+    }
+    
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
@@ -216,7 +233,9 @@ const DisplayText: React.FC = () => {
       ? 'rainbowBackground 2s linear infinite' 
       : isLightning 
         ? 'lightningFlash 3s linear infinite' 
-        : undefined
+        : isSiren
+          ? 'sirenFlash 0.6s linear infinite'
+          : undefined
   };
   
   // Only render text content if there is text to display

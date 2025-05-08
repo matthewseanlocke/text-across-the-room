@@ -15,7 +15,8 @@ const TextPreview: React.FC = () => {
     isCapitalized,
     isRainbowText,
     isRainbowBackground,
-    isLightningMode
+    isLightningMode,
+    isSirenMode
   } = useTextDisplay();
 
   const [fontSize, setFontSize] = useState('');
@@ -61,6 +62,7 @@ const TextPreview: React.FC = () => {
   const isParty = preset === 'party';
   const isDisco = preset === 'disco' || isRainbowBackground;
   const isLightning = preset === 'lightning' || isLightningMode;
+  const isSiren = preset === 'siren' || isSirenMode;
   
   // Check if there's any text to display
   const hasText = displayText.trim().length > 0;
@@ -103,6 +105,21 @@ const TextPreview: React.FC = () => {
       0%, 91%, 94%, 98% { background-color: #000000; }
       90%, 93%, 97%, 100% { background-color: #ffffff; }
     }
+    
+    @keyframes sirenFlash {
+      0%, 15% { background-color: #0000ff; }
+      15.1%, 17% { background-color: #ffffff; }
+      17.1%, 35% { background-color: #0000ff; }
+      35.1%, 40% { background-color: #000000; }
+      
+      40.1%, 55% { background-color: #ff0000; }
+      55.1%, 57% { background-color: #ffffff; }
+      57.1%, 75% { background-color: #ff0000; }
+      75.1%, 80% { background-color: #000000; }
+      
+      80.1%, 82% { background-color: #ffffff; }
+      82.1%, 100% { background-color: #000000; }
+    }
   `;
   
   const animationStyle = {
@@ -134,7 +151,9 @@ const TextPreview: React.FC = () => {
       ? 'rainbowBackground 2s linear infinite' 
       : isLightning 
         ? 'lightningFlash 3s linear infinite' 
-        : undefined
+        : isSiren
+          ? 'sirenFlash 0.6s linear infinite'
+          : undefined
   };
 
   return (

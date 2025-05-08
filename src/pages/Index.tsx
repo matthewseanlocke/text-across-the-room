@@ -376,6 +376,50 @@ const Index = () => {
                     </>
                   ) : 'Lightning'}
                 </Button>
+                <Button 
+                  variant={preset === 'siren' ? "default" : "outline"}
+                  onClick={() => applyPreset('siren')}
+                  className={`w-full transition-all overflow-hidden ${
+                    preset === 'siren' 
+                      ? 'p-0 border-0 ring-2 ring-indigo-400 ring-offset-2 dark:ring-offset-gray-900' 
+                      : 'hover:bg-red-50 dark:border-gray-600 dark:hover:bg-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  {preset === 'siren' ? (
+                    <>
+                      <style>
+                        {`
+                          @keyframes sirenButtonBg {
+                            0%, 15% { background-color: #0000ff; }
+                            15.1%, 17% { background-color: #ffffff; }
+                            17.1%, 35% { background-color: #0000ff; }
+                            35.1%, 40% { background-color: #000000; }
+                            
+                            40.1%, 55% { background-color: #ff0000; }
+                            55.1%, 57% { background-color: #ffffff; }
+                            57.1%, 75% { background-color: #ff0000; }
+                            75.1%, 80% { background-color: #000000; }
+                            
+                            80.1%, 82% { background-color: #ffffff; }
+                            82.1%, 100% { background-color: #000000; }
+                          }
+                          .siren-button-wrapper {
+                            width: 100%;
+                            height: 100%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            padding: 0.5rem;
+                            animation: sirenButtonBg 0.6s linear infinite;
+                          }
+                        `}
+                      </style>
+                      <div className="siren-button-wrapper w-full">
+                        <span className="text-white font-semibold">Police</span>
+                      </div>
+                    </>
+                  ) : 'Police'}
+                </Button>
               </div>
             </div>
           </CardContent>
