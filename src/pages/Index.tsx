@@ -11,6 +11,7 @@ import TextPreview from '@/components/TextPreview';
 import { useTextDisplay } from '@/context/TextDisplayContext';
 import { Fullscreen, Moon, Sun } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
+import AppLogo from '@/components/AppLogo';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -134,7 +135,8 @@ const Index = () => {
                 <div className="flex flex-wrap gap-2">
                   {[
                     'CALL ME', 
-                    '♡ ♡ ♡ LOVE YOU ♡ ♡ ♡', 
+                    '♡ ♡ ♡ ♡ ♡ ♡', 
+                    'I LOVE YOU',
                     'BACK OFF!', 
                     'H E L P !', 
                     '911', 
@@ -288,11 +290,12 @@ const Index = () => {
             </div>
             
             <Button 
-              className="w-full text-lg py-6 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700"
+              className="w-full py-8 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700"
               onClick={handleDisplayClick}
             >
-              <Fullscreen className="mr-2 h-5 w-5" />
-              DISPLAY
+              <div className="flex flex-col items-center justify-center">
+                <AppLogo size="small" showAnimation={true} />
+              </div>
             </Button>
           </div>
         </div>

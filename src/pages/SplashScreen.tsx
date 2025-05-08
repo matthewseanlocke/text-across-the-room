@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTextDisplay } from '@/context/TextDisplayContext';
+import AppLogo from '@/components/AppLogo';
 
 const SplashScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -48,46 +49,31 @@ const SplashScreen: React.FC = () => {
         isFadingOut ? 'animate-fade-out' : ''
       }`}
     >
-      <div className="text-center px-4">
-        <div className="animate-scale-in">
-          <h1 className="text-5xl font-bold mb-6 dark:text-white">
-            text-across-the-room
-          </h1>
-        </div>
-        
-        {/* Loading indicator */}
-        <div className="flex justify-center mt-4">
-          <div className={`${isLoading ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}>
-            <div className="flex space-x-2">
-              <div className="w-3 h-3 bg-primary dark:bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-              <div className="w-3 h-3 bg-primary dark:bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-              <div className="w-3 h-3 bg-primary dark:bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-            </div>
-          </div>
-        </div>
-        
-        <style>
-          {`
-            @keyframes scaleIn {
-              0% { opacity: 0; transform: scale(0.9); }
-              30% { opacity: 1; transform: scale(1.1); }
-              60% { transform: scale(0.95); }
-              100% { transform: scale(1); }
-            }
-            .animate-scale-in {
-              animation: scaleIn 1.2s ease-out forwards;
-            }
-            
-            @keyframes fadeOut {
-              from { opacity: 1; }
-              to { opacity: 0; }
-            }
-            .animate-fade-out {
-              animation: fadeOut 0.4s ease-in-out forwards;
-            }
-          `}
-        </style>
+      <div className="animate-scale-in px-4">
+        <AppLogo size="large" showAnimation={isLoading} />
       </div>
+      
+      <style>
+        {`
+          @keyframes scaleIn {
+            0% { opacity: 0; transform: scale(0.9); }
+            30% { opacity: 1; transform: scale(1.1); }
+            60% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+          }
+          .animate-scale-in {
+            animation: scaleIn 1.2s ease-out forwards;
+          }
+          
+          @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+          }
+          .animate-fade-out {
+            animation: fadeOut 0.4s ease-in-out forwards;
+          }
+        `}
+      </style>
     </div>
   );
 };
