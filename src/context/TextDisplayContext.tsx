@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 
 type FontOption = 'display' | 'handwriting' | 'monospace' | 'serif';
 
-type PresetType = 'day' | 'night' | 'emergency' | 'party' | 'custom';
+type PresetType = 'day' | 'night' | 'emergency' | 'party' | 'disco' | 'custom';
 
 interface TextDisplayContextType {
   text: string;
@@ -29,6 +29,8 @@ interface TextDisplayContextType {
   setScrollPosition: (position: number) => void;
   dualTextMode: boolean;
   toggleDualTextMode: () => void;
+  isRainbowBackground: boolean;
+  setRainbowBackground: (enabled: boolean) => void;
 }
 
 const defaultContext: TextDisplayContextType = {
@@ -56,6 +58,8 @@ const defaultContext: TextDisplayContextType = {
   setScrollPosition: () => {},
   dualTextMode: true,
   toggleDualTextMode: () => {},
+  isRainbowBackground: false,
+  setRainbowBackground: () => {},
 };
 
 const TextDisplayContext = createContext<TextDisplayContextType>(defaultContext);
@@ -72,6 +76,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [preset, setPreset] = useState<PresetType>(defaultContext.preset);
   const [isCapitalized, setIsCapitalized] = useState<boolean>(defaultContext.isCapitalized);
   const [isRainbowText, setIsRainbowText] = useState<boolean>(defaultContext.isRainbowText);
+  const [isRainbowBackground, setIsRainbowBackground] = useState<boolean>(defaultContext.isRainbowBackground);
   const [darkMode, setDarkMode] = useState<boolean>(defaultContext.darkMode);
   const [scrollPosition, setScrollPosition] = useState<number>(0);
   const [dualTextMode, setDualTextMode] = useState<boolean>(defaultContext.dualTextMode);
@@ -100,13 +105,28 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   const setRainbowText = () => {
     setIsRainbowText(true);
+    setIsRainbowBackground(false);
     setPreset('custom'); // Set to custom preset when selecting rainbow
+  };
+  
+  const setRainbowBackground = (enabled: boolean) => {
+    setIsRainbowBackground(enabled);
+    if (enabled) {
+      setIsRainbowText(false);
+    }
+    setPreset('custom'); // Set to custom preset when selecting rainbow background
   };
 
   // When setting a regular color, turn off rainbow mode
   const handleSetTextColor = (color: string) => {
     setTextColor(color);
     setIsRainbowText(false);
+  };
+  
+  // When setting a regular background color, turn off rainbow background
+  const handleSetBackgroundColor = (color: string) => {
+    setBackgroundColor(color);
+    setIsRainbowBackground(false);
   };
 
   const toggleDarkMode = () => {
@@ -124,23 +144,34 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setTextColor('#000000');
         setBackgroundColor('#ffffff');
         setIsRainbowText(false);
+        setIsRainbowBackground(false);
         // Keep current scroll speed
         break;
       case 'night':
         setTextColor('#ffffff');
         setBackgroundColor('#000000');
         setIsRainbowText(false);
+        setIsRainbowBackground(false);
         // Keep current scroll speed
         break;
       case 'emergency':
         setTextColor('#ffffff');
         setBackgroundColor('#ff0000');
         setIsRainbowText(false);
+        setIsRainbowBackground(false);
         // Keep current scroll speed
         break;
       case 'party':
         setIsRainbowText(true);
         setBackgroundColor('#000000');
+        setIsRainbowBackground(false);
+        // Keep current scroll speed
+        break;
+      case 'disco':
+        setTextColor('#ffffff');
+        setBackgroundColor('#000000'); 
+        setIsRainbowText(false);
+        setIsRainbowBackground(true);
         // Keep current scroll speed
         break;
       case 'custom':
@@ -157,7 +188,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         textColor,
         setTextColor: handleSetTextColor,
         backgroundColor,
-        setBackgroundColor,
+        setBackgroundColor: handleSetBackgroundColor,
         font,
         setFont,
         scrollSpeed,
@@ -176,6 +207,8 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setScrollPosition,
         dualTextMode,
         toggleDualTextMode,
+        isRainbowBackground,
+        setRainbowBackground,
       }}
     >
       {children}

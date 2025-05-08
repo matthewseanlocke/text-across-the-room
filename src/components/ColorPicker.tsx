@@ -6,9 +6,16 @@ interface ColorPickerProps {
   value: string;
   onChange: (color: string) => void;
   onSelectRainbow?: () => void;
+  onSelectRainbowBackground?: () => void;
 }
 
-const ColorPicker: React.FC<ColorPickerProps> = ({ label, value, onChange, onSelectRainbow }) => {
+const ColorPicker: React.FC<ColorPickerProps> = ({ 
+  label, 
+  value, 
+  onChange, 
+  onSelectRainbow,
+  onSelectRainbowBackground
+}) => {
   const colorOptions = [
     "#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff", 
     "#ffff00", "#ff00ff", "#00ffff", "#ff8000", "#8b5cf6"
@@ -43,13 +50,27 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ label, value, onChange, onSel
             aria-label="Rainbow color"
           />
         )}
+        {onSelectRainbowBackground && label === "Background Color" && (
+          <button
+            type="button"
+            className={`w-8 h-8 rounded-full border-2 ${
+              value === 'rainbow-bg' ? 'border-primary' : 'border-gray-300 dark:border-gray-600'
+            }`}
+            style={{ 
+              background: 'linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet)'
+            }}
+            onClick={onSelectRainbowBackground}
+            aria-label="Rainbow background"
+            title="Disco background"
+          />
+        )}
         <input
           id={label}
           type="color"
-          value={value === 'rainbow' ? '#ff0000' : value}
+          value={value === 'rainbow' || value === 'rainbow-bg' ? '#ff0000' : value}
           onChange={(e) => onChange(e.target.value)}
           className="w-8 h-8 dark:bg-gray-700"
-          disabled={value === 'rainbow'}
+          disabled={value === 'rainbow' || value === 'rainbow-bg'}
         />
       </div>
     </div>

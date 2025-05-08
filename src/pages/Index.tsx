@@ -30,7 +30,8 @@ const Index = () => {
     setRainbowText, isRainbowText,
     darkMode, toggleDarkMode,
     scrollPosition, setScrollPosition,
-    dualTextMode, toggleDualTextMode
+    dualTextMode, toggleDualTextMode,
+    isRainbowBackground, setRainbowBackground
   } = useTextDisplay();
 
   // Apply dark mode class to document body
@@ -194,8 +195,9 @@ const Index = () => {
               
               <ColorPicker 
                 label="Background Color" 
-                value={backgroundColor} 
+                value={isRainbowBackground ? 'rainbow-bg' : backgroundColor} 
                 onChange={setBackgroundColor} 
+                onSelectRainbowBackground={() => setRainbowBackground(true)}
               />
               
               <div className="flex items-center space-x-2">
@@ -296,6 +298,45 @@ const Index = () => {
                       <span className="rainbow-text">Party</span>
                     </>
                   ) : 'Party'}
+                </Button>
+                <Button 
+                  variant={preset === 'disco' ? "default" : "outline"}
+                  onClick={() => applyPreset('disco')}
+                  className={`w-full transition-all overflow-hidden ${
+                    preset === 'disco' 
+                      ? 'p-0 border-0 ring-2 ring-pink-400 ring-offset-2 dark:ring-offset-gray-900' 
+                      : 'hover:bg-purple-50 dark:border-gray-600 dark:hover:bg-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  {preset === 'disco' ? (
+                    <>
+                      <style>
+                        {`
+                          @keyframes rainbowButtonBg {
+                            0% { background-color: #ff0000; }
+                            16.6% { background-color: #ffff00; }
+                            33.3% { background-color: #00ff00; }
+                            50% { background-color: #00ffff; }
+                            66.6% { background-color: #0000ff; }
+                            83.3% { background-color: #ff00ff; }
+                            100% { background-color: #ff0000; }
+                          }
+                          .disco-button-wrapper {
+                            width: 100%;
+                            height: 100%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            padding: 0.5rem;
+                            animation: rainbowButtonBg 2s linear infinite;
+                          }
+                        `}
+                      </style>
+                      <div className="disco-button-wrapper w-full">
+                        <span className="text-white font-semibold">Disco</span>
+                      </div>
+                    </>
+                  ) : 'Disco'}
                 </Button>
               </div>
             </div>

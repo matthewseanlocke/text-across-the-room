@@ -15,7 +15,8 @@ const DisplayText: React.FC = () => {
     preset,
     isCapitalized,
     isRainbowText,
-    dualTextMode
+    dualTextMode,
+    isRainbowBackground
   } = useTextDisplay();
   
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const DisplayText: React.FC = () => {
   const displayText = processedText || "HELLO";
   const isEmergency = preset === 'emergency';
   const isParty = preset === 'party';
+  const isDisco = preset === 'disco' || isRainbowBackground;
   
   const [fontSize, setFontSize] = useState('120vh');
   const containerRef = useRef<HTMLDivElement>(null);
@@ -159,6 +161,16 @@ const DisplayText: React.FC = () => {
       100% { color: #ff0000; }
     }
     
+    @keyframes rainbowBackground {
+      0% { background-color: #ff0000; }
+      16.6% { background-color: #ffff00; }
+      33.3% { background-color: #00ff00; }
+      50% { background-color: #00ffff; }
+      66.6% { background-color: #0000ff; }
+      83.3% { background-color: #ff00ff; }
+      100% { background-color: #ff0000; }
+    }
+    
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
@@ -190,6 +202,12 @@ const DisplayText: React.FC = () => {
     top: '75%',
   };
 
+  // Determine container style based on rainbow background
+  const containerStyle = {
+    backgroundColor: isRainbowBackground ? undefined : backgroundColor,
+    animation: isRainbowBackground ? 'rainbowBackground 2s linear infinite' : undefined
+  };
+
   return (
     <div 
       ref={containerRef}
@@ -197,7 +215,7 @@ const DisplayText: React.FC = () => {
         "fixed inset-0 flex items-center justify-center overflow-hidden animate-fade-in",
         isEmergency && "animate-flash"
       )}
-      style={{ backgroundColor }}
+      style={containerStyle}
       onClick={() => {
         // Navigate back to options page without resetting scroll
         navigate('/options', { replace: true });

@@ -13,7 +13,8 @@ const TextPreview: React.FC = () => {
     isLandscape,
     preset,
     isCapitalized,
-    isRainbowText
+    isRainbowText,
+    isRainbowBackground
   } = useTextDisplay();
 
   const [fontSize, setFontSize] = useState('');
@@ -56,6 +57,7 @@ const TextPreview: React.FC = () => {
   const displayText = processedText || "HELLO";
   const isEmergency = preset === 'emergency';
   const isParty = preset === 'party';
+  const isDisco = preset === 'disco' || isRainbowBackground;
   
   const fontClasses = {
     display: 'font-display',
@@ -80,6 +82,16 @@ const TextPreview: React.FC = () => {
       83.3% { color: #ff00ff; }
       100% { color: #ff0000; }
     }
+    
+    @keyframes rainbowBackground {
+      0% { background-color: #ff0000; }
+      16.6% { background-color: #ffff00; }
+      33.3% { background-color: #00ff00; }
+      50% { background-color: #00ffff; }
+      66.6% { background-color: #0000ff; }
+      83.3% { background-color: #ff00ff; }
+      100% { background-color: #ff0000; }
+    }
   `;
   
   const animationStyle = {
@@ -103,25 +115,34 @@ const TextPreview: React.FC = () => {
   };
 
   const watermarkColor = getContrastColor(backgroundColor);
+  
+  // Determine container style based on rainbow background
+  const containerStyle = {
+    backgroundColor: isRainbowBackground ? undefined : backgroundColor,
+    animation: isRainbowBackground ? 'rainbowBackground 2s linear infinite' : undefined
+  };
 
   return (
-    <div 
-      ref={containerRef}
-      className={cn(
-        "w-full h-20 overflow-hidden border rounded-md relative",
-        isEmergency && "animate-flash"
-      )}
-      style={{ backgroundColor }}
-    >
-      {/* Preview watermark */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-        <span style={{ color: watermarkColor }} className="text-2xl font-bold">
-          Preview
-        </span>
-      </div>
-      
+    <div className="w-full h-20 rounded-lg overflow-hidden border relative" ref={containerRef}>
       <style dangerouslySetInnerHTML={{ __html: scrollTextKeyframes }} />
-      <div className="relative w-full h-full overflow-hidden">
+      
+      <div
+        className={cn(
+          "absolute inset-0 flex items-center justify-center",
+          isEmergency && "animate-flash"
+        )}
+        style={containerStyle}
+      >
+        {/* Watermark "Preview" text */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <span 
+            className="text-3xl font-bold tracking-wider uppercase"
+            style={{ color: watermarkColor }}
+          >
+            Preview
+          </span>
+        </div>
+        
         <div 
           className={cn(
             fontClasses[font],
