@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [isVisible, setIsVisible] = useState(false);
   const {
     text, setText,
     textColor, setTextColor,
@@ -35,12 +36,21 @@ const Index = () => {
     }
   }, [darkMode]);
 
+  // Add fade-in effect when component mounts
+  useEffect(() => {
+    // Short delay to ensure the fade effect starts after navigation completes
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 30); // Reduced delay for faster response
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleDisplayClick = () => {
     navigate('/display');
   };
 
   return (
-    <div className="min-h-screen bg-background pb-48 dark:bg-gray-900 dark:text-white transition-colors duration-200">
+    <div className={`min-h-screen bg-background pb-48 dark:bg-gray-900 dark:text-white transition-colors duration-200 transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
       {/* Main content with padding */}
       <div className="px-4 pt-4">
         <Card className="max-w-md mx-auto dark:bg-gray-800 dark:border-gray-700">

@@ -6,6 +6,7 @@ const SplashScreen: React.FC = () => {
   const navigate = useNavigate();
   const { darkMode } = useTextDisplay();
   const [isLoading, setIsLoading] = useState(true);
+  const [isFadingOut, setIsFadingOut] = useState(false);
   
   // Log when the splash screen renders
   useEffect(() => {
@@ -21,12 +22,17 @@ const SplashScreen: React.FC = () => {
     // Navigate to options screen after a delay
     const timer = setTimeout(() => {
       console.log('Splash screen timer completed');
-      setIsLoading(false);
+      // Start the fade out transition
+      setIsFadingOut(true);
+      
+      // Navigate after the fade out animation completes
       setTimeout(() => {
         console.log('Navigating to options');
         navigate('/options');
-      }, 500); // Additional delay after loading completes
-    }, 3000); // Increased to 3 seconds
+      }, 400); // Faster fade out transition
+      
+      setIsLoading(false);
+    }, 1800); // Reduced to 1.8 seconds for faster display
     
     return () => clearTimeout(timer);
   }, [navigate, darkMode]);
@@ -37,7 +43,11 @@ const SplashScreen: React.FC = () => {
   }, []);
   
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background dark:bg-gray-900 transition-colors duration-200">
+    <div 
+      className={`min-h-screen flex flex-col items-center justify-center bg-background dark:bg-gray-900 transition-colors duration-200 ${
+        isFadingOut ? 'animate-fade-out' : ''
+      }`}
+    >
       <div className="text-center px-4">
         <div className="animate-scale-in">
           <h1 className="text-5xl font-bold mb-6 dark:text-white">
@@ -66,6 +76,14 @@ const SplashScreen: React.FC = () => {
             }
             .animate-scale-in {
               animation: scaleIn 1.2s ease-out forwards;
+            }
+            
+            @keyframes fadeOut {
+              from { opacity: 1; }
+              to { opacity: 0; }
+            }
+            .animate-fade-out {
+              animation: fadeOut 0.4s ease-in-out forwards;
             }
           `}
         </style>
