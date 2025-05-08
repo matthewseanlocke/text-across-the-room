@@ -204,8 +204,7 @@ const Index = () => {
 
         <div className="fixed bottom-0 left-0 right-0 bg-background p-4 border-t dark:bg-gray-900 dark:border-gray-700 transition-colors duration-200">
           <div className="max-w-md mx-auto space-y-4">
-            <div className="space-y-2">
-              <h2 className="text-lg font-semibold dark:text-white">Preview</h2>
+            <div>
               <TextPreview />
             </div>
             

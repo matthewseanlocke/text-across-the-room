@@ -91,8 +91,18 @@ const TextPreview: React.FC = () => {
     lineHeight: '0.8',
     left: 0,
     top: '50%',
-    width: 'max-content'
+    width: 'max-content',
+    zIndex: 10
   };
+
+  // Get contrasting text color for the watermark based on background
+  const getContrastColor = (bgColor: string) => {
+    // Simple version - for black/dark backgrounds use very light gray, for all others use very dark gray
+    const darkColors = ['#000000', '#0000ff', '#000080'];
+    return darkColors.includes(bgColor) ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+  };
+
+  const watermarkColor = getContrastColor(backgroundColor);
 
   return (
     <div 
@@ -103,6 +113,13 @@ const TextPreview: React.FC = () => {
       )}
       style={{ backgroundColor }}
     >
+      {/* Preview watermark */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+        <span style={{ color: watermarkColor }} className="text-2xl font-bold">
+          Preview
+        </span>
+      </div>
+      
       <style dangerouslySetInnerHTML={{ __html: scrollTextKeyframes }} />
       <div className="relative w-full h-full overflow-hidden">
         <div 
