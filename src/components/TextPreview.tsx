@@ -54,10 +54,14 @@ const TextPreview: React.FC = () => {
   }, [isLandscape]);
 
   const processedText = isCapitalized ? text.toUpperCase() : text;
-  const displayText = processedText || "HELLO";
+  // Remove default text
+  const displayText = processedText || "";
   const isEmergency = preset === 'emergency';
   const isParty = preset === 'party';
   const isDisco = preset === 'disco' || isRainbowBackground;
+  
+  // Check if there's any text to display
+  const hasText = displayText.trim().length > 0;
   
   const fontClasses = {
     display: 'font-display',
@@ -143,15 +147,18 @@ const TextPreview: React.FC = () => {
           </span>
         </div>
         
-        <div 
-          className={cn(
-            fontClasses[font],
-            isParty && "animate-flash"
-          )}
-          style={animationStyle}
-        >
-          {displayText}
-        </div>
+        {/* Only render text if there is any */}
+        {hasText && (
+          <div 
+            className={cn(
+              fontClasses[font],
+              isParty && "animate-flash"
+            )}
+            style={animationStyle}
+          >
+            {displayText}
+          </div>
+        )}
       </div>
     </div>
   );

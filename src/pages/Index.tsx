@@ -136,6 +136,8 @@ const Index = () => {
                 <Label className="text-sm mb-2 block dark:text-gray-300">Quick Messages</Label>
                 <div className="flex flex-wrap gap-2">
                   {[
+                    'HELLO',
+                    'KISS ME 💋',
                     'CALL ME 📞', 
                     '♡ ♡ ♡ ♡ ♡ ♡', 
                     'I LOVE YOU',
@@ -144,6 +146,8 @@ const Index = () => {
                     'HOTTY ALERT!',
                     '911', 
                     'LETS GO!',
+                    'DISCO!',
+                    'L F G',
                     'FEED ME!',
                     'MISS IT!',
                     'USA! USA! USA!',

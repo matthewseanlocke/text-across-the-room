@@ -21,7 +21,7 @@ const DisplayText: React.FC = () => {
   
   const navigate = useNavigate();
   const processedText = isCapitalized ? text.toUpperCase() : text;
-  const displayText = processedText || "HELLO";
+  const displayText = processedText || "";
   const isEmergency = preset === 'emergency';
   const isParty = preset === 'party';
   const isDisco = preset === 'disco' || isRainbowBackground;
@@ -207,6 +207,9 @@ const DisplayText: React.FC = () => {
     backgroundColor: isRainbowBackground ? undefined : backgroundColor,
     animation: isRainbowBackground ? 'rainbowBackground 2s linear infinite' : undefined
   };
+  
+  // Only render text content if there is text to display
+  const renderTextContent = displayText.trim().length > 0;
 
   return (
     <div 
@@ -226,7 +229,7 @@ const DisplayText: React.FC = () => {
     >
       <style dangerouslySetInnerHTML={{ __html: scrollTextKeyframes }} />
       <div className="relative w-full h-full overflow-hidden">
-        {isLandscape ? (
+        {renderTextContent && isLandscape ? (
           // Landscape mode - show one text centered vertically
           <div 
             key={`landscape-${animationKey}`}
@@ -241,7 +244,7 @@ const DisplayText: React.FC = () => {
           >
             {displayText}
           </div>
-        ) : (
+        ) : renderTextContent && !isLandscape ? (
           // Portrait mode - show one or two rows of text based on dualTextMode setting
           dualTextMode ? (
             // Dual text mode - show two rows of text with synchronized animations
@@ -281,7 +284,7 @@ const DisplayText: React.FC = () => {
               {displayText}
             </div>
           )
-        )}
+        ) : null /* No text to display */}
       </div>
       
       {/* Speed change feedback */}
