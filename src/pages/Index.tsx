@@ -29,7 +29,8 @@ const Index = () => {
     isCapitalized, setIsCapitalized,
     setRainbowText, isRainbowText,
     darkMode, toggleDarkMode,
-    scrollPosition, setScrollPosition
+    scrollPosition, setScrollPosition,
+    dualTextMode, toggleDualTextMode
   } = useTextDisplay();
 
   // Apply dark mode class to document body
@@ -193,6 +194,20 @@ const Index = () => {
                 value={backgroundColor} 
                 onChange={setBackgroundColor} 
               />
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="dual-text-mode" 
+                  checked={dualTextMode}
+                  onCheckedChange={toggleDualTextMode}
+                />
+                <Label 
+                  htmlFor="dual-text-mode" 
+                  className="text-sm font-medium leading-none cursor-pointer dark:text-white"
+                >
+                  Dual Text Mode in Portrait
+                </Label>
+              </div>
               
               <div className="space-y-2">
                 <Label htmlFor="font-select" className="dark:text-gray-300">Font</Label>

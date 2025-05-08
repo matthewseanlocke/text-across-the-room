@@ -14,7 +14,8 @@ const DisplayText: React.FC = () => {
     isLandscape,
     preset,
     isCapitalized,
-    isRainbowText
+    isRainbowText,
+    dualTextMode
   } = useTextDisplay();
   
   const navigate = useNavigate();
@@ -34,6 +35,9 @@ const DisplayText: React.FC = () => {
   // Speed 1 = slowest (16s), Speed 9 = fastest (2s)
   const scrollDuration = 18 - (scrollSpeed * 1.8);
   
+  // Animation key to force reset on rotation
+  const [animationKey, setAnimationKey] = useState(Date.now());
+  
   // Swipe gesture tracking
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchStartY, setTouchStartY] = useState<number | null>(null);
@@ -48,14 +52,18 @@ const DisplayText: React.FC = () => {
     console.log('Display - Speed updated:', scrollSpeed, 'New Duration:', scrollDuration);
   }, [scrollSpeed, scrollDuration]);
 
-  // Update font size based on window size
+  // Update font size based on window size and reset animation
   useEffect(() => {
     const updateFontSize = () => {
       if (isLandscape) {
         setFontSize('120vh');
       } else {
-        setFontSize('120vh'); // Increase from 80vh to 120vh for portrait mode
+        // For portrait mode, use smaller font size if dual text mode is enabled
+        setFontSize(dualTextMode ? '60vh' : '120vh');
       }
+      
+      // Reset animations to ensure sync
+      setAnimationKey(Date.now());
     };
 
     updateFontSize();
@@ -64,7 +72,7 @@ const DisplayText: React.FC = () => {
     return () => {
       window.removeEventListener('resize', updateFontSize);
     };
-  }, [isLandscape]);
+  }, [isLandscape, dualTextMode]);
   
   // Ensure animations and positioning are set up before showing content
   useEffect(() => {
@@ -115,6 +123,9 @@ const DisplayText: React.FC = () => {
         }, 1500);
         
         setFeedbackTimeout(timeout);
+        
+        // Reset animation to ensure sync when speed changes
+        setAnimationKey(Date.now());
       }
     }
   };
@@ -154,7 +165,7 @@ const DisplayText: React.FC = () => {
     }
   `;
   
-  const animationStyle = {
+  const baseAnimationStyle = {
     animation: `displayScrollText ${currentScrollDuration}s linear infinite${isRainbowText ? ', rainbowText 2s linear infinite' : ''}`,
     position: 'absolute' as const,
     whiteSpace: 'nowrap' as const,
@@ -162,10 +173,21 @@ const DisplayText: React.FC = () => {
     fontSize: fontSize,
     lineHeight: "0.8",
     left: 0,
-    top: '50%',
     width: 'max-content',
     opacity: isContentReady ? 1 : 0,
     transition: 'opacity 0.3s ease-in'
+  };
+
+  // Top text style (positioned at 25% from top)
+  const topTextStyle = {
+    ...baseAnimationStyle,
+    top: '25%',
+  };
+
+  // Bottom text style (positioned at 75% from top)
+  const bottomTextStyle = {
+    ...baseAnimationStyle,
+    top: '75%',
   };
 
   return (
@@ -186,15 +208,62 @@ const DisplayText: React.FC = () => {
     >
       <style dangerouslySetInnerHTML={{ __html: scrollTextKeyframes }} />
       <div className="relative w-full h-full overflow-hidden">
-        <div 
-          className={cn(
-            fontClasses[font],
-            isParty && "animate-flash"
-          )}
-          style={animationStyle}
-        >
-          {displayText}
-        </div>
+        {isLandscape ? (
+          // Landscape mode - show one text centered vertically
+          <div 
+            key={`landscape-${animationKey}`}
+            className={cn(
+              fontClasses[font],
+              isParty && "animate-flash"
+            )}
+            style={{
+              ...baseAnimationStyle,
+              top: '50%'
+            }}
+          >
+            {displayText}
+          </div>
+        ) : (
+          // Portrait mode - show one or two rows of text based on dualTextMode setting
+          dualTextMode ? (
+            // Dual text mode - show two rows of text with synchronized animations
+            <div key={`portrait-dual-${animationKey}`}>
+              <div 
+                className={cn(
+                  fontClasses[font],
+                  isParty && "animate-flash"
+                )}
+                style={topTextStyle}
+              >
+                {displayText}
+              </div>
+              <div 
+                className={cn(
+                  fontClasses[font],
+                  isParty && "animate-flash"
+                )}
+                style={bottomTextStyle}
+              >
+                {displayText}
+              </div>
+            </div>
+          ) : (
+            // Single text mode - show one text centered vertically
+            <div 
+              key={`portrait-single-${animationKey}`}
+              className={cn(
+                fontClasses[font],
+                isParty && "animate-flash"
+              )}
+              style={{
+                ...baseAnimationStyle,
+                top: '50%'
+              }}
+            >
+              {displayText}
+            </div>
+          )
+        )}
       </div>
       
       {/* Speed change feedback */}
