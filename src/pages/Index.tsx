@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 const Index = () => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
+  const [forceUpdate, setForceUpdate] = useState(0);
   const {
     text, setText,
     textColor, setTextColor,
@@ -43,6 +44,15 @@ const Index = () => {
       setIsVisible(true);
     }, 30); // Reduced delay for faster response
     return () => clearTimeout(timer);
+  }, []);
+
+  // Force a re-render after the component mounts to ensure preset styling is applied
+  useEffect(() => {
+    // Force component update once mounted to ensure styles apply correctly
+    const updateTimer = setTimeout(() => {
+      setForceUpdate(prev => prev + 1);
+    }, 100);
+    return () => clearTimeout(updateTimer);
   }, []);
 
   const handleDisplayClick = () => {
@@ -158,32 +168,48 @@ const Index = () => {
             
             <div className="space-y-6">
               <h2 className="text-lg font-semibold dark:text-white">Presets</h2>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2" key={`presets-${forceUpdate}`}>
                 <Button 
                   variant="outline"
                   onClick={() => applyPreset('day')}
-                  className={`w-full transition-all ${preset === 'day' ? 'bg-blue-100 text-blue-800 ring-2 ring-blue-400 ring-offset-2' : 'hover:bg-blue-50'} dark:border-gray-600 dark:hover:bg-gray-700 dark:text-gray-300 dark:ring-offset-gray-900`}
+                  className={`w-full transition-all ${
+                    preset === 'day' 
+                      ? 'bg-blue-100 text-blue-800 ring-2 ring-blue-400 ring-offset-2 dark:ring-offset-gray-900' 
+                      : 'hover:bg-blue-50 dark:border-gray-600 dark:hover:bg-gray-700 dark:text-gray-300'
+                  }`}
                 >
                   Day
                 </Button>
                 <Button 
                   variant="outline"
                   onClick={() => applyPreset('night')}
-                  className={`w-full transition-all ${preset === 'night' ? 'bg-indigo-900 text-white ring-2 ring-indigo-400 ring-offset-2' : 'hover:bg-indigo-50'} dark:border-gray-600 dark:hover:bg-gray-700 dark:text-gray-300 dark:ring-offset-gray-900`}
+                  className={`w-full transition-all ${
+                    preset === 'night' 
+                      ? 'bg-indigo-900 text-white ring-2 ring-indigo-400 ring-offset-2 dark:text-white dark:ring-offset-gray-900' 
+                      : 'hover:bg-indigo-50 dark:border-gray-600 dark:hover:bg-gray-700 dark:text-gray-300'
+                  }`}
                 >
                   Night
                 </Button>
                 <Button 
                   variant="outline"
                   onClick={() => applyPreset('emergency')}
-                  className={`w-full transition-all ${preset === 'emergency' ? 'bg-red-600 text-white ring-2 ring-red-300 ring-offset-2' : 'text-red-600 hover:bg-red-50'} dark:border-gray-600 dark:hover:bg-gray-700 dark:text-red-400 dark:ring-offset-gray-900`}
+                  className={`w-full transition-all ${
+                    preset === 'emergency' 
+                      ? 'bg-red-600 text-white ring-2 ring-red-300 ring-offset-2 dark:ring-offset-gray-900' 
+                      : 'text-red-600 hover:bg-red-50 dark:border-gray-600 dark:hover:bg-gray-700 dark:text-red-400'
+                  }`}
                 >
                   Emergency
                 </Button>
                 <Button 
                   variant="outline"
                   onClick={() => applyPreset('party')}
-                  className={`w-full transition-all ${preset === 'party' ? 'bg-black text-white ring-2 ring-cyan-400 ring-offset-2' : 'hover:bg-gray-50'} dark:border-gray-600 dark:hover:bg-gray-700 dark:text-gray-300 dark:ring-offset-gray-900`}
+                  className={`w-full transition-all ${
+                    preset === 'party' 
+                      ? 'bg-gray-900 text-white ring-2 ring-cyan-400 ring-offset-2 dark:bg-black dark:text-white dark:ring-offset-gray-900' 
+                      : 'hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700 dark:text-gray-300'
+                  }`}
                 >
                   {preset === 'party' ? (
                     <>
