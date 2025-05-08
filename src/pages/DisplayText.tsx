@@ -10,6 +10,7 @@ const DisplayText: React.FC = () => {
     backgroundColor, 
     font, 
     scrollSpeed, 
+    setScrollSpeed,
     isLandscape,
     preset,
     isCapitalized,
@@ -31,6 +32,12 @@ const DisplayText: React.FC = () => {
   // Calculate scroll duration based on speed (1-9 range)
   // Speed 1 = slowest (16s), Speed 9 = fastest (2s)
   const scrollDuration = 18 - (scrollSpeed * 1.8);
+  
+  // Swipe gesture tracking
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [feedbackTimeout, setFeedbackTimeout] = useState<NodeJS.Timeout | null>(null);
   
   // Update duration when speed changes
   useEffect(() => {
@@ -57,6 +64,54 @@ const DisplayText: React.FC = () => {
       window.removeEventListener('resize', updateFontSize);
     };
   }, [isLandscape]);
+  
+  // Handle touch events for swipe gestures
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+    setTouchStartY(e.touches[0].clientY);
+  };
+  
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX === null || touchStartY === null) return;
+    
+    const touchX = e.touches[0].clientX;
+    const touchY = e.touches[0].clientY;
+    
+    const deltaX = touchX - touchStartX;
+    const deltaY = touchY - touchStartY;
+    
+    // Only adjust speed if horizontal swipe is more significant than vertical
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30) {
+      const direction = deltaX > 0 ? 1 : -1; // Right = increase speed, Left = decrease speed
+      const newSpeed = Math.min(Math.max(scrollSpeed + direction, 1), 9);
+      
+      if (newSpeed !== scrollSpeed) {
+        setScrollSpeed(newSpeed);
+        setTouchStartX(touchX);
+        setTouchStartY(touchY);
+        
+        // Show feedback
+        setShowFeedback(true);
+        
+        // Clear previous timeout
+        if (feedbackTimeout) {
+          clearTimeout(feedbackTimeout);
+        }
+        
+        // Hide feedback after 1.5 seconds
+        const timeout = setTimeout(() => {
+          setShowFeedback(false);
+        }, 1500);
+        
+        setFeedbackTimeout(timeout);
+      }
+    }
+  };
+  
+  const handleTouchEnd = () => {
+    setTouchStartX(null);
+    setTouchStartY(null);
+  };
 
   const fontClasses = {
     display: 'font-display',
@@ -104,6 +159,9 @@ const DisplayText: React.FC = () => {
       )}
       style={{ backgroundColor }}
       onClick={() => navigate('/')}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       <style dangerouslySetInnerHTML={{ __html: scrollTextKeyframes }} />
       <div className="relative w-full h-full overflow-hidden">
@@ -117,6 +175,21 @@ const DisplayText: React.FC = () => {
           {displayText}
         </div>
       </div>
+      
+      {/* Speed change feedback */}
+      {showFeedback && (
+        <div className="fixed bottom-10 left-0 right-0 flex justify-center pointer-events-none">
+          <div className="bg-black/70 text-white px-6 py-3 rounded-full flex items-center space-x-4">
+            <div className="text-sm">Speed: {scrollSpeed}</div>
+            <div className="w-32 h-2 bg-white/30 rounded-full">
+              <div 
+                className="h-full bg-white rounded-full"
+                style={{ width: `${(scrollSpeed - 1) / 8 * 100}%` }}
+              ></div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
