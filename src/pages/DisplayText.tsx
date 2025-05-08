@@ -24,6 +24,21 @@ const DisplayText: React.FC = () => {
   
   const [fontSize, setFontSize] = useState('120vh');
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Update when scrollSpeed changes
+  const [currentScrollDuration, setCurrentScrollDuration] = useState(0);
+  
+  // Calculate scroll duration based on speed (1-9 range)
+  // Speed 1 = slowest (16s), Speed 9 = fastest (2s)
+  const scrollDuration = 18 - (scrollSpeed * 1.8);
+  
+  // Update duration when speed changes
+  useEffect(() => {
+    setCurrentScrollDuration(scrollDuration);
+    
+    // Debug
+    console.log('Display - Speed updated:', scrollSpeed, 'New Duration:', scrollDuration);
+  }, [scrollSpeed, scrollDuration]);
 
   // Update font size based on window size
   useEffect(() => {
@@ -31,7 +46,7 @@ const DisplayText: React.FC = () => {
       if (isLandscape) {
         setFontSize('120vh');
       } else {
-        setFontSize('120vh');
+        setFontSize('120vh'); // Increase from 80vh to 120vh for portrait mode
       }
     };
 
@@ -49,14 +64,7 @@ const DisplayText: React.FC = () => {
     monospace: 'font-monospace',
     serif: 'font-serif',
   };
-
-  // Calculate scroll duration based on speed (1-9 range)
-  // Speed 1 = slowest (16s), Speed 9 = fastest (2s)
-  const scrollDuration = 18 - (scrollSpeed * 1.8);
   
-  // Debug
-  console.log('Display - Speed:', scrollSpeed, 'Duration:', scrollDuration);
-
   // Create animation styles directly
   const scrollTextKeyframes = `
     @keyframes displayScrollText {
@@ -76,7 +84,7 @@ const DisplayText: React.FC = () => {
   `;
   
   const animationStyle = {
-    animation: `displayScrollText ${scrollDuration}s linear infinite${isRainbowText ? ', rainbowText 2s linear infinite' : ''}`,
+    animation: `displayScrollText ${currentScrollDuration}s linear infinite${isRainbowText ? ', rainbowText 2s linear infinite' : ''}`,
     position: 'absolute' as const,
     whiteSpace: 'nowrap' as const,
     color: isRainbowText ? undefined : textColor,
