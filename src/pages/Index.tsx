@@ -53,6 +53,35 @@ const Index = () => {
                 CAPITALIZE TEXT
               </Label>
             </div>
+            
+            <div className="pt-2">
+              <Label className="text-sm mb-2 block">Quick Messages</Label>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  'CALL ME', 
+                  '♡ ♡ ♡ LOVE YOU ♡ ♡ ♡', 
+                  'BACK OFF!', 
+                  'H E L P !', 
+                  '911', 
+                  'LETS GO!',
+                  'LMAO', 
+                  '🤣',
+                  'I 👀 YOU',
+                  'I 💘 YOU',                  
+                  
+                ].map((preset) => (
+                  <Button 
+                    key={preset}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setText(preset)}
+                    className={`transition-all ${text === preset ? 'bg-primary text-primary-foreground' : ''}`}
+                  >
+                    {preset}
+                  </Button>
+                ))}
+              </div>
+            </div>
           </div>
           
           <div className="space-y-6">
