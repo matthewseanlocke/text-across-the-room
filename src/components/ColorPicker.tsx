@@ -7,6 +7,8 @@ interface ColorPickerProps {
   onChange: (color: string) => void;
   onSelectRainbow?: () => void;
   onSelectRainbowBackground?: () => void;
+  onSelectLightningBackground?: () => void;
+  onSelectSirenBackground?: () => void;
 }
 
 const ColorPicker: React.FC<ColorPickerProps> = ({ 
@@ -14,7 +16,9 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
   value, 
   onChange, 
   onSelectRainbow,
-  onSelectRainbowBackground
+  onSelectRainbowBackground,
+  onSelectLightningBackground,
+  onSelectSirenBackground
 }) => {
   const colorOptions = [
     "#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff", 
@@ -64,13 +68,45 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
             title="Disco background"
           />
         )}
+        {onSelectLightningBackground && label === "Background Color" && (
+          <button
+            type="button"
+            className={`w-8 h-8 rounded-full border-2 overflow-hidden ${
+              value === 'lightning-bg' ? 'border-primary' : 'border-gray-300 dark:border-gray-600'
+            }`}
+            onClick={onSelectLightningBackground}
+            aria-label="Lightning background"
+            title="Lightning effect"
+          >
+            <div className="w-full h-full bg-black relative">
+              <div className="absolute inset-0 bg-white opacity-70" 
+                style={{ clipPath: 'polygon(50% 0%, 55% 50%, 100% 55%, 55% 60%, 50% 100%, 45% 60%, 0% 55%, 45% 50%)' }} />
+            </div>
+          </button>
+        )}
+        {onSelectSirenBackground && label === "Background Color" && (
+          <button
+            type="button"
+            className={`w-8 h-8 rounded-full border-2 overflow-hidden ${
+              value === 'siren-bg' ? 'border-primary' : 'border-gray-300 dark:border-gray-600'
+            }`}
+            onClick={onSelectSirenBackground}
+            aria-label="Police siren background"
+            title="Police siren effect"
+          >
+            <div className="w-full h-full relative">
+              <div className="absolute top-0 left-0 w-1/2 h-full bg-blue-600"></div>
+              <div className="absolute top-0 right-0 w-1/2 h-full bg-red-600"></div>
+            </div>
+          </button>
+        )}
         <input
           id={label}
           type="color"
-          value={value === 'rainbow' || value === 'rainbow-bg' ? '#ff0000' : value}
+          value={value === 'rainbow' || value === 'rainbow-bg' || value === 'lightning-bg' || value === 'siren-bg' ? '#ff0000' : value}
           onChange={(e) => onChange(e.target.value)}
           className="w-8 h-8 dark:bg-gray-700"
-          disabled={value === 'rainbow' || value === 'rainbow-bg'}
+          disabled={value === 'rainbow' || value === 'rainbow-bg' || value === 'lightning-bg' || value === 'siren-bg'}
         />
       </div>
     </div>

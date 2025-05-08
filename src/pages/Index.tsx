@@ -31,7 +31,9 @@ const Index = () => {
     darkMode, toggleDarkMode,
     scrollPosition, setScrollPosition,
     dualTextMode, toggleDualTextMode,
-    isRainbowBackground, setRainbowBackground
+    isRainbowBackground, setRainbowBackground,
+    isLightningMode, setLightningMode,
+    isSirenMode, setSirenMode
   } = useTextDisplay();
 
   // Apply dark mode class to document body
@@ -199,9 +201,19 @@ const Index = () => {
               
               <ColorPicker 
                 label="Background Color" 
-                value={isRainbowBackground ? 'rainbow-bg' : backgroundColor} 
+                value={
+                  isRainbowBackground 
+                    ? 'rainbow-bg' 
+                    : isLightningMode 
+                      ? 'lightning-bg' 
+                      : isSirenMode 
+                        ? 'siren-bg' 
+                        : backgroundColor
+                } 
                 onChange={setBackgroundColor} 
                 onSelectRainbowBackground={() => setRainbowBackground(true)}
+                onSelectLightningBackground={() => setLightningMode(true)}
+                onSelectSirenBackground={() => setSirenMode(true)}
               />
               
               <div className="flex items-center space-x-2">

@@ -32,7 +32,9 @@ interface TextDisplayContextType {
   isRainbowBackground: boolean;
   setRainbowBackground: (enabled: boolean) => void;
   isLightningMode: boolean;
+  setLightningMode: (enabled: boolean) => void;
   isSirenMode: boolean;
+  setSirenMode: (enabled: boolean) => void;
 }
 
 const defaultContext: TextDisplayContextType = {
@@ -63,7 +65,9 @@ const defaultContext: TextDisplayContextType = {
   isRainbowBackground: false,
   setRainbowBackground: () => {},
   isLightningMode: false,
+  setLightningMode: () => {},
   isSirenMode: false,
+  setSirenMode: () => {},
 };
 
 const TextDisplayContext = createContext<TextDisplayContextType>(defaultContext);
@@ -125,6 +129,26 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
       setIsSirenMode(false);
     }
     setPreset('custom'); // Set to custom preset when selecting rainbow background
+  };
+
+  const setLightningMode = (enabled: boolean) => {
+    setIsLightningMode(enabled);
+    if (enabled) {
+      setIsRainbowText(false);
+      setIsRainbowBackground(false);
+      setIsSirenMode(false);
+    }
+    setPreset('custom');
+  };
+
+  const setSirenMode = (enabled: boolean) => {
+    setIsSirenMode(enabled);
+    if (enabled) {
+      setIsRainbowText(false);
+      setIsRainbowBackground(false);
+      setIsLightningMode(false);
+    }
+    setPreset('custom');
   };
 
   // When setting a regular color, turn off rainbow mode
@@ -250,7 +274,9 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         isRainbowBackground,
         setRainbowBackground,
         isLightningMode,
+        setLightningMode,
         isSirenMode,
+        setSirenMode
       }}
     >
       {children}
