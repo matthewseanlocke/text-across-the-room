@@ -25,6 +25,7 @@ const DisplayText: React.FC = () => {
   
   const [fontSize, setFontSize] = useState('120vh');
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isContentReady, setIsContentReady] = useState(false);
   
   // Update when scrollSpeed changes
   const [currentScrollDuration, setCurrentScrollDuration] = useState(0);
@@ -64,6 +65,16 @@ const DisplayText: React.FC = () => {
       window.removeEventListener('resize', updateFontSize);
     };
   }, [isLandscape]);
+  
+  // Ensure animations and positioning are set up before showing content
+  useEffect(() => {
+    // Short delay to ensure proper positioning before revealing
+    const timer = setTimeout(() => {
+      setIsContentReady(true);
+    }, 50);
+    
+    return () => clearTimeout(timer);
+  }, []);
   
   // Handle touch events for swipe gestures
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -136,6 +147,11 @@ const DisplayText: React.FC = () => {
       83.3% { color: #ff00ff; }
       100% { color: #ff0000; }
     }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
   `;
   
   const animationStyle = {
@@ -147,14 +163,16 @@ const DisplayText: React.FC = () => {
     lineHeight: "0.8",
     left: 0,
     top: '50%',
-    width: 'max-content'
+    width: 'max-content',
+    opacity: isContentReady ? 1 : 0,
+    transition: 'opacity 0.3s ease-in'
   };
 
   return (
     <div 
       ref={containerRef}
       className={cn(
-        "fixed inset-0 flex items-center justify-center overflow-hidden",
+        "fixed inset-0 flex items-center justify-center overflow-hidden animate-fade-in",
         isEmergency && "animate-flash"
       )}
       style={{ backgroundColor }}
