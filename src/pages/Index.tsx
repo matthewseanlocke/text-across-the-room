@@ -16,6 +16,8 @@ const Index = () => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(0);
+  const contentRef = useRef<HTMLDivElement>(null);
+  
   const {
     text, setText,
     textColor, setTextColor,
@@ -25,7 +27,8 @@ const Index = () => {
     preset, applyPreset,
     isCapitalized, setIsCapitalized,
     setRainbowText, isRainbowText,
-    darkMode, toggleDarkMode
+    darkMode, toggleDarkMode,
+    scrollPosition, setScrollPosition
   } = useTextDisplay();
 
   // Apply dark mode class to document body
@@ -55,12 +58,52 @@ const Index = () => {
     return () => clearTimeout(updateTimer);
   }, []);
 
+  // Save scroll position when navigating away
+  useEffect(() => {
+    // Handle saving scroll position before navigating away
+    const handleBeforeUnload = () => {
+      if (contentRef.current) {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        setScrollPosition(scrollTop);
+        console.log('Saved scroll position:', scrollTop);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    // Also save scroll on navigation
+    return () => {
+      handleBeforeUnload();
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [setScrollPosition]);
+
+  // Restore scroll position when component mounts
+  useEffect(() => {
+    if (scrollPosition > 0) {
+      const timer = setTimeout(() => {
+        window.scrollTo(0, scrollPosition);
+        console.log('Restored scroll position:', scrollPosition);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [scrollPosition, isVisible]);
+
   const handleDisplayClick = () => {
+    // Save scroll position before navigating
+    if (contentRef.current) {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      setScrollPosition(scrollTop);
+      console.log('Saved scroll position before display:', scrollTop);
+    }
     navigate('/display');
   };
 
   return (
-    <div className={`min-h-screen bg-background pb-48 dark:bg-gray-900 dark:text-white transition-colors duration-200 transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+    <div 
+      ref={contentRef}
+      className={`min-h-screen bg-background pb-48 dark:bg-gray-900 dark:text-white transition-colors duration-200 transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+    >
       {/* Main content with padding */}
       <div className="px-4 pt-4">
         <Card className="max-w-md mx-auto dark:bg-gray-800 dark:border-gray-700">

@@ -25,6 +25,8 @@ interface TextDisplayContextType {
   isRainbowText: boolean;
   darkMode: boolean;
   toggleDarkMode: () => void;
+  scrollPosition: number;
+  setScrollPosition: (position: number) => void;
 }
 
 const defaultContext: TextDisplayContextType = {
@@ -48,6 +50,8 @@ const defaultContext: TextDisplayContextType = {
   isRainbowText: false,
   darkMode: false,
   toggleDarkMode: () => {},
+  scrollPosition: 0,
+  setScrollPosition: () => {},
 };
 
 const TextDisplayContext = createContext<TextDisplayContextType>(defaultContext);
@@ -65,6 +69,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [isCapitalized, setIsCapitalized] = useState<boolean>(defaultContext.isCapitalized);
   const [isRainbowText, setIsRainbowText] = useState<boolean>(defaultContext.isRainbowText);
   const [darkMode, setDarkMode] = useState<boolean>(defaultContext.darkMode);
+  const [scrollPosition, setScrollPosition] = useState<number>(0);
 
   // Check for system preference on mount
   useEffect(() => {
@@ -158,6 +163,8 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         isRainbowText,
         darkMode,
         toggleDarkMode,
+        scrollPosition,
+        setScrollPosition,
       }}
     >
       {children}

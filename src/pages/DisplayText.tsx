@@ -158,7 +158,10 @@ const DisplayText: React.FC = () => {
         isEmergency && "animate-flash"
       )}
       style={{ backgroundColor }}
-      onClick={() => navigate('/options')}
+      onClick={() => {
+        // Navigate back to options page without resetting scroll
+        navigate('/options', { replace: true });
+      }}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
