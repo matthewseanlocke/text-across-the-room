@@ -12,6 +12,7 @@ import { useTextDisplay } from '@/context/TextDisplayContext';
 import { Fullscreen, Moon, Sun } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
 import AppLogo from '@/components/AppLogo';
+import { Separator } from "@/components/ui/separator";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -114,6 +115,7 @@ const Index = () => {
       <div className="px-4 pt-4">
         <Card className="max-w-md mx-auto dark:bg-gray-800 dark:border-gray-700">
           <CardContent className="pt-6 space-y-6">
+            {/* TEXT CONTENT SECTION */}
             <div className="space-y-2">
               <Label htmlFor="text-input" className="dark:text-gray-300">Message</Label>
               <Input
@@ -178,7 +180,8 @@ const Index = () => {
               </div>
             </div>
             
-            <div className="space-y-6">
+            {/* APPEARANCE SECTION */}
+            <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold dark:text-white">Appearance</h2>
                 <Button 
@@ -193,47 +196,26 @@ const Index = () => {
                 </Button>
               </div>
               
-              <ColorPicker 
-                label="Text Color" 
-                value={isRainbowText ? 'rainbow' : textColor} 
-                onChange={setTextColor} 
-                onSelectRainbow={setRainbowText}
-              />
-              
-              <ColorPicker 
-                label="Background Color" 
-                value={
-                  isRainbowBackground 
-                    ? 'rainbow-bg' 
-                    : isLightningMode 
-                      ? 'lightning-bg' 
-                      : isSirenMode 
-                        ? 'siren-bg' 
-                        : isHeartbeatMode
-                          ? 'heartbeat-bg'
-                          : backgroundColor
-                } 
-                onChange={setBackgroundColor} 
-                onSelectRainbowBackground={() => setRainbowBackground(true)}
-                onSelectLightningBackground={() => setLightningMode(true)}
-                onSelectSirenBackground={() => setSirenMode(true)}
-                onSelectHeartbeatBackground={() => setHeartbeatMode(true)}
-              />
-              
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="dual-text-mode" 
-                  checked={dualTextMode}
-                  onCheckedChange={toggleDualTextMode}
+              {/* Basic color pickers (without animations) */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-medium dark:text-gray-200">Basic Colors</h3>
+                
+                <ColorPicker 
+                  label="Text Color" 
+                  value={textColor} 
+                  onChange={setTextColor} 
+                  simple={true}
                 />
-                <Label 
-                  htmlFor="dual-text-mode" 
-                  className="text-sm font-medium leading-none cursor-pointer dark:text-white"
-                >
-                  Dual Text Mode in Portrait
-                </Label>
+                
+                <ColorPicker 
+                  label="Background Color" 
+                  value={backgroundColor} 
+                  onChange={setBackgroundColor}
+                  simple={true}
+                />
               </div>
               
+              {/* Font selection */}
               <div className="space-y-2">
                 <Label htmlFor="font-select" className="dark:text-gray-300">Font</Label>
                 <Select value={font} onValueChange={(value) => setFont(value as any)}>
@@ -249,10 +231,108 @@ const Index = () => {
                 </Select>
               </div>
               
+              {/* Dual text mode */}
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="dual-text-mode" 
+                  checked={dualTextMode}
+                  onCheckedChange={toggleDualTextMode}
+                />
+                <Label 
+                  htmlFor="dual-text-mode" 
+                  className="text-sm font-medium leading-none cursor-pointer dark:text-white"
+                >
+                  Dual Text Mode in Portrait
+                </Label>
+              </div>
+              
+              {/* Scrolling Speed */}
               <SpeedSlider value={scrollSpeed} onChange={setScrollSpeed} />
             </div>
             
-            <div className="space-y-6">
+            {/* EFFECTS & ANIMATIONS SECTION */}
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold dark:text-white">Effects & Animations</h2>
+              
+              <div className="space-y-3">
+                {/* Text Effects */}
+                <div>
+                  <h3 className="text-sm font-medium mb-2 dark:text-gray-200">Text Effects</h3>
+                  
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="rainbowText" 
+                        checked={isRainbowText}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setRainbowText();
+                          } else {
+                            // Just disable rainbow text without changing color
+                            setTextColor(textColor);
+                          }
+                        }}
+                      />
+                      <Label htmlFor="rainbowText" className="font-normal cursor-pointer dark:text-gray-300">Rainbow Text</Label>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Background Effects */}
+                <div>
+                  <h3 className="text-sm font-medium mb-2 dark:text-gray-200">Background Effects</h3>
+                  
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="rainbowBg" 
+                        checked={isRainbowBackground}
+                        onCheckedChange={(checked) => {
+                          setRainbowBackground(checked as boolean);
+                        }}
+                      />
+                      <Label htmlFor="rainbowBg" className="font-normal cursor-pointer dark:text-gray-300">Disco Background</Label>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="lightningMode" 
+                        checked={isLightningMode}
+                        onCheckedChange={(checked) => {
+                          setLightningMode(checked as boolean);
+                        }}
+                      />
+                      <Label htmlFor="lightningMode" className="font-normal cursor-pointer dark:text-gray-300">Lightning Flash</Label>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="sirenMode" 
+                        checked={isSirenMode}
+                        onCheckedChange={(checked) => {
+                          setSirenMode(checked as boolean);
+                        }}
+                      />
+                      <Label htmlFor="sirenMode" className="font-normal cursor-pointer dark:text-gray-300">Siren Flash</Label>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="heartbeatMode" 
+                        checked={isHeartbeatMode}
+                        onCheckedChange={(checked) => {
+                          setHeartbeatMode(checked as boolean);
+                        }}
+                      />
+                      <Label htmlFor="heartbeatMode" className="font-normal cursor-pointer dark:text-gray-300">Heartbeat Effect</Label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* PRESETS SECTION */}
+            <div className="space-y-4">
               <h2 className="text-lg font-semibold dark:text-white">Presets</h2>
               <div className="grid grid-cols-3 gap-2" key={`presets-${forceUpdate}`}>
                 <Button 

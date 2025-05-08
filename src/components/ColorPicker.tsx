@@ -10,6 +10,7 @@ interface ColorPickerProps {
   onSelectLightningBackground?: () => void;
   onSelectSirenBackground?: () => void;
   onSelectHeartbeatBackground?: () => void;
+  simple?: boolean;
 }
 
 const ColorPicker: React.FC<ColorPickerProps> = ({ 
@@ -20,12 +21,42 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
   onSelectRainbowBackground,
   onSelectLightningBackground,
   onSelectSirenBackground,
-  onSelectHeartbeatBackground
+  onSelectHeartbeatBackground,
+  simple = false
 }) => {
   const colorOptions = [
     "#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff", 
     "#ffff00", "#ff00ff", "#00ffff", "#ff8000", "#8b5cf6"
   ];
+
+  if (simple) {
+    return (
+      <div className="space-y-2">
+        <Label htmlFor={label} className="dark:text-gray-300">{label}</Label>
+        <div className="flex flex-wrap gap-2">
+          {colorOptions.map((color) => (
+            <button
+              key={color}
+              type="button"
+              className={`w-8 h-8 rounded-full border-2 ${
+                color === value ? 'border-primary' : 'border-gray-300 dark:border-gray-600'
+              }`}
+              style={{ backgroundColor: color }}
+              onClick={() => onChange(color)}
+              aria-label={`${color} color`}
+            />
+          ))}
+          <input
+            id={label}
+            type="color"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className="w-8 h-8 dark:bg-gray-700"
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-2">
