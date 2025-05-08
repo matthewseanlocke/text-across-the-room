@@ -23,6 +23,8 @@ interface TextDisplayContextType {
   setIsCapitalized: (capitalized: boolean) => void;
   setRainbowText: () => void;
   isRainbowText: boolean;
+  darkMode: boolean;
+  toggleDarkMode: () => void;
 }
 
 const defaultContext: TextDisplayContextType = {
@@ -44,6 +46,8 @@ const defaultContext: TextDisplayContextType = {
   setIsCapitalized: () => {},
   setRainbowText: () => {},
   isRainbowText: false,
+  darkMode: false,
+  toggleDarkMode: () => {},
 };
 
 const TextDisplayContext = createContext<TextDisplayContextType>(defaultContext);
@@ -60,6 +64,13 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [preset, setPreset] = useState<PresetType>(defaultContext.preset);
   const [isCapitalized, setIsCapitalized] = useState<boolean>(defaultContext.isCapitalized);
   const [isRainbowText, setIsRainbowText] = useState<boolean>(defaultContext.isRainbowText);
+  const [darkMode, setDarkMode] = useState<boolean>(defaultContext.darkMode);
+
+  // Check for system preference on mount
+  useEffect(() => {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setDarkMode(prefersDark);
+  }, []);
 
   useEffect(() => {
     const handleOrientationChange = () => {
@@ -86,6 +97,10 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const handleSetTextColor = (color: string) => {
     setTextColor(color);
     setIsRainbowText(false);
+  };
+
+  const toggleDarkMode = () => {
+    setDarkMode(prevMode => !prevMode);
   };
 
   const applyPreset = (newPreset: PresetType) => {
@@ -141,6 +156,8 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setIsCapitalized,
         setRainbowText,
         isRainbowText,
+        darkMode,
+        toggleDarkMode,
       }}
     >
       {children}

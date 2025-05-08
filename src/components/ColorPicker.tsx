@@ -16,14 +16,14 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ label, value, onChange, onSel
 
   return (
     <div className="space-y-2">
-      <Label htmlFor={label}>{label}</Label>
+      <Label htmlFor={label} className="dark:text-gray-300">{label}</Label>
       <div className="flex flex-wrap gap-2">
         {colorOptions.map((color) => (
           <button
             key={color}
             type="button"
             className={`w-8 h-8 rounded-full border-2 ${
-              color === value ? 'border-primary' : 'border-gray-300'
+              color === value ? 'border-primary' : 'border-gray-300 dark:border-gray-600'
             }`}
             style={{ backgroundColor: color }}
             onClick={() => onChange(color)}
@@ -34,7 +34,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ label, value, onChange, onSel
           <button
             type="button"
             className={`w-8 h-8 rounded-full border-2 ${
-              value === 'rainbow' ? 'border-primary' : 'border-gray-300'
+              value === 'rainbow' ? 'border-primary' : 'border-gray-300 dark:border-gray-600'
             }`}
             style={{ 
               background: 'linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet)'
@@ -48,7 +48,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ label, value, onChange, onSel
           type="color"
           value={value === 'rainbow' ? '#ff0000' : value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-8 h-8"
+          className="w-8 h-8 dark:bg-gray-700"
           disabled={value === 'rainbow'}
         />
       </div>
