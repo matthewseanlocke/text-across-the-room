@@ -158,7 +158,7 @@ const DisplayText: React.FC = () => {
         isEmergency && "animate-flash"
       )}
       style={{ backgroundColor }}
-      onClick={() => navigate('/')}
+      onClick={() => navigate('/options')}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
