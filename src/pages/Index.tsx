@@ -240,37 +240,101 @@ const Index = () => {
               <h2 className="text-lg font-semibold dark:text-white">Presets</h2>
               <div className="grid grid-cols-3 gap-2" key={`presets-${forceUpdate}`}>
                 <Button 
-                  variant="outline"
+                  variant={preset === 'day' ? "default" : "outline"}
                   onClick={() => applyPreset('day')}
-                  className={`w-full transition-all ${
+                  className={`w-full transition-all overflow-hidden ${
                     preset === 'day' 
-                      ? 'bg-blue-100 text-blue-800 ring-2 ring-blue-400 ring-offset-2 dark:ring-offset-gray-900' 
+                      ? 'p-0 border-0 ring-2 ring-blue-400 ring-offset-2 dark:ring-offset-gray-900' 
                       : 'hover:bg-blue-50 dark:border-gray-600 dark:hover:bg-gray-700 dark:text-gray-300'
                   }`}
                 >
-                  Day
+                  {preset === 'day' ? (
+                    <>
+                      <style>
+                        {`
+                          .day-button-wrapper {
+                            width: 100%;
+                            height: 100%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            padding: 0.5rem;
+                            background: linear-gradient(135deg, #87ceeb, #f0f8ff);
+                            color: #1e40af;
+                          }
+                        `}
+                      </style>
+                      <div className="day-button-wrapper w-full">
+                        <span className="font-semibold">Day</span>
+                      </div>
+                    </>
+                  ) : 'Day'}
                 </Button>
                 <Button 
-                  variant="outline"
+                  variant={preset === 'night' ? "default" : "outline"}
                   onClick={() => applyPreset('night')}
-                  className={`w-full transition-all ${
+                  className={`w-full transition-all overflow-hidden ${
                     preset === 'night' 
-                      ? 'bg-indigo-900 text-white ring-2 ring-indigo-400 ring-offset-2 dark:text-white dark:ring-offset-gray-900' 
+                      ? 'p-0 border-0 ring-2 ring-indigo-400 ring-offset-2 dark:ring-offset-gray-900' 
                       : 'hover:bg-indigo-50 dark:border-gray-600 dark:hover:bg-gray-700 dark:text-gray-300'
                   }`}
                 >
-                  Night
+                  {preset === 'night' ? (
+                    <>
+                      <style>
+                        {`
+                          .night-button-wrapper {
+                            width: 100%;
+                            height: 100%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            padding: 0.5rem;
+                            background: linear-gradient(135deg, #0a1120, #131e30);
+                            color: white;
+                          }
+                        `}
+                      </style>
+                      <div className="night-button-wrapper w-full relative">
+                        <span className="font-semibold z-10">Night</span>
+                      </div>
+                    </>
+                  ) : 'Night'}
                 </Button>
                 <Button 
-                  variant="outline"
+                  variant={preset === 'emergency' ? "default" : "outline"}
                   onClick={() => applyPreset('emergency')}
-                  className={`w-full transition-all ${
+                  className={`w-full transition-all overflow-hidden ${
                     preset === 'emergency' 
-                      ? 'bg-red-600 text-white ring-2 ring-red-300 ring-offset-2 dark:ring-offset-gray-900' 
+                      ? 'p-0 border-0 ring-2 ring-red-300 ring-offset-2 dark:ring-offset-gray-900' 
                       : 'text-red-600 hover:bg-red-50 dark:border-gray-600 dark:hover:bg-gray-700 dark:text-red-400'
                   }`}
                 >
-                  Emergency
+                  {preset === 'emergency' ? (
+                    <>
+                      <style>
+                        {`
+                          @keyframes emergencyPulse {
+                            0%, 100% { background-color: #ff0000; }
+                            50% { background-color: #ff4444; }
+                          }
+                          .emergency-button-wrapper {
+                            width: 100%;
+                            height: 100%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            padding: 0.5rem;
+                            color: white;
+                            animation: emergencyPulse 1s ease-in-out infinite;
+                          }
+                        `}
+                      </style>
+                      <div className="emergency-button-wrapper w-full">
+                        <span className="font-semibold">Emergency</span>
+                      </div>
+                    </>
+                  ) : 'Emergency'}
                 </Button>
                 <Button 
                   variant="outline"
