@@ -7,10 +7,13 @@ A simple yet effective scrolling text display application that lets you create a
 - Display scrolling text that's visible from a distance
 - Multiple font options (Display, Handwriting, Monospace, Serif)
 - Customizable text and background colors, including rainbow text
-- Adjustable scroll speed
+- Adjustable scroll speed with intuitive swipe gestures
 - Pre-defined presets (Day, Night, Emergency, Party)
+- Quick message templates for common use cases
 - Text preview before display
 - Full-screen display mode
+- Dark mode interface
+- Mobile-friendly with touch gestures
 - Responsive design works in both portrait and landscape orientations
 
 ## Project Setup
@@ -43,12 +46,15 @@ npm run dev
 
 ## Usage
 
-1. Enter your message in the text field
+1. Enter your message in the text field or select from quick message templates
 2. Customize the appearance (color, font, speed)
 3. Select a preset or create your custom style
 4. Preview how your text will look in the preview section
 5. Click "DISPLAY" to show the message in full-screen mode
-6. Click anywhere on the screen to return to the editor
+6. On the display screen:
+   - Swipe left/right to adjust scroll speed
+   - Click anywhere to return to the editor
+7. Toggle between light and dark mode using the sun/moon icon
 
 ## Building for Production
 
@@ -60,6 +66,10 @@ npm run build
 
 The built files will be in the `dist` directory and can be deployed to any static file hosting service.
 
-## License
+## Copyright Notice
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+© 2024. All Rights Reserved.
+
+This application is proprietary software. No part of this application may be reproduced, distributed, or transmitted in any form or by any means without prior written permission.
+
+This is NOT an open-source project. The source code is shared for development and review purposes only.
