@@ -141,8 +141,9 @@ const Index = () => {
                     'H E L P !', 
                     '911', 
                     'LETS GO!',
+                    'FEED ME!',
                     'LMAO', 
-                    '🤣',
+                    '🤣 🤣 🤣',
                     'I 👀 YOU',
                     'I 💘 YOU',                  
                     
