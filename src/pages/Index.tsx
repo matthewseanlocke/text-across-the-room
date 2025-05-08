@@ -41,23 +41,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background pb-48 dark:bg-gray-900 dark:text-white transition-colors duration-200">
-      {/* Simple header with just the dark mode toggle */}
-      <div className="fixed top-0 left-0 right-0 z-10 bg-background dark:bg-gray-900 border-b dark:border-gray-800 transition-colors duration-200">
-        <div className="flex justify-end p-3 max-w-md mx-auto">
-          <Button 
-            variant="outline" 
-            size="icon" 
-            onClick={toggleDarkMode} 
-            className="w-8 h-8 rounded-full"
-          >
-            {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            <span className="sr-only">Toggle theme</span>
-          </Button>
-        </div>
-      </div>
-      
-      {/* Main content with top padding to account for the fixed header */}
-      <div className="pt-12 px-4">
+      {/* Main content with padding */}
+      <div className="px-4 pt-4">
         <Card className="max-w-md mx-auto dark:bg-gray-800 dark:border-gray-700">
           <CardContent className="pt-6 space-y-6">
             <div className="space-y-2">
@@ -116,7 +101,19 @@ const Index = () => {
             </div>
             
             <div className="space-y-6">
-              <h2 className="text-lg font-semibold dark:text-white">Appearance</h2>
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold dark:text-white">Appearance</h2>
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  onClick={toggleDarkMode} 
+                  className="w-8 h-8 rounded-full"
+                  title="Toggle Dark Mode"
+                >
+                  {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                  <span className="sr-only">Toggle theme</span>
+                </Button>
+              </div>
               
               <ColorPicker 
                 label="Text Color" 
