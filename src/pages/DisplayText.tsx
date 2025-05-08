@@ -18,7 +18,8 @@ const DisplayText: React.FC = () => {
     dualTextMode,
     isRainbowBackground,
     isLightningMode,
-    isSirenMode
+    isSirenMode,
+    isHeartbeatMode
   } = useTextDisplay();
   
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ const DisplayText: React.FC = () => {
   const isDisco = preset === 'disco' || isRainbowBackground;
   const isLightning = preset === 'lightning' || isLightningMode;
   const isSiren = preset === 'siren' || isSirenMode;
+  const isHeartbeat = preset === 'heartbeat' || isHeartbeatMode;
   
   const [fontSize, setFontSize] = useState('120vh');
   const containerRef = useRef<HTMLDivElement>(null);
@@ -195,6 +197,14 @@ const DisplayText: React.FC = () => {
       82.1%, 100% { background-color: #000000; }
     }
     
+    @keyframes heartbeatPulse {
+      0%, 100% { background-color: #800000; transform: scale(1); }
+      15% { background-color: #ff0000; transform: scale(1.08); }
+      30% { background-color: #800000; transform: scale(1); }
+      45% { background-color: #ff0000; transform: scale(1.08); }
+      60% { background-color: #800000; transform: scale(1); }
+    }
+    
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
@@ -235,7 +245,9 @@ const DisplayText: React.FC = () => {
         ? 'lightningFlash 3s linear infinite' 
         : isSiren
           ? 'sirenFlash 0.6s linear infinite'
-          : undefined
+          : isHeartbeat
+            ? 'heartbeatPulse 1.5s ease-in-out infinite'
+            : undefined
   };
   
   // Only render text content if there is text to display

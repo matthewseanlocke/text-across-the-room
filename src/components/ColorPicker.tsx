@@ -9,6 +9,7 @@ interface ColorPickerProps {
   onSelectRainbowBackground?: () => void;
   onSelectLightningBackground?: () => void;
   onSelectSirenBackground?: () => void;
+  onSelectHeartbeatBackground?: () => void;
 }
 
 const ColorPicker: React.FC<ColorPickerProps> = ({ 
@@ -18,7 +19,8 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
   onSelectRainbow,
   onSelectRainbowBackground,
   onSelectLightningBackground,
-  onSelectSirenBackground
+  onSelectSirenBackground,
+  onSelectHeartbeatBackground
 }) => {
   const colorOptions = [
     "#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff", 
@@ -100,13 +102,28 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
             </div>
           </button>
         )}
+        {onSelectHeartbeatBackground && label === "Background Color" && (
+          <button
+            type="button"
+            className={`w-8 h-8 rounded-full border-2 overflow-hidden ${
+              value === 'heartbeat-bg' ? 'border-primary' : 'border-gray-300 dark:border-gray-600'
+            }`}
+            onClick={onSelectHeartbeatBackground}
+            aria-label="Heartbeat background"
+            title="Heartbeat effect"
+          >
+            <div className="w-full h-full bg-red-900 relative flex items-center justify-center">
+              <div className="text-white text-xs">♥</div>
+            </div>
+          </button>
+        )}
         <input
           id={label}
           type="color"
-          value={value === 'rainbow' || value === 'rainbow-bg' || value === 'lightning-bg' || value === 'siren-bg' ? '#ff0000' : value}
+          value={value === 'rainbow' || value === 'rainbow-bg' || value === 'lightning-bg' || value === 'siren-bg' || value === 'heartbeat-bg' ? '#ff0000' : value}
           onChange={(e) => onChange(e.target.value)}
           className="w-8 h-8 dark:bg-gray-700"
-          disabled={value === 'rainbow' || value === 'rainbow-bg' || value === 'lightning-bg' || value === 'siren-bg'}
+          disabled={value === 'rainbow' || value === 'rainbow-bg' || value === 'lightning-bg' || value === 'siren-bg' || value === 'heartbeat-bg'}
         />
       </div>
     </div>

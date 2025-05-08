@@ -16,7 +16,8 @@ const TextPreview: React.FC = () => {
     isRainbowText,
     isRainbowBackground,
     isLightningMode,
-    isSirenMode
+    isSirenMode,
+    isHeartbeatMode
   } = useTextDisplay();
 
   const [fontSize, setFontSize] = useState('');
@@ -63,6 +64,7 @@ const TextPreview: React.FC = () => {
   const isDisco = preset === 'disco' || isRainbowBackground;
   const isLightning = preset === 'lightning' || isLightningMode;
   const isSiren = preset === 'siren' || isSirenMode;
+  const isHeartbeat = preset === 'heartbeat' || isHeartbeatMode;
   
   // Check if there's any text to display
   const hasText = displayText.trim().length > 0;
@@ -120,6 +122,14 @@ const TextPreview: React.FC = () => {
       80.1%, 82% { background-color: #ffffff; }
       82.1%, 100% { background-color: #000000; }
     }
+    
+    @keyframes heartbeatPulse {
+      0%, 100% { background-color: #800000; transform: scale(1); }
+      15% { background-color: #ff0000; transform: scale(1.08); }
+      30% { background-color: #800000; transform: scale(1); }
+      45% { background-color: #ff0000; transform: scale(1.08); }
+      60% { background-color: #800000; transform: scale(1); }
+    }
   `;
   
   const animationStyle = {
@@ -138,7 +148,7 @@ const TextPreview: React.FC = () => {
   // Get contrasting text color for the watermark based on background
   const getContrastColor = (bgColor: string) => {
     // Simple version - for black/dark backgrounds use very light gray, for all others use very dark gray
-    const darkColors = ['#000000', '#0000ff', '#000080'];
+    const darkColors = ['#000000', '#0000ff', '#000080', '#800000'];
     return darkColors.includes(bgColor) ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
   };
 
@@ -153,7 +163,9 @@ const TextPreview: React.FC = () => {
         ? 'lightningFlash 3s linear infinite' 
         : isSiren
           ? 'sirenFlash 0.6s linear infinite'
-          : undefined
+          : isHeartbeat
+            ? 'heartbeatPulse 1.5s ease-in-out infinite'
+            : undefined
   };
 
   return (

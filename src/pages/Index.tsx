@@ -33,7 +33,8 @@ const Index = () => {
     dualTextMode, toggleDualTextMode,
     isRainbowBackground, setRainbowBackground,
     isLightningMode, setLightningMode,
-    isSirenMode, setSirenMode
+    isSirenMode, setSirenMode,
+    isHeartbeatMode, setHeartbeatMode
   } = useTextDisplay();
 
   // Apply dark mode class to document body
@@ -208,12 +209,15 @@ const Index = () => {
                       ? 'lightning-bg' 
                       : isSirenMode 
                         ? 'siren-bg' 
-                        : backgroundColor
+                        : isHeartbeatMode
+                          ? 'heartbeat-bg'
+                          : backgroundColor
                 } 
                 onChange={setBackgroundColor} 
                 onSelectRainbowBackground={() => setRainbowBackground(true)}
                 onSelectLightningBackground={() => setLightningMode(true)}
                 onSelectSirenBackground={() => setSirenMode(true)}
+                onSelectHeartbeatBackground={() => setHeartbeatMode(true)}
               />
               
               <div className="flex items-center space-x-2">
@@ -495,6 +499,44 @@ const Index = () => {
                       </div>
                     </>
                   ) : 'Police'}
+                </Button>
+                <Button 
+                  variant={preset === 'heartbeat' ? "default" : "outline"}
+                  onClick={() => applyPreset('heartbeat')}
+                  className={`w-full transition-all overflow-hidden ${
+                    preset === 'heartbeat' 
+                      ? 'p-0 border-0 ring-2 ring-red-400 ring-offset-2 dark:ring-offset-gray-900' 
+                      : 'hover:bg-red-50 dark:border-gray-600 dark:hover:bg-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  {preset === 'heartbeat' ? (
+                    <>
+                      <style>
+                        {`
+                          @keyframes heartbeatPulse {
+                            0%, 100% { background-color: #800000; transform: scale(1); }
+                            15% { background-color: #ff0000; transform: scale(1.15); }
+                            30% { background-color: #800000; transform: scale(1); }
+                            45% { background-color: #ff0000; transform: scale(1.15); }
+                            60% { background-color: #800000; transform: scale(1); }
+                          }
+                          .heartbeat-button-wrapper {
+                            width: 100%;
+                            height: 100%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            padding: 0.5rem;
+                            color: white;
+                            animation: heartbeatPulse 1.5s ease-in-out infinite;
+                          }
+                        `}
+                      </style>
+                      <div className="heartbeat-button-wrapper w-full">
+                        <span className="font-semibold">♥ Heartbeat</span>
+                      </div>
+                    </>
+                  ) : '♥ Heartbeat'}
                 </Button>
               </div>
             </div>

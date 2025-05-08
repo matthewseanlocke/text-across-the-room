@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 
 type FontOption = 'display' | 'handwriting' | 'monospace' | 'serif';
 
-type PresetType = 'day' | 'night' | 'emergency' | 'party' | 'disco' | 'lightning' | 'siren' | 'custom';
+type PresetType = 'day' | 'night' | 'emergency' | 'party' | 'disco' | 'lightning' | 'siren' | 'heartbeat' | 'custom';
 
 interface TextDisplayContextType {
   text: string;
@@ -35,6 +35,8 @@ interface TextDisplayContextType {
   setLightningMode: (enabled: boolean) => void;
   isSirenMode: boolean;
   setSirenMode: (enabled: boolean) => void;
+  isHeartbeatMode: boolean;
+  setHeartbeatMode: (enabled: boolean) => void;
 }
 
 const defaultContext: TextDisplayContextType = {
@@ -68,6 +70,8 @@ const defaultContext: TextDisplayContextType = {
   setLightningMode: () => {},
   isSirenMode: false,
   setSirenMode: () => {},
+  isHeartbeatMode: false,
+  setHeartbeatMode: () => {},
 };
 
 const TextDisplayContext = createContext<TextDisplayContextType>(defaultContext);
@@ -87,6 +91,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [isRainbowBackground, setIsRainbowBackground] = useState<boolean>(defaultContext.isRainbowBackground);
   const [isLightningMode, setIsLightningMode] = useState<boolean>(defaultContext.isLightningMode);
   const [isSirenMode, setIsSirenMode] = useState<boolean>(defaultContext.isSirenMode);
+  const [isHeartbeatMode, setIsHeartbeatMode] = useState<boolean>(defaultContext.isHeartbeatMode);
   const [darkMode, setDarkMode] = useState<boolean>(defaultContext.darkMode);
   const [scrollPosition, setScrollPosition] = useState<number>(0);
   const [dualTextMode, setDualTextMode] = useState<boolean>(defaultContext.dualTextMode);
@@ -118,6 +123,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
     setIsRainbowBackground(false);
     setIsLightningMode(false);
     setIsSirenMode(false);
+    setIsHeartbeatMode(false);
     setPreset('custom'); // Set to custom preset when selecting rainbow
   };
   
@@ -127,6 +133,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
       setIsRainbowText(false);
       setIsLightningMode(false);
       setIsSirenMode(false);
+      setIsHeartbeatMode(false);
     }
     setPreset('custom'); // Set to custom preset when selecting rainbow background
   };
@@ -137,6 +144,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
       setIsRainbowText(false);
       setIsRainbowBackground(false);
       setIsSirenMode(false);
+      setIsHeartbeatMode(false);
     }
     setPreset('custom');
   };
@@ -147,6 +155,18 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
       setIsRainbowText(false);
       setIsRainbowBackground(false);
       setIsLightningMode(false);
+      setIsHeartbeatMode(false);
+    }
+    setPreset('custom');
+  };
+
+  const setHeartbeatMode = (enabled: boolean) => {
+    setIsHeartbeatMode(enabled);
+    if (enabled) {
+      setIsRainbowText(false);
+      setIsRainbowBackground(false);
+      setIsLightningMode(false);
+      setIsSirenMode(false);
     }
     setPreset('custom');
   };
@@ -163,6 +183,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
     setIsRainbowBackground(false);
     setIsLightningMode(false);
     setIsSirenMode(false);
+    setIsHeartbeatMode(false);
   };
 
   const toggleDarkMode = () => {
@@ -183,6 +204,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setIsRainbowBackground(false);
         setIsLightningMode(false);
         setIsSirenMode(false);
+        setIsHeartbeatMode(false);
         // Keep current scroll speed
         break;
       case 'night':
@@ -192,6 +214,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setIsRainbowBackground(false);
         setIsLightningMode(false);
         setIsSirenMode(false);
+        setIsHeartbeatMode(false);
         // Keep current scroll speed
         break;
       case 'emergency':
@@ -201,6 +224,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setIsRainbowBackground(false);
         setIsLightningMode(false);
         setIsSirenMode(false);
+        setIsHeartbeatMode(false);
         // Keep current scroll speed
         break;
       case 'party':
@@ -209,6 +233,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setIsRainbowBackground(false);
         setIsLightningMode(false);
         setIsSirenMode(false);
+        setIsHeartbeatMode(false);
         // Keep current scroll speed
         break;
       case 'disco':
@@ -218,6 +243,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setIsRainbowBackground(true);
         setIsLightningMode(false);
         setIsSirenMode(false);
+        setIsHeartbeatMode(false);
         // Keep current scroll speed
         break;
       case 'lightning':
@@ -227,6 +253,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setIsRainbowBackground(false);
         setIsLightningMode(true);
         setIsSirenMode(false);
+        setIsHeartbeatMode(false);
         // Keep current scroll speed
         break;
       case 'siren':
@@ -236,6 +263,17 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setIsRainbowBackground(false);
         setIsLightningMode(false);
         setIsSirenMode(true);
+        setIsHeartbeatMode(false);
+        // Keep current scroll speed
+        break;
+      case 'heartbeat':
+        setTextColor('#ffffff');
+        setBackgroundColor('#8B0000'); // Dark red
+        setIsRainbowText(false);
+        setIsRainbowBackground(false);
+        setIsLightningMode(false);
+        setIsSirenMode(false);
+        setIsHeartbeatMode(true);
         // Keep current scroll speed
         break;
       case 'custom':
@@ -276,7 +314,9 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         isLightningMode,
         setLightningMode,
         isSirenMode,
-        setSirenMode
+        setSirenMode,
+        isHeartbeatMode,
+        setHeartbeatMode
       }}
     >
       {children}
