@@ -30,10 +30,11 @@ const SplashScreen: React.FC = () => {
       setTimeout(() => {
         console.log('Navigating to options');
         navigate('/options');
-      }, 400); // Faster fade out transition
+      }, 500); // Slightly longer fade out transition
       
-      setIsLoading(false);
-    }, 1800); // Reduced to 1.8 seconds for faster display
+      // Don't stop the animation during fade-out
+      // The animation will continue until the component unmounts
+    }, 2800); // Increased to 2.8 seconds for longer display
     
     return () => clearTimeout(timer);
   }, [navigate, darkMode]);
@@ -50,7 +51,7 @@ const SplashScreen: React.FC = () => {
       }`}
     >
       <div className="animate-scale-in px-4">
-        <AppLogo size="large" showAnimation={isLoading} />
+        <AppLogo size="large" showAnimation={true} />
       </div>
       
       <style>
@@ -70,7 +71,7 @@ const SplashScreen: React.FC = () => {
             to { opacity: 0; }
           }
           .animate-fade-out {
-            animation: fadeOut 0.4s ease-in-out forwards;
+            animation: fadeOut 0.5s ease-in-out forwards;
           }
         `}
       </style>
