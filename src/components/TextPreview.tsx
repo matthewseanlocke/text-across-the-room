@@ -14,7 +14,8 @@ const TextPreview: React.FC = () => {
     preset,
     isCapitalized,
     isRainbowText,
-    isRainbowBackground
+    isRainbowBackground,
+    isLightningMode
   } = useTextDisplay();
 
   const [fontSize, setFontSize] = useState('');
@@ -59,6 +60,7 @@ const TextPreview: React.FC = () => {
   const isEmergency = preset === 'emergency';
   const isParty = preset === 'party';
   const isDisco = preset === 'disco' || isRainbowBackground;
+  const isLightning = preset === 'lightning' || isLightningMode;
   
   // Check if there's any text to display
   const hasText = displayText.trim().length > 0;
@@ -96,6 +98,11 @@ const TextPreview: React.FC = () => {
       83.3% { background-color: #ff00ff; }
       100% { background-color: #ff0000; }
     }
+    
+    @keyframes lightningFlash {
+      0%, 91%, 94%, 98% { background-color: #000000; }
+      90%, 93%, 97%, 100% { background-color: #ffffff; }
+    }
   `;
   
   const animationStyle = {
@@ -120,10 +127,14 @@ const TextPreview: React.FC = () => {
 
   const watermarkColor = getContrastColor(backgroundColor);
   
-  // Determine container style based on rainbow background
+  // Determine container style based on effects
   const containerStyle = {
     backgroundColor: isRainbowBackground ? undefined : backgroundColor,
-    animation: isRainbowBackground ? 'rainbowBackground 2s linear infinite' : undefined
+    animation: isRainbowBackground 
+      ? 'rainbowBackground 2s linear infinite' 
+      : isLightning 
+        ? 'lightningFlash 3s linear infinite' 
+        : undefined
   };
 
   return (

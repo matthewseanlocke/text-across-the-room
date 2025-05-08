@@ -16,7 +16,8 @@ const DisplayText: React.FC = () => {
     isCapitalized,
     isRainbowText,
     dualTextMode,
-    isRainbowBackground
+    isRainbowBackground,
+    isLightningMode
   } = useTextDisplay();
   
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ const DisplayText: React.FC = () => {
   const isEmergency = preset === 'emergency';
   const isParty = preset === 'party';
   const isDisco = preset === 'disco' || isRainbowBackground;
+  const isLightning = preset === 'lightning' || isLightningMode;
   
   const [fontSize, setFontSize] = useState('120vh');
   const containerRef = useRef<HTMLDivElement>(null);
@@ -171,6 +173,11 @@ const DisplayText: React.FC = () => {
       100% { background-color: #ff0000; }
     }
     
+    @keyframes lightningFlash {
+      0%, 91%, 94%, 98% { background-color: #000000; }
+      90%, 93%, 97%, 100% { background-color: #ffffff; }
+    }
+    
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
@@ -202,10 +209,14 @@ const DisplayText: React.FC = () => {
     top: '75%',
   };
 
-  // Determine container style based on rainbow background
+  // Determine container style based on effects
   const containerStyle = {
     backgroundColor: isRainbowBackground ? undefined : backgroundColor,
-    animation: isRainbowBackground ? 'rainbowBackground 2s linear infinite' : undefined
+    animation: isRainbowBackground 
+      ? 'rainbowBackground 2s linear infinite' 
+      : isLightning 
+        ? 'lightningFlash 3s linear infinite' 
+        : undefined
   };
   
   // Only render text content if there is text to display

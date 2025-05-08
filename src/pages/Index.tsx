@@ -238,7 +238,7 @@ const Index = () => {
             
             <div className="space-y-6">
               <h2 className="text-lg font-semibold dark:text-white">Presets</h2>
-              <div className="grid grid-cols-2 gap-2" key={`presets-${forceUpdate}`}>
+              <div className="grid grid-cols-3 gap-2" key={`presets-${forceUpdate}`}>
                 <Button 
                   variant="outline"
                   onClick={() => applyPreset('day')}
@@ -341,6 +341,40 @@ const Index = () => {
                       </div>
                     </>
                   ) : 'Disco'}
+                </Button>
+                <Button 
+                  variant={preset === 'lightning' ? "default" : "outline"}
+                  onClick={() => applyPreset('lightning')}
+                  className={`w-full transition-all overflow-hidden ${
+                    preset === 'lightning' 
+                      ? 'p-0 border-0 ring-2 ring-cyan-300 ring-offset-2 dark:ring-offset-gray-900' 
+                      : 'hover:bg-blue-50 dark:border-gray-600 dark:hover:bg-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  {preset === 'lightning' ? (
+                    <>
+                      <style>
+                        {`
+                          @keyframes lightningButtonBg {
+                            0%, 91%, 94%, 98% { background-color: #000033; }
+                            90%, 93%, 97%, 100% { background-color: #ffffff; }
+                          }
+                          .lightning-button-wrapper {
+                            width: 100%;
+                            height: 100%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            padding: 0.5rem;
+                            animation: lightningButtonBg 3s linear infinite;
+                          }
+                        `}
+                      </style>
+                      <div className="lightning-button-wrapper w-full">
+                        <span className="text-gray-900 font-semibold mix-blend-difference">Lightning</span>
+                      </div>
+                    </>
+                  ) : 'Lightning'}
                 </Button>
               </div>
             </div>

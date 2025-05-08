@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 
 type FontOption = 'display' | 'handwriting' | 'monospace' | 'serif';
 
-type PresetType = 'day' | 'night' | 'emergency' | 'party' | 'disco' | 'custom';
+type PresetType = 'day' | 'night' | 'emergency' | 'party' | 'disco' | 'lightning' | 'custom';
 
 interface TextDisplayContextType {
   text: string;
@@ -31,6 +31,7 @@ interface TextDisplayContextType {
   toggleDualTextMode: () => void;
   isRainbowBackground: boolean;
   setRainbowBackground: (enabled: boolean) => void;
+  isLightningMode: boolean;
 }
 
 const defaultContext: TextDisplayContextType = {
@@ -60,6 +61,7 @@ const defaultContext: TextDisplayContextType = {
   toggleDualTextMode: () => {},
   isRainbowBackground: false,
   setRainbowBackground: () => {},
+  isLightningMode: false,
 };
 
 const TextDisplayContext = createContext<TextDisplayContextType>(defaultContext);
@@ -77,6 +79,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [isCapitalized, setIsCapitalized] = useState<boolean>(defaultContext.isCapitalized);
   const [isRainbowText, setIsRainbowText] = useState<boolean>(defaultContext.isRainbowText);
   const [isRainbowBackground, setIsRainbowBackground] = useState<boolean>(defaultContext.isRainbowBackground);
+  const [isLightningMode, setIsLightningMode] = useState<boolean>(defaultContext.isLightningMode);
   const [darkMode, setDarkMode] = useState<boolean>(defaultContext.darkMode);
   const [scrollPosition, setScrollPosition] = useState<number>(0);
   const [dualTextMode, setDualTextMode] = useState<boolean>(defaultContext.dualTextMode);
@@ -106,6 +109,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const setRainbowText = () => {
     setIsRainbowText(true);
     setIsRainbowBackground(false);
+    setIsLightningMode(false);
     setPreset('custom'); // Set to custom preset when selecting rainbow
   };
   
@@ -113,6 +117,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
     setIsRainbowBackground(enabled);
     if (enabled) {
       setIsRainbowText(false);
+      setIsLightningMode(false);
     }
     setPreset('custom'); // Set to custom preset when selecting rainbow background
   };
@@ -127,6 +132,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const handleSetBackgroundColor = (color: string) => {
     setBackgroundColor(color);
     setIsRainbowBackground(false);
+    setIsLightningMode(false);
   };
 
   const toggleDarkMode = () => {
@@ -145,6 +151,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setBackgroundColor('#ffffff');
         setIsRainbowText(false);
         setIsRainbowBackground(false);
+        setIsLightningMode(false);
         // Keep current scroll speed
         break;
       case 'night':
@@ -152,6 +159,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setBackgroundColor('#000000');
         setIsRainbowText(false);
         setIsRainbowBackground(false);
+        setIsLightningMode(false);
         // Keep current scroll speed
         break;
       case 'emergency':
@@ -159,12 +167,14 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setBackgroundColor('#ff0000');
         setIsRainbowText(false);
         setIsRainbowBackground(false);
+        setIsLightningMode(false);
         // Keep current scroll speed
         break;
       case 'party':
         setIsRainbowText(true);
         setBackgroundColor('#000000');
         setIsRainbowBackground(false);
+        setIsLightningMode(false);
         // Keep current scroll speed
         break;
       case 'disco':
@@ -172,6 +182,15 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setBackgroundColor('#000000'); 
         setIsRainbowText(false);
         setIsRainbowBackground(true);
+        setIsLightningMode(false);
+        // Keep current scroll speed
+        break;
+      case 'lightning':
+        setTextColor('#ffffff');
+        setBackgroundColor('#000000'); 
+        setIsRainbowText(false);
+        setIsRainbowBackground(false);
+        setIsLightningMode(true);
         // Keep current scroll speed
         break;
       case 'custom':
@@ -209,6 +228,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         toggleDualTextMode,
         isRainbowBackground,
         setRainbowBackground,
+        isLightningMode,
       }}
     >
       {children}
