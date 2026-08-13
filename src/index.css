@@ -271,14 +271,14 @@
   .preview-column {
     grid-column: 1;
     grid-row: 1;
-    position: sticky;
-    top: 76px;
+    position: relative;
+    align-self: stretch;
     z-index: 20;
     padding: 0;
     background: transparent;
   }
   .dark .preview-column { background: transparent; }
-  .preview-sticky { position: static; }
+  .preview-sticky { position: sticky; top: 76px; }
   .editor-column {
     grid-column: 2;
     grid-row: 1;
