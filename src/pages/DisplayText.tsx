@@ -56,7 +56,7 @@ const DisplayText: React.FC = () => {
     const measureWord = () => {
       const span = measureRef.current;
       if (!span) return;
-      const baseSize = window.innerHeight * 0.72;
+      const baseSize = window.innerHeight * (isLandscape ? 0.72 : 0.42);
       span.style.fontSize = `${baseSize}px`;
       const measuredWidth = span.getBoundingClientRect().width;
       const availableWidth = window.innerWidth * 0.88;
@@ -67,10 +67,10 @@ const DisplayText: React.FC = () => {
     measureWord();
     window.addEventListener('resize', measureWord);
     return () => window.removeEventListener('resize', measureWord);
-  }, [shownText, font, isWordFlash, autoFitWords]);
+  }, [shownText, font, isWordFlash, autoFitWords, isLandscape]);
 
   const fittedFullScreenFontSize = isWordFlash && autoFitWords
-    ? (fittedWordSize || '72vh')
+    ? (fittedWordSize || (isLandscape ? '72vh' : '42vh'))
     : fontSize;
 
   useEffect(() => {
@@ -104,8 +104,8 @@ const DisplayText: React.FC = () => {
       if (isLandscape) {
         setFontSize('120vh');
       } else {
-        // For portrait mode, use smaller font size if dual text mode is enabled
-        setFontSize(dualTextMode ? '60vh' : '120vh');
+        // Keep portrait text readable without filling the screen height.
+        setFontSize(dualTextMode ? '32vh' : '42vh');
       }
       
       // Reset animations to ensure sync
