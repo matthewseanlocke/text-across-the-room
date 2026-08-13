@@ -21,7 +21,7 @@ const SpeedSlider: React.FC<SpeedSliderProps> = ({ value, onChange }) => {
           <Slider
             id="speed-slider"
             min={1}
-            max={10}
+            max={15}
             step={1}
             value={[value]}
             onValueChange={handleChange}
@@ -30,7 +30,7 @@ const SpeedSlider: React.FC<SpeedSliderProps> = ({ value, onChange }) => {
           <span className="speed-end dark:text-gray-300">Fast</span>
         </div>
         <div className="text-center text-sm text-muted-foreground dark:text-gray-400">
-          Speed {value} of 10
+          Speed {value} of 15
         </div>
       </div>
     </div>

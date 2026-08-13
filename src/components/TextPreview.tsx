@@ -34,7 +34,9 @@ const TextPreview: React.FC = () => {
   const [wordIndex, setWordIndex] = useState(0);
   
   // A wider ten-level range: comfortably slow at 1, still quick at 10.
-  const scrollDuration = 12 - ((scrollSpeed - 1) * 1.1);
+  const scrollDuration = scrollSpeed <= 10
+    ? 12 - ((scrollSpeed - 1) * 1.1)
+    : 2.1 - ((scrollSpeed - 10) * 0.28);
   
   // Update font size based on container size
   useEffect(() => {
@@ -70,21 +72,38 @@ const TextPreview: React.FC = () => {
     const baseSize = container.clientHeight * 0.72;
     span.style.fontSize = `${baseSize}px`;
     span.style.letterSpacing = spacingValue;
+    span.style.fontFamily = textTreatment === 'pixel' ? '"Press Start 2P", monospace' : '';
+    span.style.fontWeight = textTreatment === 'pixel' ? '400' : '';
     const measuredWidth = span.getBoundingClientRect().width;
     const scale = measuredWidth > 0 ? Math.min(1, (container.clientWidth * 0.88) / measuredWidth) : 1;
     setFittedWordSize(`${baseSize * scale}px`);
-  }, [shownText, font, isWordFlash, autoFitWords, previewWidth, spacingValue]);
+  }, [shownText, font, textTreatment, isWordFlash, autoFitWords, previewWidth, spacingValue]);
 
   const fittedFontSize = isWordFlash && autoFitWords ? (fittedWordSize || fontSize) : fontSize;
+  const isHollow = textTreatment === 'outline' || textTreatment === 'hollow-glow' || textTreatment === 'double-outline';
+  const treatmentShadow = {
+    glow: '0 0 .14em currentColor, 0 0 .34em currentColor',
+    shadow: '.07em .09em .02em rgba(0,0,0,.7)',
+    'hollow-glow': '0 0 .12em currentColor, 0 0 .28em currentColor',
+    'double-outline': '.045em .045em 0 #000, -.045em -.045em 0 #000, .08em .08em 0 currentColor',
+    'retro-3d': '.035em .035em 0 #ff3b81, .07em .07em 0 #5b5ce2, .105em .105em 0 #16c7d9',
+    '3d-glasses': '-.055em 0 0 rgba(255,32,32,.9), .055em 0 0 rgba(0,220,255,.9)',
+  }[textTreatment];
+  const treatmentGradient = textTreatment === 'chrome'
+    ? 'linear-gradient(180deg,#fff 0%,#9ca3af 38%,#fff 50%,#4b5563 55%,#e5e7eb 100%)'
+    : textTreatment === 'split'
+      ? `linear-gradient(180deg,currentColor 0 48%,#ff3b81 49% 100%)`
+      : undefined;
 
   useEffect(() => {
     setWordIndex(0);
     if (!isWordFlash || words.length < 2) return;
-    const intervalMs = 1600 - ((scrollSpeed - 1) * 120);
+    const intervalMs = scrollSpeed <= 10
+      ? 1600 - ((scrollSpeed - 1) * 120)
+      : 520 - ((scrollSpeed - 10) * 60);
     const timer = window.setInterval(() => setWordIndex((index) => (index + 1) % words.length), intervalMs);
     return () => window.clearInterval(timer);
   }, [isWordFlash, scrollSpeed, displayText, words.length]);
-  const isEmergency = preset === 'emergency';
   const isParty = preset === 'party';
   const isDisco = preset === 'disco' || isRainbowBackground;
   const isLightning = preset === 'lightning' || isLightningMode;
@@ -166,10 +185,15 @@ const TextPreview: React.FC = () => {
     color: isLightning ? '#ffffff' : (isRainbowText ? undefined : textColor),
     mixBlendMode: isLightning ? 'difference' as const : undefined,
     fontSize: fittedFontSize,
+    fontFamily: textTreatment === 'pixel' ? '"Press Start 2P", monospace' : undefined,
+    fontWeight: textTreatment === 'pixel' ? 400 : undefined,
     letterSpacing: spacingValue,
-    WebkitTextStroke: textTreatment === 'outline' ? '0.045em currentColor' : undefined,
-    WebkitTextFillColor: textTreatment === 'outline' ? 'transparent' : undefined,
-    textShadow: textTreatment === 'glow' ? '0 0 .14em currentColor, 0 0 .34em currentColor' : undefined,
+    WebkitTextStroke: textTreatment === 'black-outline' ? '0.025em #000' : isHollow ? (textTreatment === 'double-outline' ? '0.07em currentColor' : '0.045em currentColor') : undefined,
+    WebkitTextFillColor: isHollow || treatmentGradient ? 'transparent' : undefined,
+    textShadow: treatmentShadow,
+    backgroundImage: treatmentGradient,
+    WebkitBackgroundClip: treatmentGradient ? 'text' : undefined,
+    backgroundClip: treatmentGradient ? 'text' : undefined,
     lineHeight: isWordFlash ? '1.05' : '0.8',
     left: 0,
     top: '50%',
@@ -208,16 +232,13 @@ const TextPreview: React.FC = () => {
     <div className="text-preview w-full rounded-lg overflow-hidden border relative" ref={containerRef}>
       <style dangerouslySetInnerHTML={{ __html: scrollTextKeyframes }} />
       {isWordFlash && autoFitWords && (
-        <span ref={measureRef} className={fontClasses[font]} aria-hidden="true" style={{ position: 'absolute', visibility: 'hidden', whiteSpace: 'nowrap', pointerEvents: 'none' }}>
+        <span ref={measureRef} className={fontClasses[font]} aria-hidden="true" style={{ position: 'fixed', left: '-10000px', top: '-10000px', visibility: 'hidden', whiteSpace: 'nowrap', pointerEvents: 'none', border: 0, textDecoration: 'none', textShadow: 'none', WebkitTextStroke: 0 }}>
           {shownText}
         </span>
       )}
       
       <div
-        className={cn(
-          "absolute inset-0 flex items-center justify-center",
-          isEmergency && "animate-flash"
-        )}
+        className="absolute inset-0 flex items-center justify-center"
         style={containerStyle}
       >
         {/* Watermark "Preview" text */}

@@ -24,6 +24,11 @@ const PRESETS = [
 ] as const;
 const COLOR_PRESETS = PRESETS.slice(0, 3);
 const ANIMATED_PRESETS = PRESETS.slice(3);
+const TEXT_TREATMENTS = [
+  ['solid', 'Solid'], ['outline', 'Outline'], ['black-outline', 'Black outline'], ['glow', 'Glow'], ['shadow', 'Shadow'],
+  ['chrome', 'Chrome'], ['split', 'Split color'], ['hollow-glow', 'Hollow glow'],
+  ['double-outline', 'Double outline'], ['retro-3d', 'Retro 3D'], ['3d-glasses', '3D glasses'], ['pixel', 'Pixel'],
+] as const;
 
 function ToggleRow({ checked, onChange, label, description }: { checked: boolean; onChange: (checked: boolean) => void; label: string; description?: string }) {
   return (
@@ -85,6 +90,7 @@ const Index = () => {
               <input id="text-input" value={text} maxLength={80} onChange={(event) => setText(event.target.value)} placeholder="Type something bold…" autoComplete="off" />
               <span>{text.length}/80</span>
             </div>
+            <SpeedSlider value={scrollSpeed} onChange={setScrollSpeed} />
             <div className={`quick-heading ${showAllMessages ? 'is-open' : ''}`}>
               <span>Quick picks</span>
               <button type="button" aria-expanded={showAllMessages} onClick={() => setShowAllMessages(!showAllMessages)}>
@@ -132,12 +138,11 @@ const Index = () => {
               </div>
               <div className="text-style-row">
                 <span>Treatment</span>
-                <div className="segmented-control">
-                  {(['solid', 'outline', 'glow'] as const).map((value) => <button type="button" key={value} className={textTreatment === value ? 'selected' : ''} onClick={() => setTextTreatment(value)} aria-pressed={textTreatment === value}>{value}</button>)}
+                <div className="segmented-control treatment-options">
+                  {TEXT_TREATMENTS.map(([value, label]) => <button type="button" key={value} className={textTreatment === value ? 'selected' : ''} onClick={() => setTextTreatment(value)} aria-pressed={textTreatment === value}>{label}</button>)}
                 </div>
               </div>
             </div>
-            <SpeedSlider value={scrollSpeed} onChange={setScrollSpeed} />
           </section>
 
           <section className="control-card">

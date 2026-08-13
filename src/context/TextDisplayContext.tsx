@@ -3,7 +3,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 type FontOption = 'display' | 'handwriting' | 'monospace' | 'serif';
 type LetterSpacingOption = 'tight' | 'normal' | 'wide';
 type TextCaseOption = 'typed' | 'uppercase';
-type TextTreatmentOption = 'solid' | 'outline' | 'glow';
+type TextTreatmentOption = 'solid' | 'outline' | 'black-outline' | 'glow' | 'shadow' | 'chrome' | 'split' | 'hollow-glow' | 'double-outline' | 'retro-3d' | '3d-glasses' | 'pixel';
 
 type PresetType = 'day' | 'night' | 'emergency' | 'party' | 'disco' | 'lightning' | 'siren' | 'heartbeat' | 'custom';
 

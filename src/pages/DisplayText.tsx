@@ -30,7 +30,6 @@ const DisplayText: React.FC = () => {
   const displayText = text || "";
   const styledDisplayText = textCase === 'uppercase' ? displayText.toUpperCase() : displayText;
   const spacingValue = letterSpacing === 'tight' ? '-0.04em' : letterSpacing === 'wide' ? '0.12em' : '0em';
-  const isEmergency = preset === 'emergency';
   const isParty = preset === 'party';
   const isDisco = preset === 'disco' || isRainbowBackground;
   const isLightning = preset === 'lightning' || isLightningMode;
@@ -46,7 +45,9 @@ const DisplayText: React.FC = () => {
   const measureRef = useRef<HTMLSpanElement>(null);
   
   // A wider ten-level range: comfortably slow at 1, still quick at 10.
-  const scrollDuration = 12 - ((scrollSpeed - 1) * 1.1);
+  const scrollDuration = scrollSpeed <= 10
+    ? 12 - ((scrollSpeed - 1) * 1.1)
+    : 2.1 - ((scrollSpeed - 10) * 0.28);
 
   const words = styledDisplayText.trim().split(/\s+/).filter(Boolean);
   const shownText = isWordFlash && words.length > 1 ? words[wordIndex % words.length] : displayText;
@@ -62,6 +63,8 @@ const DisplayText: React.FC = () => {
       const baseSize = window.innerHeight * (isLandscape ? 0.72 : 0.42);
       span.style.fontSize = `${baseSize}px`;
       span.style.letterSpacing = spacingValue;
+      span.style.fontFamily = textTreatment === 'pixel' ? '"Press Start 2P", monospace' : '';
+      span.style.fontWeight = textTreatment === 'pixel' ? '400' : '';
       const measuredWidth = span.getBoundingClientRect().width;
       const availableWidth = window.innerWidth * 0.88;
       const scale = measuredWidth > 0 ? Math.min(1, availableWidth / measuredWidth) : 1;
@@ -71,7 +74,7 @@ const DisplayText: React.FC = () => {
     measureWord();
     window.addEventListener('resize', measureWord);
     return () => window.removeEventListener('resize', measureWord);
-  }, [shownText, font, isWordFlash, autoFitWords, isLandscape, spacingValue]);
+  }, [shownText, font, textTreatment, isWordFlash, autoFitWords, isLandscape, spacingValue]);
 
   const fittedFullScreenFontSize = isWordFlash && autoFitWords
     ? (fittedWordSize || (isLandscape ? '72vh' : '42vh'))
@@ -80,7 +83,9 @@ const DisplayText: React.FC = () => {
   useEffect(() => {
     setWordIndex(0);
     if (!isWordFlash || words.length < 2) return;
-    const intervalMs = 1600 - ((scrollSpeed - 1) * 120);
+    const intervalMs = scrollSpeed <= 10
+      ? 1600 - ((scrollSpeed - 1) * 120)
+      : 520 - ((scrollSpeed - 10) * 60);
     const timer = window.setInterval(() => setWordIndex((index) => (index + 1) % words.length), intervalMs);
     return () => window.clearInterval(timer);
   }, [isWordFlash, scrollSpeed, displayText, words.length]);
@@ -91,6 +96,7 @@ const DisplayText: React.FC = () => {
   // Swipe gesture tracking
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchStartY, setTouchStartY] = useState<number | null>(null);
+  const didSpeedSwipeRef = useRef(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedbackTimeout, setFeedbackTimeout] = useState<NodeJS.Timeout | null>(null);
   
@@ -128,6 +134,7 @@ const DisplayText: React.FC = () => {
   
   // Handle touch events for swipe gestures
   const handleTouchStart = (e: React.TouchEvent) => {
+    didSpeedSwipeRef.current = false;
     setTouchStartX(e.touches[0].clientX);
     setTouchStartY(e.touches[0].clientY);
   };
@@ -141,15 +148,21 @@ const DisplayText: React.FC = () => {
     const deltaX = touchX - touchStartX;
     const deltaY = touchY - touchStartY;
     
-    // Only adjust speed if horizontal swipe is more significant than vertical
-    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30) {
-      const direction = deltaX > 0 ? 1 : -1; // Right = increase speed, Left = decrease speed
-      const newSpeed = Math.min(Math.max(scrollSpeed + direction, 1), 10);
+    const horizontalGesture = Math.abs(deltaX) >= Math.abs(deltaY);
+    const gestureDistance = horizontalGesture ? Math.abs(deltaX) : Math.abs(deltaY);
+
+    if (gestureDistance > 30) {
+      // Right or up = faster. Left or down = slower.
+      const direction = horizontalGesture
+        ? (deltaX > 0 ? 1 : -1)
+        : (deltaY < 0 ? 1 : -1);
+      const newSpeed = Math.min(Math.max(scrollSpeed + direction, 1), 15);
+      didSpeedSwipeRef.current = true;
+      setTouchStartX(touchX);
+      setTouchStartY(touchY);
       
       if (newSpeed !== scrollSpeed) {
         setScrollSpeed(newSpeed);
-        setTouchStartX(touchX);
-        setTouchStartY(touchY);
         
         // Show feedback
         setShowFeedback(true);
@@ -245,6 +258,21 @@ const DisplayText: React.FC = () => {
     }
   `;
   
+  const isHollow = textTreatment === 'outline' || textTreatment === 'hollow-glow' || textTreatment === 'double-outline';
+  const treatmentShadow = {
+    glow: '0 0 .14em currentColor, 0 0 .34em currentColor',
+    shadow: '.07em .09em .02em rgba(0,0,0,.7)',
+    'hollow-glow': '0 0 .12em currentColor, 0 0 .28em currentColor',
+    'double-outline': '.045em .045em 0 #000, -.045em -.045em 0 #000, .08em .08em 0 currentColor',
+    'retro-3d': '.035em .035em 0 #ff3b81, .07em .07em 0 #5b5ce2, .105em .105em 0 #16c7d9',
+    '3d-glasses': '-.055em 0 0 rgba(255,32,32,.9), .055em 0 0 rgba(0,220,255,.9)',
+  }[textTreatment];
+  const treatmentGradient = textTreatment === 'chrome'
+    ? 'linear-gradient(180deg,#fff 0%,#9ca3af 38%,#fff 50%,#4b5563 55%,#e5e7eb 100%)'
+    : textTreatment === 'split'
+      ? 'linear-gradient(180deg,currentColor 0 48%,#ff3b81 49% 100%)'
+      : undefined;
+
   const baseAnimationStyle = {
     animation: isWordFlash
       ? (isRainbowText ? 'rainbowText 2s linear infinite' : undefined)
@@ -254,10 +282,15 @@ const DisplayText: React.FC = () => {
     color: isLightning ? '#ffffff' : (isRainbowText ? undefined : textColor),
     mixBlendMode: isLightning ? 'difference' as const : undefined,
     fontSize: fittedFullScreenFontSize,
+    fontFamily: textTreatment === 'pixel' ? '"Press Start 2P", monospace' : undefined,
+    fontWeight: textTreatment === 'pixel' ? 400 : undefined,
     letterSpacing: spacingValue,
-    WebkitTextStroke: textTreatment === 'outline' ? '0.045em currentColor' : undefined,
-    WebkitTextFillColor: textTreatment === 'outline' ? 'transparent' : undefined,
-    textShadow: textTreatment === 'glow' ? '0 0 .14em currentColor, 0 0 .34em currentColor' : undefined,
+    WebkitTextStroke: textTreatment === 'black-outline' ? '0.025em #000' : isHollow ? (textTreatment === 'double-outline' ? '0.07em currentColor' : '0.045em currentColor') : undefined,
+    WebkitTextFillColor: isHollow || treatmentGradient ? 'transparent' : undefined,
+    textShadow: treatmentShadow,
+    backgroundImage: treatmentGradient,
+    WebkitBackgroundClip: treatmentGradient ? 'text' : undefined,
+    backgroundClip: treatmentGradient ? 'text' : undefined,
     lineHeight: isWordFlash ? "1.05" : "0.8",
     left: 0,
     width: isWordFlash ? '100%' : 'max-content',
@@ -300,12 +333,13 @@ const DisplayText: React.FC = () => {
   return (
     <div 
       ref={containerRef}
-      className={cn(
-        "fixed inset-0 flex items-center justify-center overflow-hidden animate-fade-in",
-        isEmergency && "animate-flash"
-      )}
-      style={containerStyle}
+      className="fixed inset-0 flex items-center justify-center overflow-hidden animate-fade-in"
+      style={{ ...containerStyle, touchAction: 'none' }}
       onClick={() => {
+        if (didSpeedSwipeRef.current) {
+          didSpeedSwipeRef.current = false;
+          return;
+        }
         // Navigate back to options page without resetting scroll
         navigate('/options', { replace: true });
       }}
@@ -319,7 +353,7 @@ const DisplayText: React.FC = () => {
           ref={measureRef}
           className={fontClasses[font]}
           aria-hidden="true"
-          style={{ position: 'fixed', visibility: 'hidden', whiteSpace: 'nowrap', pointerEvents: 'none' }}
+          style={{ position: 'fixed', left: '-10000px', top: '-10000px', visibility: 'hidden', whiteSpace: 'nowrap', pointerEvents: 'none', border: 0, textDecoration: 'none', textShadow: 'none', WebkitTextStroke: 0 }}
         >
           {shownText}
         </span>
@@ -391,7 +425,7 @@ const DisplayText: React.FC = () => {
             <div className="w-32 h-2 bg-white/30 rounded-full">
               <div 
                 className="h-full bg-white rounded-full"
-                style={{ width: `${(scrollSpeed - 1) / 9 * 100}%` }}
+                style={{ width: `${(scrollSpeed - 1) / 14 * 100}%` }}
               ></div>
             </div>
           </div>
