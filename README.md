@@ -66,6 +66,18 @@ npm run build
 
 The built files will be in the `dist` directory and can be deployed to any static file hosting service.
 
+## Versioning
+
+The splash screen displays the current application version directly from `package.json`.
+
+Every completed code update must increment the patch version before it is committed or deployed:
+
+```sh
+npm run version:patch
+```
+
+For example: `0.1.2` becomes `0.1.3`. Commit both `package.json` and `package-lock.json` with the update. Use a minor or major version bump instead when intentionally publishing a larger release.
+
 ## Design documentation
 
 See [DESIGN_RULES.md](DESIGN_RULES.md) for the required visual behavior of preset tiles and display effects. Update that reference whenever an effect's intended appearance changes.

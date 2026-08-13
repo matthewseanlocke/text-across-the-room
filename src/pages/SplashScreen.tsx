@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTextDisplay } from '@/context/TextDisplayContext';
 import AppLogo from '@/components/AppLogo';
+import packageInfo from '../../package.json';
 
 const SplashScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -59,7 +60,7 @@ const SplashScreen: React.FC = () => {
       }}
     >
       <div className="animate-scale-in px-4">
-        <AppLogo size="large" showAnimation={true} meta={<div className="splash-version">v{__APP_VERSION__}</div>} />
+        <AppLogo size="large" showAnimation={true} meta={<div className="splash-version">v{packageInfo.version}</div>} />
       </div>
 
       <a
