@@ -8,7 +8,7 @@ A simple yet effective scrolling text display application that lets you create a
 - Multiple font options (Display, Handwriting, Monospace, Serif)
 - Customizable text and background colors, including rainbow text
 - Adjustable scroll speed with intuitive swipe gestures
-- Pre-defined presets (Day, Night, Emergency, Party)
+- Visual effect presets (Day, Night, Emergency, Party, Disco, Lightning)
 - Quick message templates for common use cases
 - Text preview before display
 - Full-screen display mode
@@ -65,6 +65,10 @@ npm run build
 ```
 
 The built files will be in the `dist` directory and can be deployed to any static file hosting service.
+
+## Design documentation
+
+See [DESIGN_RULES.md](DESIGN_RULES.md) for the required visual behavior of preset tiles and display effects. Update that reference whenever an effect's intended appearance changes.
 
 ## Copyright Notice
 

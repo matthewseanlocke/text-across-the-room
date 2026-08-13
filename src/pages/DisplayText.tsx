@@ -9,6 +9,9 @@ const DisplayText: React.FC = () => {
     textColor, 
     backgroundColor, 
     font, 
+    letterSpacing,
+    textCase,
+    textTreatment,
     scrollSpeed, 
     setScrollSpeed,
     isWordFlash,
@@ -25,6 +28,8 @@ const DisplayText: React.FC = () => {
   
   const navigate = useNavigate();
   const displayText = text || "";
+  const styledDisplayText = textCase === 'uppercase' ? displayText.toUpperCase() : displayText;
+  const spacingValue = letterSpacing === 'tight' ? '-0.04em' : letterSpacing === 'wide' ? '0.12em' : '0em';
   const isEmergency = preset === 'emergency';
   const isParty = preset === 'party';
   const isDisco = preset === 'disco' || isRainbowBackground;
@@ -36,8 +41,6 @@ const DisplayText: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isContentReady, setIsContentReady] = useState(false);
   
-  // Update when scrollSpeed changes
-  const [currentScrollDuration, setCurrentScrollDuration] = useState(0);
   const [wordIndex, setWordIndex] = useState(0);
   const [fittedWordSize, setFittedWordSize] = useState<string | null>(null);
   const measureRef = useRef<HTMLSpanElement>(null);
@@ -45,7 +48,7 @@ const DisplayText: React.FC = () => {
   // A wider ten-level range: comfortably slow at 1, still quick at 10.
   const scrollDuration = 12 - ((scrollSpeed - 1) * 1.1);
 
-  const words = displayText.trim().split(/\s+/).filter(Boolean);
+  const words = styledDisplayText.trim().split(/\s+/).filter(Boolean);
   const shownText = isWordFlash && words.length > 1 ? words[wordIndex % words.length] : displayText;
   useLayoutEffect(() => {
     if (!isWordFlash || !autoFitWords || !measureRef.current) {
@@ -58,6 +61,7 @@ const DisplayText: React.FC = () => {
       if (!span) return;
       const baseSize = window.innerHeight * (isLandscape ? 0.72 : 0.42);
       span.style.fontSize = `${baseSize}px`;
+      span.style.letterSpacing = spacingValue;
       const measuredWidth = span.getBoundingClientRect().width;
       const availableWidth = window.innerWidth * 0.88;
       const scale = measuredWidth > 0 ? Math.min(1, availableWidth / measuredWidth) : 1;
@@ -67,7 +71,7 @@ const DisplayText: React.FC = () => {
     measureWord();
     window.addEventListener('resize', measureWord);
     return () => window.removeEventListener('resize', measureWord);
-  }, [shownText, font, isWordFlash, autoFitWords, isLandscape]);
+  }, [shownText, font, isWordFlash, autoFitWords, isLandscape, spacingValue]);
 
   const fittedFullScreenFontSize = isWordFlash && autoFitWords
     ? (fittedWordSize || (isLandscape ? '72vh' : '42vh'))
@@ -90,14 +94,6 @@ const DisplayText: React.FC = () => {
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedbackTimeout, setFeedbackTimeout] = useState<NodeJS.Timeout | null>(null);
   
-  // Update duration when speed changes
-  useEffect(() => {
-    setCurrentScrollDuration(scrollDuration);
-    
-    // Debug
-    console.log('Display - Speed updated:', scrollSpeed, 'New Duration:', scrollDuration);
-  }, [scrollSpeed, scrollDuration]);
-
   // Update font size based on window size and reset animation
   useEffect(() => {
     const updateFontSize = () => {
@@ -252,11 +248,16 @@ const DisplayText: React.FC = () => {
   const baseAnimationStyle = {
     animation: isWordFlash
       ? (isRainbowText ? 'rainbowText 2s linear infinite' : undefined)
-      : `displayScrollText ${currentScrollDuration}s linear infinite${isRainbowText ? ', rainbowText 2s linear infinite' : ''}`,
+      : `displayScrollText ${scrollDuration}s linear infinite${isRainbowText ? ', rainbowText 2s linear infinite' : ''}`,
     position: 'absolute' as const,
     whiteSpace: 'nowrap' as const,
-    color: isRainbowText ? undefined : textColor,
+    color: isLightning ? '#ffffff' : (isRainbowText ? undefined : textColor),
+    mixBlendMode: isLightning ? 'difference' as const : undefined,
     fontSize: fittedFullScreenFontSize,
+    letterSpacing: spacingValue,
+    WebkitTextStroke: textTreatment === 'outline' ? '0.045em currentColor' : undefined,
+    WebkitTextFillColor: textTreatment === 'outline' ? 'transparent' : undefined,
+    textShadow: textTreatment === 'glow' ? '0 0 .14em currentColor, 0 0 .34em currentColor' : undefined,
     lineHeight: isWordFlash ? "1.05" : "0.8",
     left: 0,
     width: isWordFlash ? '100%' : 'max-content',
@@ -285,7 +286,7 @@ const DisplayText: React.FC = () => {
     animation: isRainbowBackground 
       ? 'rainbowBackground 2s linear infinite' 
       : isLightning 
-        ? 'lightningFlash 3s linear infinite' 
+        ? 'lightningFlash 3s steps(1, end) infinite'
         : isSiren
           ? 'sirenFlash 0.6s linear infinite'
           : isHeartbeat

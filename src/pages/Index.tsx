@@ -18,8 +18,12 @@ const PRESETS = [
   { id: 'emergency', label: 'Emergency', swatch: 'linear-gradient(135deg,#ef4444,#991b1b)' },
   { id: 'party', label: 'Party', swatch: 'linear-gradient(135deg,#ec4899,#8b5cf6,#06b6d4)' },
   { id: 'disco', label: 'Disco', swatch: 'linear-gradient(135deg,#f59e0b,#ec4899,#3b82f6)' },
-  { id: 'lightning', label: 'Lightning', swatch: 'linear-gradient(135deg,#111827 45%,#fde047 46%,#fff 54%,#111827 55%)' },
+  { id: 'lightning', label: 'Lightning', swatch: '#000000' },
+  { id: 'siren', label: 'Siren', swatch: '#0000ff' },
+  { id: 'heartbeat', label: 'Heartbeat', swatch: '#800000' },
 ] as const;
+const COLOR_PRESETS = PRESETS.slice(0, 3);
+const ANIMATED_PRESETS = PRESETS.slice(3);
 
 function ToggleRow({ checked, onChange, label, description }: { checked: boolean; onChange: (checked: boolean) => void; label: string; description?: string }) {
   return (
@@ -37,11 +41,9 @@ const Index = () => {
   const [showAllMessages, setShowAllMessages] = useState(false);
   const {
     text, setText, textColor, setTextColor, backgroundColor, setBackgroundColor,
-    font, setFont, scrollSpeed, setScrollSpeed, isWordFlash, setIsWordFlash, autoFitWords, setAutoFitWords, preset, applyPreset,
-    setRainbowText, isRainbowText,
+    font, setFont, letterSpacing, setLetterSpacing, textCase, setTextCase, textTreatment, setTextTreatment,
+    scrollSpeed, setScrollSpeed, isWordFlash, setIsWordFlash, autoFitWords, setAutoFitWords, preset, applyPreset,
     darkMode, toggleDarkMode, dualTextMode, toggleDualTextMode,
-    isRainbowBackground, setRainbowBackground, isLightningMode, setLightningMode,
-    isSirenMode, setSirenMode, isHeartbeatMode, setHeartbeatMode,
   } = useTextDisplay();
 
   useEffect(() => {
@@ -49,6 +51,14 @@ const Index = () => {
   }, [darkMode]);
 
   const visibleMessages = showAllMessages ? QUICK_MESSAGES : QUICK_MESSAGES.slice(0, 9);
+  const isAnimatedLook = ANIMATED_PRESETS.some((item) => item.id === preset);
+
+  const renderPreset = (item: typeof PRESETS[number]) => (
+    <button type="button" key={item.id} data-preset={item.id} className={`preset-tile ${preset === item.id ? 'selected' : ''}`} onClick={() => applyPreset(item.id)} aria-label={`${item.label} color effect`} title={item.label}>
+      <span className="preset-swatch" style={{ background: item.swatch }}><span className="preset-demo-text">TEXT</span></span>
+      {preset === item.id && <Check size={16} aria-hidden="true" />}
+    </button>
+  );
 
   return (
     <main className="studio-shell">
@@ -90,23 +100,43 @@ const Index = () => {
 
           <section className="control-card">
             <div className="section-heading compact-heading"><span className="step-number">2</span><div><h2>Choose the look</h2></div></div>
-            <div className="preset-grid">
-              {PRESETS.map((item) => (
-                <button type="button" key={item.id} className={`preset-tile ${preset === item.id ? 'selected' : ''}`} onClick={() => applyPreset(item.id)}>
-                  <span className="preset-swatch" style={{ background: item.swatch }} />
-                  <span>{item.label}</span>{preset === item.id && <Check size={14} />}
-                </button>
-              ))}
+            <div className="look-group">
+              <div className="look-group-heading"><strong>Color looks</strong><span>Customize the colors below</span></div>
+              <div className="preset-grid color-presets">{COLOR_PRESETS.map(renderPreset)}</div>
+            </div>
+            <div className={`color-grid custom-colors ${isAnimatedLook ? 'is-locked' : ''}`}>
+              <ColorPicker label="Text color" value={textColor} onChange={setTextColor} simple disabled={isAnimatedLook} />
+              <ColorPicker label="Background" value={backgroundColor} onChange={setBackgroundColor} simple disabled={isAnimatedLook} />
+            </div>
+            <div className="look-group animated-look-group">
+              <div className="look-group-heading"><strong>Animated looks</strong><span>Colors are built into each effect</span></div>
+              <div className="preset-grid animated-presets">{ANIMATED_PRESETS.map(renderPreset)}</div>
             </div>
             <div className="divider" />
-            <div className="color-grid">
-              <ColorPicker label="Text color" value={textColor} onChange={setTextColor} simple disabled={isRainbowText} />
-              <ColorPicker label="Background" value={backgroundColor} onChange={setBackgroundColor} simple disabled={isRainbowBackground || isLightningMode || isSirenMode || isHeartbeatMode} />
-            </div>
             <label className="field-label" htmlFor="font-select">Typeface</label>
             <select id="font-select" value={font} onChange={(event) => setFont(event.target.value as typeof font)}>
               <option value="display">Bold display</option><option value="handwriting">Handwritten</option><option value="monospace">Monospace</option><option value="serif">Classic serif</option>
             </select>
+            <div className="text-style-controls" aria-label="Text styling">
+              <div className="text-style-row">
+                <span>Spacing</span>
+                <div className="segmented-control">
+                  {(['tight', 'normal', 'wide'] as const).map((value) => <button type="button" key={value} className={letterSpacing === value ? 'selected' : ''} onClick={() => setLetterSpacing(value)} aria-pressed={letterSpacing === value}>{value}</button>)}
+                </div>
+              </div>
+              <div className="text-style-row">
+                <span>Case</span>
+                <div className="segmented-control two-options">
+                  {(['typed', 'uppercase'] as const).map((value) => <button type="button" key={value} className={textCase === value ? 'selected' : ''} onClick={() => setTextCase(value)} aria-pressed={textCase === value}>{value === 'typed' ? 'As typed' : 'UPPERCASE'}</button>)}
+                </div>
+              </div>
+              <div className="text-style-row">
+                <span>Treatment</span>
+                <div className="segmented-control">
+                  {(['solid', 'outline', 'glow'] as const).map((value) => <button type="button" key={value} className={textTreatment === value ? 'selected' : ''} onClick={() => setTextTreatment(value)} aria-pressed={textTreatment === value}>{value}</button>)}
+                </div>
+              </div>
+            </div>
             <SpeedSlider value={scrollSpeed} onChange={setScrollSpeed} />
           </section>
 
@@ -115,11 +145,6 @@ const Index = () => {
             <div className="toggle-list">
               <ToggleRow label="Flash one word at a time" description="Show each word separately at the chosen speed" checked={isWordFlash} onChange={setIsWordFlash} />
               {isWordFlash && <ToggleRow label="Auto-fit flashed words" description="Shrink long words so they stay on screen" checked={autoFitWords} onChange={setAutoFitWords} />}
-              <ToggleRow label="Rainbow text" description="Cycle through vivid colors" checked={isRainbowText} onChange={(on) => on ? setRainbowText() : setTextColor(textColor)} />
-              <ToggleRow label="Disco background" checked={isRainbowBackground} onChange={setRainbowBackground} />
-              <ToggleRow label="Lightning flash" checked={isLightningMode} onChange={setLightningMode} />
-              <ToggleRow label="Siren flash" checked={isSirenMode} onChange={setSirenMode} />
-              <ToggleRow label="Heartbeat" checked={isHeartbeatMode} onChange={setHeartbeatMode} />
               <ToggleRow label="Two rows in portrait" description="Fill tall phone screens" checked={dualTextMode} onChange={() => toggleDualTextMode()} />
             </div>
           </section>

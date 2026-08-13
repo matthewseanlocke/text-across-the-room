@@ -1,6 +1,9 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
 type FontOption = 'display' | 'handwriting' | 'monospace' | 'serif';
+type LetterSpacingOption = 'tight' | 'normal' | 'wide';
+type TextCaseOption = 'typed' | 'uppercase';
+type TextTreatmentOption = 'solid' | 'outline' | 'glow';
 
 type PresetType = 'day' | 'night' | 'emergency' | 'party' | 'disco' | 'lightning' | 'siren' | 'heartbeat' | 'custom';
 
@@ -11,6 +14,9 @@ interface PersistedSettings {
   textColor: string;
   backgroundColor: string;
   font: FontOption;
+  letterSpacing: LetterSpacingOption;
+  textCase: TextCaseOption;
+  textTreatment: TextTreatmentOption;
   scrollSpeed: number;
   isWordFlash: boolean;
   autoFitWords: boolean;
@@ -42,6 +48,12 @@ interface TextDisplayContextType {
   setBackgroundColor: (color: string) => void;
   font: FontOption;
   setFont: (font: FontOption) => void;
+  letterSpacing: LetterSpacingOption;
+  setLetterSpacing: (spacing: LetterSpacingOption) => void;
+  textCase: TextCaseOption;
+  setTextCase: (textCase: TextCaseOption) => void;
+  textTreatment: TextTreatmentOption;
+  setTextTreatment: (treatment: TextTreatmentOption) => void;
   scrollSpeed: number;
   setScrollSpeed: (speed: number) => void;
   isWordFlash: boolean;
@@ -81,6 +93,12 @@ const defaultContext: TextDisplayContextType = {
   setBackgroundColor: () => {},
   font: "display",
   setFont: () => {},
+  letterSpacing: "normal",
+  setLetterSpacing: () => {},
+  textCase: "typed",
+  setTextCase: () => {},
+  textTreatment: "solid",
+  setTextTreatment: () => {},
   scrollSpeed: 1,
   setScrollSpeed: () => {},
   isWordFlash: false,
@@ -121,6 +139,9 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [textColor, setTextColor] = useState<string>(savedSettings.textColor ?? defaultContext.textColor);
   const [backgroundColor, setBackgroundColor] = useState<string>(savedSettings.backgroundColor ?? defaultContext.backgroundColor);
   const [font, setFont] = useState<FontOption>(savedSettings.font ?? defaultContext.font);
+  const [letterSpacing, setLetterSpacing] = useState<LetterSpacingOption>(savedSettings.letterSpacing ?? defaultContext.letterSpacing);
+  const [textCase, setTextCase] = useState<TextCaseOption>(savedSettings.textCase ?? defaultContext.textCase);
+  const [textTreatment, setTextTreatment] = useState<TextTreatmentOption>(savedSettings.textTreatment ?? defaultContext.textTreatment);
   const [scrollSpeed, setScrollSpeed] = useState<number>(savedSettings.scrollSpeed ?? defaultContext.scrollSpeed);
   const [isWordFlash, setIsWordFlash] = useState<boolean>(savedSettings.isWordFlash ?? defaultContext.isWordFlash);
   const [autoFitWords, setAutoFitWords] = useState<boolean>(savedSettings.autoFitWords ?? defaultContext.autoFitWords);
@@ -138,13 +159,13 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   useEffect(() => {
     const settings: PersistedSettings = {
-      text, textColor, backgroundColor, font, scrollSpeed,
+      text, textColor, backgroundColor, font, letterSpacing, textCase, textTreatment, scrollSpeed,
       isWordFlash, autoFitWords, preset, isRainbowText, darkMode,
       dualTextMode, isRainbowBackground, isLightningMode, isSirenMode,
       isHeartbeatMode,
     };
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-  }, [text, textColor, backgroundColor, font, scrollSpeed,
+  }, [text, textColor, backgroundColor, font, letterSpacing, textCase, textTreatment, scrollSpeed,
     isWordFlash, autoFitWords, preset, isRainbowText, darkMode,
     dualTextMode, isRainbowBackground, isLightningMode, isSirenMode,
     isHeartbeatMode]);
@@ -277,9 +298,9 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         // Keep current scroll speed
         break;
       case 'disco':
-        // For disco preset, we keep the current text color or rainbow text state
-        // and only change the background to rainbow
+        setTextColor('#ffffff');
         setBackgroundColor('#000000'); 
+        setIsRainbowText(false);
         setIsRainbowBackground(true); // This one should be true for disco
         setIsLightningMode(false);
         setIsSirenMode(false);
@@ -287,9 +308,9 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         // Keep current scroll speed and text effects
         break;
       case 'lightning':
-        // For lightning preset, we keep the current text color or rainbow text state
-        // and only change the background effect
+        setTextColor('#ffffff');
         setBackgroundColor('#000000'); 
+        setIsRainbowText(false);
         setIsRainbowBackground(false);
         setIsLightningMode(true); // This one should be true for lightning
         setIsSirenMode(false);
@@ -297,9 +318,9 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         // Keep current scroll speed and text effects
         break;
       case 'siren':
-        // For siren preset, we keep the current text color or rainbow text state
-        // and only change the background effect
+        setTextColor('#ffffff');
         setBackgroundColor('#000000'); 
+        setIsRainbowText(false);
         setIsRainbowBackground(false);
         setIsLightningMode(false);
         setIsSirenMode(true); // This one should be true for siren
@@ -307,9 +328,9 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         // Keep current scroll speed and text effects
         break;
       case 'heartbeat':
-        // For heartbeat preset, we keep the current text color or rainbow text state
-        // and only change the background effect
+        setTextColor('#ffffff');
         setBackgroundColor('#8B0000'); // Dark red
+        setIsRainbowText(false);
         setIsRainbowBackground(false);
         setIsLightningMode(false);
         setIsSirenMode(false);
@@ -333,6 +354,12 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setBackgroundColor: handleSetBackgroundColor,
         font,
         setFont,
+        letterSpacing,
+        setLetterSpacing,
+        textCase,
+        setTextCase,
+        textTreatment,
+        setTextTreatment,
         scrollSpeed,
         setScrollSpeed,
         isWordFlash,

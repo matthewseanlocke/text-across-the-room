@@ -9,6 +9,9 @@ const TextPreview: React.FC = () => {
     textColor, 
     backgroundColor, 
     font, 
+    letterSpacing,
+    textCase,
+    textTreatment,
     scrollSpeed, 
     isWordFlash,
     autoFitWords,
@@ -28,21 +31,11 @@ const TextPreview: React.FC = () => {
   const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
   
-  // Update when scrollSpeed changes
-  const [currentScrollDuration, setCurrentScrollDuration] = useState(0);
   const [wordIndex, setWordIndex] = useState(0);
   
   // A wider ten-level range: comfortably slow at 1, still quick at 10.
   const scrollDuration = 12 - ((scrollSpeed - 1) * 1.1);
   
-  // Update duration when speed changes
-  useEffect(() => {
-    setCurrentScrollDuration(scrollDuration);
-    
-    // Debug
-    console.log('Preview - Speed updated:', scrollSpeed, 'New Duration:', scrollDuration);
-  }, [scrollSpeed, scrollDuration]);
-
   // Update font size based on container size
   useEffect(() => {
     const updateFontSize = () => {
@@ -63,7 +56,9 @@ const TextPreview: React.FC = () => {
   }, [isLandscape]);
 
   const displayText = text || "";
-  const words = displayText.trim().split(/\s+/).filter(Boolean);
+  const styledDisplayText = textCase === 'uppercase' ? displayText.toUpperCase() : displayText;
+  const spacingValue = letterSpacing === 'tight' ? '-0.04em' : letterSpacing === 'wide' ? '0.12em' : '0em';
+  const words = styledDisplayText.trim().split(/\s+/).filter(Boolean);
   const shownText = isWordFlash && words.length > 1 ? words[wordIndex % words.length] : displayText;
   useLayoutEffect(() => {
     const span = measureRef.current;
@@ -74,10 +69,11 @@ const TextPreview: React.FC = () => {
     }
     const baseSize = container.clientHeight * 0.72;
     span.style.fontSize = `${baseSize}px`;
+    span.style.letterSpacing = spacingValue;
     const measuredWidth = span.getBoundingClientRect().width;
     const scale = measuredWidth > 0 ? Math.min(1, (container.clientWidth * 0.88) / measuredWidth) : 1;
     setFittedWordSize(`${baseSize * scale}px`);
-  }, [shownText, font, isWordFlash, autoFitWords, previewWidth]);
+  }, [shownText, font, isWordFlash, autoFitWords, previewWidth, spacingValue]);
 
   const fittedFontSize = isWordFlash && autoFitWords ? (fittedWordSize || fontSize) : fontSize;
 
@@ -108,7 +104,7 @@ const TextPreview: React.FC = () => {
   // Create animation styles directly
   const scrollTextKeyframes = `
     @keyframes previewScrollText {
-      from { transform: translateX(100%) translateY(-50%); }
+      from { transform: translateX(var(--preview-start)) translateY(-50%); }
       to { transform: translateX(-100%) translateY(-50%); }
     }
     
@@ -161,14 +157,19 @@ const TextPreview: React.FC = () => {
     }
   `;
   
-  const animationStyle = {
+  const animationStyle: React.CSSProperties & { '--preview-start': string } = {
     animation: isWordFlash
       ? (isRainbowText ? 'rainbowText 2s linear infinite' : undefined)
-      : `previewScrollText ${currentScrollDuration}s linear infinite${isRainbowText ? ', rainbowText 2s linear infinite' : ''}`,
+      : `previewScrollText ${scrollDuration}s linear infinite${isRainbowText ? ', rainbowText 2s linear infinite' : ''}`,
     position: 'absolute' as const,
     whiteSpace: 'nowrap' as const,
-    color: isRainbowText ? undefined : textColor,
+    color: isLightning ? '#ffffff' : (isRainbowText ? undefined : textColor),
+    mixBlendMode: isLightning ? 'difference' as const : undefined,
     fontSize: fittedFontSize,
+    letterSpacing: spacingValue,
+    WebkitTextStroke: textTreatment === 'outline' ? '0.045em currentColor' : undefined,
+    WebkitTextFillColor: textTreatment === 'outline' ? 'transparent' : undefined,
+    textShadow: textTreatment === 'glow' ? '0 0 .14em currentColor, 0 0 .34em currentColor' : undefined,
     lineHeight: isWordFlash ? '1.05' : '0.8',
     left: 0,
     top: '50%',
@@ -176,7 +177,8 @@ const TextPreview: React.FC = () => {
     textAlign: isWordFlash ? 'center' as const : undefined,
     transform: isWordFlash ? 'translateY(-50%)' : undefined,
     overflow: isWordFlash ? 'visible' : undefined,
-    zIndex: 10
+    zIndex: 10,
+    '--preview-start': `${previewWidth}px`
   };
 
   // Get contrasting text color for the watermark based on background
@@ -194,7 +196,7 @@ const TextPreview: React.FC = () => {
     animation: isRainbowBackground 
       ? 'rainbowBackground 2s linear infinite' 
       : isLightning 
-        ? 'lightningFlash 3s linear infinite' 
+        ? 'lightningFlash 3s steps(1, end) infinite'
         : isSiren
           ? 'sirenFlash 0.6s linear infinite'
           : isHeartbeat
@@ -230,7 +232,7 @@ const TextPreview: React.FC = () => {
         
         {/* Only render text if there is any */}
         {hasText && (
-          <div 
+          <div
             className={cn(
               fontClasses[font],
               isParty && "animate-flash"
