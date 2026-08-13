@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTextDisplay } from '@/context/TextDisplayContext';
 import AppLogo from '@/components/AppLogo';
@@ -6,8 +6,16 @@ import AppLogo from '@/components/AppLogo';
 const SplashScreen: React.FC = () => {
   const navigate = useNavigate();
   const { darkMode } = useTextDisplay();
-  const [isLoading, setIsLoading] = useState(true);
   const [isFadingOut, setIsFadingOut] = useState(false);
+  const navigationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isDismissing = useRef(false);
+
+  const dismissSplash = useCallback(() => {
+    if (isDismissing.current) return;
+    isDismissing.current = true;
+    setIsFadingOut(true);
+    navigationTimer.current = setTimeout(() => navigate('/options'), 350);
+  }, [navigate]);
   
   // Log when the splash screen renders
   useEffect(() => {
@@ -21,23 +29,13 @@ const SplashScreen: React.FC = () => {
     }
     
     // Navigate to options screen after a delay
-    const timer = setTimeout(() => {
-      console.log('Splash screen timer completed');
-      // Start the fade out transition
-      setIsFadingOut(true);
-      
-      // Navigate after the fade out animation completes
-      setTimeout(() => {
-        console.log('Navigating to options');
-        navigate('/options');
-      }, 500); // Slightly longer fade out transition
-      
-      // Don't stop the animation during fade-out
-      // The animation will continue until the component unmounts
-    }, 2800); // Increased to 2.8 seconds for longer display
+    const timer = setTimeout(dismissSplash, 2800);
     
-    return () => clearTimeout(timer);
-  }, [navigate, darkMode]);
+    return () => {
+      clearTimeout(timer);
+      if (navigationTimer.current) clearTimeout(navigationTimer.current);
+    };
+  }, [darkMode, dismissSplash]);
   
   // Ensure full rerender by forcing component rerender
   useEffect(() => {
@@ -46,13 +44,35 @@ const SplashScreen: React.FC = () => {
   
   return (
     <div 
-      className={`min-h-screen flex flex-col items-center justify-center bg-background dark:bg-gray-900 transition-colors duration-200 ${
+      className={`splash-screen flex flex-col items-center justify-center bg-background dark:bg-gray-900 transition-colors duration-200 ${
         isFadingOut ? 'animate-fade-out' : ''
       }`}
+      role="button"
+      tabIndex={0}
+      aria-label="Continue to Text Across the Room"
+      onClick={dismissSplash}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          dismissSplash();
+        }
+      }}
     >
       <div className="animate-scale-in px-4">
         <AppLogo size="large" showAnimation={true} />
       </div>
+
+      <a
+        className="coffee-button splash-coffee"
+        href="https://buymeacoffee.com/matthewseanwallace"
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Buy me a coffee"
+        title="Buy me a coffee"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <span className="coffee-cup" aria-hidden="true" />
+      </a>
       
       <style>
         {`
@@ -65,13 +85,29 @@ const SplashScreen: React.FC = () => {
           .animate-scale-in {
             animation: scaleIn 1.2s ease-out forwards;
           }
+          .splash-screen {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            min-height: 100svh;
+            overflow: hidden;
+            cursor: pointer;
+          }
+          .splash-coffee {
+            position: absolute;
+            left: max(18px, env(safe-area-inset-left));
+            bottom: max(18px, env(safe-area-inset-bottom));
+            z-index: 2;
+            cursor: pointer;
+          }
           
           @keyframes fadeOut {
             from { opacity: 1; }
             to { opacity: 0; }
           }
           .animate-fade-out {
-            animation: fadeOut 0.5s ease-in-out forwards;
+            animation: fadeOut 0.35s ease-in-out forwards;
           }
         `}
       </style>
@@ -79,4 +115,4 @@ const SplashScreen: React.FC = () => {
   );
 };
 
-export default SplashScreen; 
+export default SplashScreen;

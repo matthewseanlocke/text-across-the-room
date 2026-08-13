@@ -60,3 +60,10 @@ When changing a preset, compare its tile against the live preview and full-scree
 - Glow uses the active text color and must remain readable rather than becoming a large blurred haze.
 - Typography choices persist locally and apply identically to the editor preview and full-screen display.
 - Auto-fit measurements must include the active letter spacing.
+
+## Splash screen
+
+- Center the logo within the dynamic visible viewport (`dvh`), not the legacy mobile layout viewport.
+- Tapping anywhere on the splash or pressing Enter/Space dismisses it immediately with a short fade.
+- Keep the Buy Me a Coffee icon in the bottom-left corner, offset by device safe-area insets.
+- Clicking the coffee link must not dismiss or navigate the app underneath it.
