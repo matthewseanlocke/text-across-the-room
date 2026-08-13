@@ -57,28 +57,39 @@ const Index = () => {
           <span className="brand-mark"><MessageSquareText size={21} /></span>
           <span>text across the room</span>
         </a>
-        <button className="icon-button" type="button" onClick={toggleDarkMode} aria-label="Toggle color theme">
-          {darkMode ? <Sun size={19} /> : <Moon size={19} />}
-        </button>
+        <div className="header-actions">
+          <a className="coffee-button" href="https://buymeacoffee.com/matthewseanwallace" target="_blank" rel="noreferrer" aria-label="Buy me a coffee" title="Buy me a coffee">
+            <span className="coffee-cup" aria-hidden="true" />
+          </a>
+          <button className="icon-button" type="button" onClick={toggleDarkMode} aria-label="Toggle color theme">
+            {darkMode ? <Sun size={19} /> : <Moon size={19} />}
+          </button>
+        </div>
       </header>
 
       <div className="studio-grid">
         <section className="editor-column">
           <section className="control-card compose-card">
-            <div className="section-heading"><span className="step-number">1</span><div><h2>Write your message</h2><p>Keep it short for the biggest impact.</p></div></div>
-            <label className="field-label" htmlFor="text-input">Message</label>
+            <div className="section-heading compact-heading"><span className="step-number">1</span><div><h2>Write your message</h2></div></div>
             <div className="message-input-wrap">
               <input id="text-input" value={text} maxLength={80} onChange={(event) => setText(event.target.value)} placeholder="Type something bold…" autoComplete="off" />
               <span>{text.length}/80</span>
             </div>
-            <div className="quick-heading"><span>Quick picks</span><button type="button" onClick={() => setShowAllMessages(!showAllMessages)}>{showAllMessages ? 'Show less' : 'See all'} <ChevronDown size={14} /></button></div>
-            <div className="quick-grid">
-              {visibleMessages.map((message) => <button type="button" key={message} className={text === message ? 'selected' : ''} onClick={() => setText(message)}>{message}</button>)}
+            <div className={`quick-heading ${showAllMessages ? 'is-open' : ''}`}>
+              <span>Quick picks</span>
+              <button type="button" aria-expanded={showAllMessages} onClick={() => setShowAllMessages(!showAllMessages)}>
+                {showAllMessages ? 'Hide' : 'Show quick picks'} <ChevronDown size={14} />
+              </button>
             </div>
+            {showAllMessages && (
+              <div className="quick-grid">
+                {visibleMessages.map((message) => <button type="button" key={message} className={text === message ? 'selected' : ''} onClick={() => setText(message)}>{message}</button>)}
+              </div>
+            )}
           </section>
 
           <section className="control-card">
-            <div className="section-heading"><span className="step-number">2</span><div><h2>Choose the look</h2><p>Start with a preset or make it yours.</p></div></div>
+            <div className="section-heading compact-heading"><span className="step-number">2</span><div><h2>Choose the look</h2></div></div>
             <div className="preset-grid">
               {PRESETS.map((item) => (
                 <button type="button" key={item.id} className={`preset-tile ${preset === item.id ? 'selected' : ''}`} onClick={() => applyPreset(item.id)}>
@@ -100,7 +111,7 @@ const Index = () => {
           </section>
 
           <section className="control-card">
-            <div className="section-heading"><span className="step-number"><Sparkles size={17} /></span><div><h2>Effects</h2><p>Add motion only when the moment calls for it.</p></div></div>
+            <div className="section-heading compact-heading"><span className="step-number"><Sparkles size={17} /></span><div><h2>Effects</h2></div></div>
             <div className="toggle-list">
               <ToggleRow label="Keep text still" description="Center the message without scrolling" checked={isStaticText} onChange={(on) => { setIsStaticText(on); if (on) setIsWordFlash(false); }} />
               <ToggleRow label="Flash one word at a time" description="Show each word separately at the chosen speed" checked={isWordFlash} onChange={(on) => { setIsWordFlash(on); if (on) setIsStaticText(false); }} />
