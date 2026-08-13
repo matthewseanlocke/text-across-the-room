@@ -109,6 +109,8 @@
   .studio-header { height: 72px; padding: 0 max(24px, calc((100vw - 1180px)/2)); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e5e7eb; background: rgba(255,255,255,.86); backdrop-filter: blur(16px); position: sticky; top: 0; z-index: 40; }
   .dark .studio-header { background: rgba(10,15,29,.86); border-color: #202a3d; }
   .brand { display: flex; align-items: center; gap: 11px; color: inherit; font-size: 15px; font-weight: 750; letter-spacing: -.02em; }
+  .brand-copy { display:flex; align-items:baseline; gap:8px; }
+  .build-version { color:#8b95a7; font-size:9px; font-weight:700; letter-spacing:.03em; white-space:nowrap; }
   .brand-mark { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 11px; color: white; background: linear-gradient(145deg,#6366f1,#2563eb); box-shadow: 0 7px 20px rgba(37,99,235,.23); }
   .icon-button { width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid #dfe3eb; border-radius: 12px; background: white; transition: .2s; }
   .icon-button:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(15,23,42,.08); }
@@ -251,6 +253,8 @@
   .color-grid,.toggle-list { grid-template-columns:1fr; }
   .color-grid { gap:18px; }
   .brand { font-size:13px; }
+  .brand-copy { display:block; line-height:1.05; }
+  .build-version { display:block; margin-top:4px; font-size:8px; }
 }
 
 /* Real mobile Safari can report a landscape width below the stacked-layout breakpoint. */
