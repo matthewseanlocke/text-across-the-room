@@ -15,6 +15,12 @@ interface TextDisplayContextType {
   setFont: (font: FontOption) => void;
   scrollSpeed: number;
   setScrollSpeed: (speed: number) => void;
+  isStaticText: boolean;
+  setIsStaticText: (enabled: boolean) => void;
+  isWordFlash: boolean;
+  setIsWordFlash: (enabled: boolean) => void;
+  autoFitWords: boolean;
+  setAutoFitWords: (enabled: boolean) => void;
   isLandscape: boolean;
   preset: PresetType;
   setPreset: (preset: PresetType) => void;
@@ -48,8 +54,14 @@ const defaultContext: TextDisplayContextType = {
   setBackgroundColor: () => {},
   font: "display",
   setFont: () => {},
-  scrollSpeed: 5,
+  scrollSpeed: 1,
   setScrollSpeed: () => {},
+  isStaticText: false,
+  setIsStaticText: () => {},
+  isWordFlash: false,
+  setIsWordFlash: () => {},
+  autoFitWords: true,
+  setAutoFitWords: () => {},
   isLandscape: false,
   preset: "day",
   setPreset: () => {},
@@ -84,6 +96,9 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [backgroundColor, setBackgroundColor] = useState<string>(defaultContext.backgroundColor);
   const [font, setFont] = useState<FontOption>(defaultContext.font);
   const [scrollSpeed, setScrollSpeed] = useState<number>(defaultContext.scrollSpeed);
+  const [isStaticText, setIsStaticText] = useState<boolean>(defaultContext.isStaticText);
+  const [isWordFlash, setIsWordFlash] = useState<boolean>(defaultContext.isWordFlash);
+  const [autoFitWords, setAutoFitWords] = useState<boolean>(defaultContext.autoFitWords);
   const [isLandscape, setIsLandscape] = useState<boolean>(defaultContext.isLandscape);
   const [preset, setPreset] = useState<PresetType>(defaultContext.preset);
   const [isCapitalized, setIsCapitalized] = useState<boolean>(defaultContext.isCapitalized);
@@ -288,6 +303,12 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setFont,
         scrollSpeed,
         setScrollSpeed,
+        isStaticText,
+        setIsStaticText,
+        isWordFlash,
+        setIsWordFlash,
+        autoFitWords,
+        setAutoFitWords,
         isLandscape,
         preset,
         setPreset,

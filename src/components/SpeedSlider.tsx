@@ -13,24 +13,24 @@ const SpeedSlider: React.FC<SpeedSliderProps> = ({ value, onChange }) => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="speed-control space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="speed-slider" className="dark:text-gray-300">Scroll Speed</Label>
+        <Label htmlFor="speed-slider" className="field-label dark:text-gray-300">Scroll speed</Label>
         <div className="flex items-center space-x-4">
-          <span className="dark:text-gray-300">Slow</span>
+          <span className="speed-end dark:text-gray-300">Slow</span>
           <Slider
             id="speed-slider"
             min={1}
-            max={9}
+            max={10}
             step={1}
             value={[value]}
             onValueChange={handleChange}
             className="flex-1"
           />
-          <span className="dark:text-gray-300">Fast</span>
+          <span className="speed-end dark:text-gray-300">Fast</span>
         </div>
         <div className="text-center text-sm text-muted-foreground dark:text-gray-400">
-          Current: {value}
+          Speed {value} of 10
         </div>
       </div>
     </div>

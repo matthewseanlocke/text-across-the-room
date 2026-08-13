@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { useTextDisplay } from '@/context/TextDisplayContext';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -10,9 +10,11 @@ const TextPreview: React.FC = () => {
     backgroundColor, 
     font, 
     scrollSpeed, 
+    isStaticText,
+    isWordFlash,
+    autoFitWords,
     isLandscape,
     preset,
-    isCapitalized,
     isRainbowText,
     isRainbowBackground,
     isLightningMode,
@@ -21,15 +23,18 @@ const TextPreview: React.FC = () => {
   } = useTextDisplay();
 
   const [fontSize, setFontSize] = useState('');
+  const [previewWidth, setPreviewWidth] = useState(0);
+  const [fittedWordSize, setFittedWordSize] = useState<string | null>(null);
+  const measureRef = useRef<HTMLSpanElement>(null);
   const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Update when scrollSpeed changes
   const [currentScrollDuration, setCurrentScrollDuration] = useState(0);
+  const [wordIndex, setWordIndex] = useState(0);
   
-  // Calculate scroll duration based on speed (1-9 range)
-  // Speed 1 = slowest (16s), Speed 9 = fastest (2s)
-  const scrollDuration = 18 - (scrollSpeed * 1.8);
+  // Ten closely spaced levels. Level 1 matches the former level 7 speed.
+  const scrollDuration = 5.4 - ((scrollSpeed - 1) * 0.4);
   
   // Update duration when speed changes
   useEffect(() => {
@@ -44,7 +49,9 @@ const TextPreview: React.FC = () => {
     const updateFontSize = () => {
       if (containerRef.current) {
         const containerHeight = containerRef.current.clientHeight;
-        setFontSize(`${containerHeight * 1.2}px`);
+        setPreviewWidth(containerRef.current.clientWidth);
+        // Keep a single, readable row inside the compact studio preview.
+        setFontSize(`${containerHeight * 0.72}px`);
       }
     };
     
@@ -56,9 +63,32 @@ const TextPreview: React.FC = () => {
     };
   }, [isLandscape]);
 
-  const processedText = isCapitalized ? text.toUpperCase() : text;
-  // Remove default text
-  const displayText = processedText || "";
+  const displayText = text || "";
+  const words = displayText.trim().split(/\s+/).filter(Boolean);
+  const shownText = isWordFlash && words.length > 1 ? words[wordIndex % words.length] : displayText;
+  useLayoutEffect(() => {
+    const span = measureRef.current;
+    const container = containerRef.current;
+    if (!isWordFlash || !autoFitWords || !span || !container) {
+      setFittedWordSize(null);
+      return;
+    }
+    const baseSize = container.clientHeight * 0.72;
+    span.style.fontSize = `${baseSize}px`;
+    const measuredWidth = span.getBoundingClientRect().width;
+    const scale = measuredWidth > 0 ? Math.min(1, (container.clientWidth * 0.88) / measuredWidth) : 1;
+    setFittedWordSize(`${baseSize * scale}px`);
+  }, [shownText, font, isWordFlash, autoFitWords, previewWidth]);
+
+  const fittedFontSize = isWordFlash && autoFitWords ? (fittedWordSize || fontSize) : fontSize;
+
+  useEffect(() => {
+    setWordIndex(0);
+    if (!isWordFlash || words.length < 2) return;
+    const intervalMs = 1100 - ((scrollSpeed - 1) * 80);
+    const timer = window.setInterval(() => setWordIndex((index) => (index + 1) % words.length), intervalMs);
+    return () => window.clearInterval(timer);
+  }, [isWordFlash, scrollSpeed, displayText, words.length]);
   const isEmergency = preset === 'emergency';
   const isParty = preset === 'party';
   const isDisco = preset === 'disco' || isRainbowBackground;
@@ -133,15 +163,20 @@ const TextPreview: React.FC = () => {
   `;
   
   const animationStyle = {
-    animation: `previewScrollText ${currentScrollDuration}s linear infinite${isRainbowText ? ', rainbowText 2s linear infinite' : ''}`,
+    animation: isStaticText || isWordFlash
+      ? (isRainbowText ? 'rainbowText 2s linear infinite' : undefined)
+      : `previewScrollText ${currentScrollDuration}s linear infinite${isRainbowText ? ', rainbowText 2s linear infinite' : ''}`,
     position: 'absolute' as const,
     whiteSpace: 'nowrap' as const,
     color: isRainbowText ? undefined : textColor,
-    fontSize: fontSize,
-    lineHeight: '0.8',
+    fontSize: fittedFontSize,
+    lineHeight: isStaticText || isWordFlash ? '1.05' : '0.8',
     left: 0,
     top: '50%',
-    width: 'max-content',
+    width: isStaticText || isWordFlash ? '100%' : 'max-content',
+    textAlign: isStaticText || isWordFlash ? 'center' as const : undefined,
+    transform: isStaticText || isWordFlash ? 'translateY(-50%)' : undefined,
+    overflow: isStaticText || isWordFlash ? 'visible' : undefined,
     zIndex: 10
   };
 
@@ -169,8 +204,13 @@ const TextPreview: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-20 rounded-lg overflow-hidden border relative" ref={containerRef}>
+    <div className="text-preview w-full rounded-lg overflow-hidden border relative" ref={containerRef}>
       <style dangerouslySetInnerHTML={{ __html: scrollTextKeyframes }} />
+      {isWordFlash && autoFitWords && (
+        <span ref={measureRef} className={fontClasses[font]} aria-hidden="true" style={{ position: 'absolute', visibility: 'hidden', whiteSpace: 'nowrap', pointerEvents: 'none' }}>
+          {shownText}
+        </span>
+      )}
       
       <div
         className={cn(
@@ -182,7 +222,7 @@ const TextPreview: React.FC = () => {
         {/* Watermark "Preview" text */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <span 
-            className="text-3xl font-bold tracking-wider uppercase"
+            className="preview-watermark text-3xl font-bold tracking-wider uppercase"
             style={{ color: watermarkColor }}
           >
             Preview
@@ -198,7 +238,7 @@ const TextPreview: React.FC = () => {
             )}
             style={animationStyle}
           >
-            {displayText}
+            {shownText}
           </div>
         )}
       </div>

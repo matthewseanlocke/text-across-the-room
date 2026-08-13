@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTextDisplay } from '@/context/TextDisplayContext';
 import { cn } from '@/lib/utils';
@@ -11,9 +11,11 @@ const DisplayText: React.FC = () => {
     font, 
     scrollSpeed, 
     setScrollSpeed,
+    isStaticText,
+    isWordFlash,
+    autoFitWords,
     isLandscape,
     preset,
-    isCapitalized,
     isRainbowText,
     dualTextMode,
     isRainbowBackground,
@@ -23,8 +25,7 @@ const DisplayText: React.FC = () => {
   } = useTextDisplay();
   
   const navigate = useNavigate();
-  const processedText = isCapitalized ? text.toUpperCase() : text;
-  const displayText = processedText || "";
+  const displayText = text || "";
   const isEmergency = preset === 'emergency';
   const isParty = preset === 'party';
   const isDisco = preset === 'disco' || isRainbowBackground;
@@ -38,10 +39,48 @@ const DisplayText: React.FC = () => {
   
   // Update when scrollSpeed changes
   const [currentScrollDuration, setCurrentScrollDuration] = useState(0);
+  const [wordIndex, setWordIndex] = useState(0);
+  const [fittedWordSize, setFittedWordSize] = useState<string | null>(null);
+  const measureRef = useRef<HTMLSpanElement>(null);
   
-  // Calculate scroll duration based on speed (1-9 range)
-  // Speed 1 = slowest (16s), Speed 9 = fastest (2s)
-  const scrollDuration = 18 - (scrollSpeed * 1.8);
+  // Ten closely spaced levels. Level 1 matches the former level 7 speed.
+  const scrollDuration = 5.4 - ((scrollSpeed - 1) * 0.4);
+
+  const words = displayText.trim().split(/\s+/).filter(Boolean);
+  const shownText = isWordFlash && words.length > 1 ? words[wordIndex % words.length] : displayText;
+  useLayoutEffect(() => {
+    if (!isWordFlash || !autoFitWords || !measureRef.current) {
+      setFittedWordSize(null);
+      return;
+    }
+
+    const measureWord = () => {
+      const span = measureRef.current;
+      if (!span) return;
+      const baseSize = window.innerHeight * 0.72;
+      span.style.fontSize = `${baseSize}px`;
+      const measuredWidth = span.getBoundingClientRect().width;
+      const availableWidth = window.innerWidth * 0.88;
+      const scale = measuredWidth > 0 ? Math.min(1, availableWidth / measuredWidth) : 1;
+      setFittedWordSize(`${baseSize * scale}px`);
+    };
+
+    measureWord();
+    window.addEventListener('resize', measureWord);
+    return () => window.removeEventListener('resize', measureWord);
+  }, [shownText, font, isWordFlash, autoFitWords]);
+
+  const fittedFullScreenFontSize = isWordFlash && autoFitWords
+    ? (fittedWordSize || '72vh')
+    : fontSize;
+
+  useEffect(() => {
+    setWordIndex(0);
+    if (!isWordFlash || words.length < 2) return;
+    const intervalMs = 1100 - ((scrollSpeed - 1) * 80);
+    const timer = window.setInterval(() => setWordIndex((index) => (index + 1) % words.length), intervalMs);
+    return () => window.clearInterval(timer);
+  }, [isWordFlash, scrollSpeed, displayText, words.length]);
   
   // Animation key to force reset on rotation
   const [animationKey, setAnimationKey] = useState(Date.now());
@@ -110,7 +149,7 @@ const DisplayText: React.FC = () => {
     // Only adjust speed if horizontal swipe is more significant than vertical
     if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30) {
       const direction = deltaX > 0 ? 1 : -1; // Right = increase speed, Left = decrease speed
-      const newSpeed = Math.min(Math.max(scrollSpeed + direction, 1), 9);
+      const newSpeed = Math.min(Math.max(scrollSpeed + direction, 1), 10);
       
       if (newSpeed !== scrollSpeed) {
         setScrollSpeed(newSpeed);
@@ -212,14 +251,19 @@ const DisplayText: React.FC = () => {
   `;
   
   const baseAnimationStyle = {
-    animation: `displayScrollText ${currentScrollDuration}s linear infinite${isRainbowText ? ', rainbowText 2s linear infinite' : ''}`,
+    animation: isStaticText || isWordFlash
+      ? (isRainbowText ? 'rainbowText 2s linear infinite' : undefined)
+      : `displayScrollText ${currentScrollDuration}s linear infinite${isRainbowText ? ', rainbowText 2s linear infinite' : ''}`,
     position: 'absolute' as const,
     whiteSpace: 'nowrap' as const,
     color: isRainbowText ? undefined : textColor,
-    fontSize: fontSize,
-    lineHeight: "0.8",
+    fontSize: fittedFullScreenFontSize,
+    lineHeight: isStaticText || isWordFlash ? "1.05" : "0.8",
     left: 0,
-    width: 'max-content',
+    width: isStaticText || isWordFlash ? '100%' : 'max-content',
+    textAlign: isStaticText || isWordFlash ? 'center' as const : undefined,
+    transform: isStaticText || isWordFlash ? 'translateY(-50%)' : undefined,
+    overflow: isStaticText || isWordFlash ? 'visible' : undefined,
     opacity: isContentReady ? 1 : 0,
     transition: 'opacity 0.3s ease-in'
   };
@@ -270,6 +314,16 @@ const DisplayText: React.FC = () => {
       onTouchEnd={handleTouchEnd}
     >
       <style dangerouslySetInnerHTML={{ __html: scrollTextKeyframes }} />
+      {isWordFlash && autoFitWords && (
+        <span
+          ref={measureRef}
+          className={fontClasses[font]}
+          aria-hidden="true"
+          style={{ position: 'fixed', visibility: 'hidden', whiteSpace: 'nowrap', pointerEvents: 'none' }}
+        >
+          {shownText}
+        </span>
+      )}
       <div className="relative w-full h-full overflow-hidden">
         {renderTextContent && isLandscape ? (
           // Landscape mode - show one text centered vertically
@@ -284,7 +338,7 @@ const DisplayText: React.FC = () => {
               top: '50%'
             }}
           >
-            {displayText}
+            {shownText}
           </div>
         ) : renderTextContent && !isLandscape ? (
           // Portrait mode - show one or two rows of text based on dualTextMode setting
@@ -298,7 +352,7 @@ const DisplayText: React.FC = () => {
                 )}
                 style={topTextStyle}
               >
-                {displayText}
+                {shownText}
               </div>
               <div 
                 className={cn(
@@ -307,7 +361,7 @@ const DisplayText: React.FC = () => {
                 )}
                 style={bottomTextStyle}
               >
-                {displayText}
+                {shownText}
               </div>
             </div>
           ) : (
@@ -323,7 +377,7 @@ const DisplayText: React.FC = () => {
                 top: '50%'
               }}
             >
-              {displayText}
+              {shownText}
             </div>
           )
         ) : null /* No text to display */}
@@ -337,7 +391,7 @@ const DisplayText: React.FC = () => {
             <div className="w-32 h-2 bg-white/30 rounded-full">
               <div 
                 className="h-full bg-white rounded-full"
-                style={{ width: `${(scrollSpeed - 1) / 8 * 100}%` }}
+                style={{ width: `${(scrollSpeed - 1) / 9 * 100}%` }}
               ></div>
             </div>
           </div>

@@ -33,14 +33,14 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
 
   if (simple) {
     return (
-      <div className="space-y-2">
-        <Label htmlFor={label} className="dark:text-gray-300">{label}</Label>
-        <div className="flex flex-wrap gap-2">
+      <div className="color-picker space-y-2">
+        <Label htmlFor={label} className="field-label dark:text-gray-300">{label}</Label>
+        <div className="color-options flex flex-wrap gap-2">
           {colorOptions.map((color) => (
             <button
               key={color}
               type="button"
-              className={`w-8 h-8 rounded-full border-2 ${
+              className={`color-dot w-8 h-8 rounded-full border-2 ${
                 color === value ? 'border-primary' : 'border-gray-300 dark:border-gray-600'
               } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
               style={{ backgroundColor: color }}
@@ -54,7 +54,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
             type="color"
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className={`w-8 h-8 dark:bg-gray-700 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`color-custom w-8 h-8 dark:bg-gray-700 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             disabled={disabled}
           />
         </div>
