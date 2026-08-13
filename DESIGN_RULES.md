@@ -67,3 +67,11 @@ When changing a preset, compare its tile against the live preview and full-scree
 - Tapping anywhere on the splash or pressing Enter/Space dismisses it immediately with a short fade.
 - Keep the Buy Me a Coffee icon in the bottom-left corner, offset by device safe-area insets.
 - Clicking the coffee link must not dismiss or navigate the app underneath it.
+
+## Responsive editor layout
+
+- Portrait and narrow upright screens stack the live preview above the controls.
+- Short landscape screens use two panes regardless of coarse-pointer or mobile-device detection.
+- In mobile landscape, the live preview occupies the sticky left pane and the editor controls scroll in the right pane.
+- Landscape spacing must respect left and right device safe-area insets.
+- Do not rely on width alone to classify mobile landscape; real Safari viewports can fall below the tablet breakpoint while emulators do not.

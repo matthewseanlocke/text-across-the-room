@@ -252,3 +252,40 @@
   .color-grid { gap:18px; }
   .brand { font-size:13px; }
 }
+
+/* Real mobile Safari can report a landscape width below the stacked-layout breakpoint. */
+@media (orientation: landscape) and (max-height: 600px) {
+  .studio-header {
+    height: 64px;
+    padding-left: max(18px, env(safe-area-inset-left));
+    padding-right: max(18px, env(safe-area-inset-right));
+  }
+  .studio-grid {
+    max-width: none;
+    padding: 12px max(14px, env(safe-area-inset-right)) 48px max(14px, env(safe-area-inset-left));
+    display: grid;
+    grid-template-columns: minmax(300px, .95fr) minmax(340px, 1.05fr);
+    gap: 14px;
+    align-items: start;
+  }
+  .preview-column {
+    grid-column: 1;
+    grid-row: 1;
+    position: sticky;
+    top: 76px;
+    z-index: 20;
+    padding: 0;
+    background: transparent;
+  }
+  .dark .preview-column { background: transparent; }
+  .preview-sticky { position: static; }
+  .editor-column {
+    grid-column: 2;
+    grid-row: 1;
+    display: block;
+    min-width: 0;
+  }
+  .control-card { padding: 18px; }
+  .preview-frame { padding: 9px; border-radius: 17px; }
+  .text-preview { aspect-ratio: 2.2 / 1; }
+}
