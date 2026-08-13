@@ -43,7 +43,7 @@ const DisplayText: React.FC = () => {
   const measureRef = useRef<HTMLSpanElement>(null);
   
   // A wider ten-level range: comfortably slow at 1, still quick at 10.
-  const scrollDuration = 8 - ((scrollSpeed - 1) * 0.68);
+  const scrollDuration = 12 - ((scrollSpeed - 1) * 1.1);
 
   const words = displayText.trim().split(/\s+/).filter(Boolean);
   const shownText = isWordFlash && words.length > 1 ? words[wordIndex % words.length] : displayText;

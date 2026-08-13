@@ -33,7 +33,7 @@ const TextPreview: React.FC = () => {
   const [wordIndex, setWordIndex] = useState(0);
   
   // A wider ten-level range: comfortably slow at 1, still quick at 10.
-  const scrollDuration = 8 - ((scrollSpeed - 1) * 0.68);
+  const scrollDuration = 12 - ((scrollSpeed - 1) * 1.1);
   
   // Update duration when speed changes
   useEffect(() => {
