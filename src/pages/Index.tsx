@@ -70,7 +70,7 @@ const Index = () => {
       <header className="studio-header">
         <a href="/" className="brand" aria-label="Text Across the Room home">
           <span className="brand-mark"><MessageSquareText size={21} /></span>
-          <span className="brand-copy">text across the room <small className="build-version" title={`Version ${__APP_VERSION__}, commit ${__GIT_SHA__}`}>v{__APP_VERSION__} · {__GIT_SHA__}</small></span>
+          <span>text across the room</span>
         </a>
         <div className="header-actions">
           <a className="coffee-button" href="https://buymeacoffee.com/matthewseanwallace" target="_blank" rel="noreferrer" aria-label="Buy me a coffee" title="Buy me a coffee">

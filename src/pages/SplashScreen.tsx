@@ -59,7 +59,7 @@ const SplashScreen: React.FC = () => {
       }}
     >
       <div className="animate-scale-in px-4">
-        <AppLogo size="large" showAnimation={true} />
+        <AppLogo size="large" showAnimation={true} meta={<div className="splash-version">v{__APP_VERSION__}</div>} />
       </div>
 
       <a
@@ -85,6 +85,17 @@ const SplashScreen: React.FC = () => {
           .animate-scale-in {
             animation: scaleIn 1.2s ease-out forwards;
           }
+          .splash-version {
+            margin-top: 12px;
+            margin-bottom: 12px;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-align: center;
+            text-transform: uppercase;
+          }
+          .dark .splash-version { color: #94a3b8; }
           .splash-screen {
             position: relative;
             width: 100%;

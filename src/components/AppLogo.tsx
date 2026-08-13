@@ -4,12 +4,14 @@ interface AppLogoProps {
   size?: 'small' | 'medium' | 'large';
   showAnimation?: boolean;
   className?: string;
+  meta?: React.ReactNode;
 }
 
 const AppLogo: React.FC<AppLogoProps> = ({ 
   size = 'medium', 
   showAnimation = true,
-  className = ''
+  className = '',
+  meta
 }) => {
   const textSizeClasses = {
     small: 'text-lg',
@@ -42,6 +44,8 @@ const AppLogo: React.FC<AppLogoProps> = ({
           text-across-the-room
         </h1>
       </div>
+
+      {meta}
       
       {showAnimation && (
         <div className={`flex justify-center ${spacingClasses[size]}`}>
