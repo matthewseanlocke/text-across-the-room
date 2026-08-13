@@ -4,6 +4,35 @@ type FontOption = 'display' | 'handwriting' | 'monospace' | 'serif';
 
 type PresetType = 'day' | 'night' | 'emergency' | 'party' | 'disco' | 'lightning' | 'siren' | 'heartbeat' | 'custom';
 
+const STORAGE_KEY = 'text-across-the-room-settings';
+
+interface PersistedSettings {
+  text: string;
+  textColor: string;
+  backgroundColor: string;
+  font: FontOption;
+  scrollSpeed: number;
+  isWordFlash: boolean;
+  autoFitWords: boolean;
+  preset: PresetType;
+  isRainbowText: boolean;
+  darkMode: boolean;
+  dualTextMode: boolean;
+  isRainbowBackground: boolean;
+  isLightningMode: boolean;
+  isSirenMode: boolean;
+  isHeartbeatMode: boolean;
+}
+
+const readSavedSettings = (): Partial<PersistedSettings> => {
+  if (typeof window === 'undefined') return {};
+  try {
+    return JSON.parse(window.localStorage.getItem(STORAGE_KEY) || '{}');
+  } catch {
+    return {};
+  }
+};
+
 interface TextDisplayContextType {
   text: string;
   setText: (text: string) => void;
@@ -15,8 +44,6 @@ interface TextDisplayContextType {
   setFont: (font: FontOption) => void;
   scrollSpeed: number;
   setScrollSpeed: (speed: number) => void;
-  isStaticText: boolean;
-  setIsStaticText: (enabled: boolean) => void;
   isWordFlash: boolean;
   setIsWordFlash: (enabled: boolean) => void;
   autoFitWords: boolean;
@@ -56,8 +83,6 @@ const defaultContext: TextDisplayContextType = {
   setFont: () => {},
   scrollSpeed: 1,
   setScrollSpeed: () => {},
-  isStaticText: false,
-  setIsStaticText: () => {},
   isWordFlash: false,
   setIsWordFlash: () => {},
   autoFitWords: true,
@@ -74,7 +99,7 @@ const defaultContext: TextDisplayContextType = {
   toggleDarkMode: () => {},
   scrollPosition: 0,
   setScrollPosition: () => {},
-  dualTextMode: true,
+  dualTextMode: false,
   toggleDualTextMode: () => {},
   isRainbowBackground: false,
   setRainbowBackground: () => {},
@@ -91,31 +116,38 @@ const TextDisplayContext = createContext<TextDisplayContextType>(defaultContext)
 export const useTextDisplay = () => useContext(TextDisplayContext);
 
 export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [text, setText] = useState<string>(defaultContext.text);
-  const [textColor, setTextColor] = useState<string>(defaultContext.textColor);
-  const [backgroundColor, setBackgroundColor] = useState<string>(defaultContext.backgroundColor);
-  const [font, setFont] = useState<FontOption>(defaultContext.font);
-  const [scrollSpeed, setScrollSpeed] = useState<number>(defaultContext.scrollSpeed);
-  const [isStaticText, setIsStaticText] = useState<boolean>(defaultContext.isStaticText);
-  const [isWordFlash, setIsWordFlash] = useState<boolean>(defaultContext.isWordFlash);
-  const [autoFitWords, setAutoFitWords] = useState<boolean>(defaultContext.autoFitWords);
+  const [savedSettings] = useState(readSavedSettings);
+  const [text, setText] = useState<string>(savedSettings.text ?? defaultContext.text);
+  const [textColor, setTextColor] = useState<string>(savedSettings.textColor ?? defaultContext.textColor);
+  const [backgroundColor, setBackgroundColor] = useState<string>(savedSettings.backgroundColor ?? defaultContext.backgroundColor);
+  const [font, setFont] = useState<FontOption>(savedSettings.font ?? defaultContext.font);
+  const [scrollSpeed, setScrollSpeed] = useState<number>(savedSettings.scrollSpeed ?? defaultContext.scrollSpeed);
+  const [isWordFlash, setIsWordFlash] = useState<boolean>(savedSettings.isWordFlash ?? defaultContext.isWordFlash);
+  const [autoFitWords, setAutoFitWords] = useState<boolean>(savedSettings.autoFitWords ?? defaultContext.autoFitWords);
   const [isLandscape, setIsLandscape] = useState<boolean>(defaultContext.isLandscape);
-  const [preset, setPreset] = useState<PresetType>(defaultContext.preset);
+  const [preset, setPreset] = useState<PresetType>(savedSettings.preset ?? defaultContext.preset);
   const [isCapitalized, setIsCapitalized] = useState<boolean>(defaultContext.isCapitalized);
-  const [isRainbowText, setIsRainbowText] = useState<boolean>(defaultContext.isRainbowText);
-  const [isRainbowBackground, setIsRainbowBackground] = useState<boolean>(defaultContext.isRainbowBackground);
-  const [isLightningMode, setIsLightningMode] = useState<boolean>(defaultContext.isLightningMode);
-  const [isSirenMode, setIsSirenMode] = useState<boolean>(defaultContext.isSirenMode);
-  const [isHeartbeatMode, setIsHeartbeatMode] = useState<boolean>(defaultContext.isHeartbeatMode);
-  const [darkMode, setDarkMode] = useState<boolean>(defaultContext.darkMode);
+  const [isRainbowText, setIsRainbowText] = useState<boolean>(savedSettings.isRainbowText ?? defaultContext.isRainbowText);
+  const [isRainbowBackground, setIsRainbowBackground] = useState<boolean>(savedSettings.isRainbowBackground ?? defaultContext.isRainbowBackground);
+  const [isLightningMode, setIsLightningMode] = useState<boolean>(savedSettings.isLightningMode ?? defaultContext.isLightningMode);
+  const [isSirenMode, setIsSirenMode] = useState<boolean>(savedSettings.isSirenMode ?? defaultContext.isSirenMode);
+  const [isHeartbeatMode, setIsHeartbeatMode] = useState<boolean>(savedSettings.isHeartbeatMode ?? defaultContext.isHeartbeatMode);
+  const [darkMode, setDarkMode] = useState<boolean>(() => savedSettings.darkMode ?? window.matchMedia('(prefers-color-scheme: dark)').matches);
   const [scrollPosition, setScrollPosition] = useState<number>(0);
-  const [dualTextMode, setDualTextMode] = useState<boolean>(defaultContext.dualTextMode);
+  const [dualTextMode, setDualTextMode] = useState<boolean>(savedSettings.dualTextMode ?? defaultContext.dualTextMode);
 
-  // Check for system preference on mount
   useEffect(() => {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setDarkMode(prefersDark);
-  }, []);
+    const settings: PersistedSettings = {
+      text, textColor, backgroundColor, font, scrollSpeed,
+      isWordFlash, autoFitWords, preset, isRainbowText, darkMode,
+      dualTextMode, isRainbowBackground, isLightningMode, isSirenMode,
+      isHeartbeatMode,
+    };
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+  }, [text, textColor, backgroundColor, font, scrollSpeed,
+    isWordFlash, autoFitWords, preset, isRainbowText, darkMode,
+    dualTextMode, isRainbowBackground, isLightningMode, isSirenMode,
+    isHeartbeatMode]);
 
   useEffect(() => {
     const handleOrientationChange = () => {
@@ -303,8 +335,6 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setFont,
         scrollSpeed,
         setScrollSpeed,
-        isStaticText,
-        setIsStaticText,
         isWordFlash,
         setIsWordFlash,
         autoFitWords,

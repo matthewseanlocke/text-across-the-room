@@ -37,7 +37,7 @@ const Index = () => {
   const [showAllMessages, setShowAllMessages] = useState(false);
   const {
     text, setText, textColor, setTextColor, backgroundColor, setBackgroundColor,
-    font, setFont, scrollSpeed, setScrollSpeed, isStaticText, setIsStaticText, isWordFlash, setIsWordFlash, autoFitWords, setAutoFitWords, preset, applyPreset,
+    font, setFont, scrollSpeed, setScrollSpeed, isWordFlash, setIsWordFlash, autoFitWords, setAutoFitWords, preset, applyPreset,
     setRainbowText, isRainbowText,
     darkMode, toggleDarkMode, dualTextMode, toggleDualTextMode,
     isRainbowBackground, setRainbowBackground, isLightningMode, setLightningMode,
@@ -113,8 +113,7 @@ const Index = () => {
           <section className="control-card">
             <div className="section-heading compact-heading"><span className="step-number"><Sparkles size={17} /></span><div><h2>Effects</h2></div></div>
             <div className="toggle-list">
-              <ToggleRow label="Keep text still" description="Center the message without scrolling" checked={isStaticText} onChange={(on) => { setIsStaticText(on); if (on) setIsWordFlash(false); }} />
-              <ToggleRow label="Flash one word at a time" description="Show each word separately at the chosen speed" checked={isWordFlash} onChange={(on) => { setIsWordFlash(on); if (on) setIsStaticText(false); }} />
+              <ToggleRow label="Flash one word at a time" description="Show each word separately at the chosen speed" checked={isWordFlash} onChange={setIsWordFlash} />
               {isWordFlash && <ToggleRow label="Auto-fit flashed words" description="Shrink long words so they stay on screen" checked={autoFitWords} onChange={setAutoFitWords} />}
               <ToggleRow label="Rainbow text" description="Cycle through vivid colors" checked={isRainbowText} onChange={(on) => on ? setRainbowText() : setTextColor(textColor)} />
               <ToggleRow label="Disco background" checked={isRainbowBackground} onChange={setRainbowBackground} />

@@ -10,7 +10,6 @@ const TextPreview: React.FC = () => {
     backgroundColor, 
     font, 
     scrollSpeed, 
-    isStaticText,
     isWordFlash,
     autoFitWords,
     isLandscape,
@@ -33,8 +32,8 @@ const TextPreview: React.FC = () => {
   const [currentScrollDuration, setCurrentScrollDuration] = useState(0);
   const [wordIndex, setWordIndex] = useState(0);
   
-  // Ten closely spaced levels. Level 1 matches the former level 7 speed.
-  const scrollDuration = 5.4 - ((scrollSpeed - 1) * 0.4);
+  // A wider ten-level range: comfortably slow at 1, still quick at 10.
+  const scrollDuration = 8 - ((scrollSpeed - 1) * 0.68);
   
   // Update duration when speed changes
   useEffect(() => {
@@ -85,7 +84,7 @@ const TextPreview: React.FC = () => {
   useEffect(() => {
     setWordIndex(0);
     if (!isWordFlash || words.length < 2) return;
-    const intervalMs = 1100 - ((scrollSpeed - 1) * 80);
+    const intervalMs = 1600 - ((scrollSpeed - 1) * 120);
     const timer = window.setInterval(() => setWordIndex((index) => (index + 1) % words.length), intervalMs);
     return () => window.clearInterval(timer);
   }, [isWordFlash, scrollSpeed, displayText, words.length]);
@@ -163,20 +162,20 @@ const TextPreview: React.FC = () => {
   `;
   
   const animationStyle = {
-    animation: isStaticText || isWordFlash
+    animation: isWordFlash
       ? (isRainbowText ? 'rainbowText 2s linear infinite' : undefined)
       : `previewScrollText ${currentScrollDuration}s linear infinite${isRainbowText ? ', rainbowText 2s linear infinite' : ''}`,
     position: 'absolute' as const,
     whiteSpace: 'nowrap' as const,
     color: isRainbowText ? undefined : textColor,
     fontSize: fittedFontSize,
-    lineHeight: isStaticText || isWordFlash ? '1.05' : '0.8',
+    lineHeight: isWordFlash ? '1.05' : '0.8',
     left: 0,
     top: '50%',
-    width: isStaticText || isWordFlash ? '100%' : 'max-content',
-    textAlign: isStaticText || isWordFlash ? 'center' as const : undefined,
-    transform: isStaticText || isWordFlash ? 'translateY(-50%)' : undefined,
-    overflow: isStaticText || isWordFlash ? 'visible' : undefined,
+    width: isWordFlash ? '100%' : 'max-content',
+    textAlign: isWordFlash ? 'center' as const : undefined,
+    transform: isWordFlash ? 'translateY(-50%)' : undefined,
+    overflow: isWordFlash ? 'visible' : undefined,
     zIndex: 10
   };
 
