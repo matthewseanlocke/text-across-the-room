@@ -36,7 +36,7 @@ const DisplayText: React.FC = () => {
   const isSiren = preset === 'siren' || isSirenMode;
   const isHeartbeat = preset === 'heartbeat' || isHeartbeatMode;
   
-  const [fontSize, setFontSize] = useState('120vh');
+  const [fontSize, setFontSize] = useState('78dvh');
   const containerRef = useRef<HTMLDivElement>(null);
   const [isContentReady, setIsContentReady] = useState(false);
   
@@ -62,7 +62,8 @@ const DisplayText: React.FC = () => {
       if (cancelled) return;
       const span = measureRef.current;
       if (!span) return;
-      const baseSize = window.innerHeight * (isLandscape ? 0.72 : 0.42);
+      const visibleHeight = window.visualViewport?.height ?? window.innerHeight;
+      const baseSize = visibleHeight * (isLandscape ? 0.76 : 0.42);
       span.style.fontSize = `${baseSize}px`;
       span.style.letterSpacing = spacingValue;
       span.style.fontFamily = textTreatment === 'pixel' ? '"Press Start 2P", monospace' : '';
@@ -85,7 +86,7 @@ const DisplayText: React.FC = () => {
   }, [shownText, font, textTreatment, isWordFlash, autoFitWords, isLandscape, spacingValue]);
 
   const fittedFullScreenFontSize = isWordFlash && autoFitWords
-    ? (fittedWordSize || (isLandscape ? '72vh' : '42vh'))
+    ? (fittedWordSize || fontSize)
     : fontSize;
 
   useEffect(() => {
@@ -111,11 +112,13 @@ const DisplayText: React.FC = () => {
   // Update font size based on window size and reset animation
   useEffect(() => {
     const updateFontSize = () => {
+      const visibleHeight = window.visualViewport?.height ?? window.innerHeight;
       if (isLandscape) {
-        setFontSize('120vh');
+        // Fit complete glyphs inside the portion of the screen visible above mobile browser chrome.
+        setFontSize(`${Math.floor(visibleHeight * 0.76)}px`);
       } else {
         // Keep portrait text readable without filling the screen height.
-        setFontSize(dualTextMode ? '32vh' : '42vh');
+        setFontSize(`${Math.floor(visibleHeight * (dualTextMode ? 0.32 : 0.42))}px`);
       }
       
       // Reset animations to ensure sync
@@ -124,9 +127,11 @@ const DisplayText: React.FC = () => {
 
     updateFontSize();
     window.addEventListener('resize', updateFontSize);
+    window.visualViewport?.addEventListener('resize', updateFontSize);
     
     return () => {
       window.removeEventListener('resize', updateFontSize);
+      window.visualViewport?.removeEventListener('resize', updateFontSize);
     };
   }, [isLandscape, dualTextMode]);
   

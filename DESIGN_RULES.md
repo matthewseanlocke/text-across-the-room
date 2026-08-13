@@ -75,3 +75,10 @@ When changing a preset, compare its tile against the live preview and full-scree
 - In mobile landscape, the live preview occupies the sticky left pane and the editor controls scroll in the right pane.
 - Landscape spacing must respect left and right device safe-area insets.
 - Do not rely on width alone to classify mobile landscape; real Safari viewports can fall below the tablet breakpoint while emulators do not.
+
+## Full-screen text fitting
+
+- Landscape text must fit complete glyphs within the visible viewport; never size it larger than the screen height.
+- Measure `window.visualViewport.height` when available so mobile Safari browser chrome is excluded.
+- Recalculate text size when either the window or visual viewport changes size.
+- Use roughly 76% of the visible landscape height as the base font size, leaving room for ascenders, descenders, outlines, and glow.
