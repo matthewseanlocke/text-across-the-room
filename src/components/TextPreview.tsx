@@ -69,14 +69,24 @@ const TextPreview: React.FC = () => {
       setFittedWordSize(null);
       return;
     }
-    const baseSize = container.clientHeight * 0.72;
-    span.style.fontSize = `${baseSize}px`;
-    span.style.letterSpacing = spacingValue;
-    span.style.fontFamily = textTreatment === 'pixel' ? '"Press Start 2P", monospace' : '';
-    span.style.fontWeight = textTreatment === 'pixel' ? '400' : '';
-    const measuredWidth = span.getBoundingClientRect().width;
-    const scale = measuredWidth > 0 ? Math.min(1, (container.clientWidth * 0.88) / measuredWidth) : 1;
-    setFittedWordSize(`${baseSize * scale}px`);
+    let cancelled = false;
+    const measureWord = () => {
+      if (cancelled) return;
+      const baseSize = container.clientHeight * 0.72;
+      span.style.fontSize = `${baseSize}px`;
+      span.style.letterSpacing = spacingValue;
+      span.style.fontFamily = textTreatment === 'pixel' ? '"Press Start 2P", monospace' : '';
+      span.style.fontWeight = textTreatment === 'pixel' ? '400' : '';
+      const measuredWidth = span.getBoundingClientRect().width;
+      const scale = measuredWidth > 0 ? Math.min(1, (container.clientWidth * 0.84) / measuredWidth) : 1;
+      setFittedWordSize(`${baseSize * scale}px`);
+    };
+
+    measureWord();
+    if (textTreatment === 'pixel' && 'fonts' in document) {
+      document.fonts.load('400 16px "Press Start 2P"').then(measureWord);
+    }
+    return () => { cancelled = true; };
   }, [shownText, font, textTreatment, isWordFlash, autoFitWords, previewWidth, spacingValue]);
 
   const fittedFontSize = isWordFlash && autoFitWords ? (fittedWordSize || fontSize) : fontSize;

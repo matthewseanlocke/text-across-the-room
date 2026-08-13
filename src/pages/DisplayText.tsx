@@ -57,7 +57,9 @@ const DisplayText: React.FC = () => {
       return;
     }
 
+    let cancelled = false;
     const measureWord = () => {
+      if (cancelled) return;
       const span = measureRef.current;
       if (!span) return;
       const baseSize = window.innerHeight * (isLandscape ? 0.72 : 0.42);
@@ -66,14 +68,20 @@ const DisplayText: React.FC = () => {
       span.style.fontFamily = textTreatment === 'pixel' ? '"Press Start 2P", monospace' : '';
       span.style.fontWeight = textTreatment === 'pixel' ? '400' : '';
       const measuredWidth = span.getBoundingClientRect().width;
-      const availableWidth = window.innerWidth * 0.88;
+      const availableWidth = window.innerWidth * 0.84;
       const scale = measuredWidth > 0 ? Math.min(1, availableWidth / measuredWidth) : 1;
       setFittedWordSize(`${baseSize * scale}px`);
     };
 
     measureWord();
+    if (textTreatment === 'pixel' && 'fonts' in document) {
+      document.fonts.load('400 16px "Press Start 2P"').then(measureWord);
+    }
     window.addEventListener('resize', measureWord);
-    return () => window.removeEventListener('resize', measureWord);
+    return () => {
+      cancelled = true;
+      window.removeEventListener('resize', measureWord);
+    };
   }, [shownText, font, textTreatment, isWordFlash, autoFitWords, isLandscape, spacingValue]);
 
   const fittedFullScreenFontSize = isWordFlash && autoFitWords
