@@ -16,7 +16,6 @@ const DisplayText: React.FC = () => {
     scrollSpeed, 
     setScrollSpeed,
     isWordFlash,
-    autoFitWords,
     tapToAdvanceWords,
     isLandscape,
     preset,
@@ -54,7 +53,7 @@ const DisplayText: React.FC = () => {
   const words = styledDisplayText.trim().split(/\s+/).filter(Boolean);
   const shownText = isWordFlash && words.length > 1 ? words[wordIndex % words.length] : styledDisplayText;
   useLayoutEffect(() => {
-    if (!isWordFlash || !autoFitWords || !measureRef.current) {
+    if (!isWordFlash || !measureRef.current) {
       setFittedWordSize(null);
       return;
     }
@@ -85,9 +84,9 @@ const DisplayText: React.FC = () => {
       cancelled = true;
       window.removeEventListener('resize', measureWord);
     };
-  }, [shownText, font, textTreatment, isWordFlash, autoFitWords, isLandscape, spacingValue]);
+  }, [shownText, font, textTreatment, isWordFlash, isLandscape, spacingValue]);
 
-  const fittedFullScreenFontSize = isWordFlash && autoFitWords
+  const fittedFullScreenFontSize = isWordFlash
     ? (fittedWordSize || fontSize)
     : fontSize;
 
@@ -378,7 +377,7 @@ const DisplayText: React.FC = () => {
         <X aria-hidden="true" />
       </button>
       <style dangerouslySetInnerHTML={{ __html: scrollTextKeyframes }} />
-      {isWordFlash && autoFitWords && (
+      {isWordFlash && (
         <span
           ref={measureRef}
           className={fontClasses[font]}

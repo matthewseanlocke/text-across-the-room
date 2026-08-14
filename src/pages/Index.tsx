@@ -47,7 +47,7 @@ const Index = () => {
   const {
     text, setText, textColor, setTextColor, backgroundColor, setBackgroundColor,
     font, setFont, letterSpacing, setLetterSpacing, textCase, setTextCase, textTreatment, setTextTreatment,
-    scrollSpeed, setScrollSpeed, isWordFlash, setIsWordFlash, autoFitWords, setAutoFitWords, tapToAdvanceWords, setTapToAdvanceWords, preset, applyPreset,
+    scrollSpeed, setScrollSpeed, isWordFlash, setIsWordFlash, tapToAdvanceWords, setTapToAdvanceWords, preset, applyPreset,
     darkMode, toggleDarkMode, dualTextMode, toggleDualTextMode,
   } = useTextDisplay();
 
@@ -149,7 +149,6 @@ const Index = () => {
             <div className="section-heading compact-heading"><span className="step-number"><Sparkles size={17} /></span><div><h2>Effects</h2></div></div>
             <div className="toggle-list">
               <ToggleRow label="Flash one word at a time" description="Show each word separately at the chosen speed" checked={isWordFlash} onChange={setIsWordFlash} />
-              {isWordFlash && <ToggleRow label="Auto-fit flashed words" description="Shrink long words so they stay on screen" checked={autoFitWords} onChange={setAutoFitWords} />}
               {isWordFlash && <ToggleRow label="Tap to advance words" description="Tap the display to show the next word" checked={tapToAdvanceWords} onChange={setTapToAdvanceWords} />}
               <ToggleRow label="Two rows in portrait" description="Fill tall phone screens" checked={dualTextMode} onChange={() => toggleDualTextMode()} />
             </div>

@@ -14,7 +14,6 @@ const TextPreview: React.FC = () => {
     textTreatment,
     scrollSpeed, 
     isWordFlash,
-    autoFitWords,
     tapToAdvanceWords,
     isLandscape,
     preset,
@@ -66,7 +65,7 @@ const TextPreview: React.FC = () => {
   useLayoutEffect(() => {
     const span = measureRef.current;
     const container = containerRef.current;
-    if (!isWordFlash || !autoFitWords || !span || !container) {
+    if (!isWordFlash || !span || !container) {
       setFittedWordSize(null);
       return;
     }
@@ -88,9 +87,9 @@ const TextPreview: React.FC = () => {
       document.fonts.load('400 16px "Press Start 2P"').then(measureWord);
     }
     return () => { cancelled = true; };
-  }, [shownText, font, textTreatment, isWordFlash, autoFitWords, previewWidth, spacingValue]);
+  }, [shownText, font, textTreatment, isWordFlash, previewWidth, spacingValue]);
 
-  const fittedFontSize = isWordFlash && autoFitWords ? (fittedWordSize || fontSize) : fontSize;
+  const fittedFontSize = isWordFlash ? (fittedWordSize || fontSize) : fontSize;
   const isHollow = textTreatment === 'outline' || textTreatment === 'hollow-glow' || textTreatment === 'double-outline';
   const treatmentShadow = {
     glow: '0 0 .14em currentColor, 0 0 .34em currentColor',
@@ -242,7 +241,7 @@ const TextPreview: React.FC = () => {
   return (
     <div className="text-preview w-full rounded-lg overflow-hidden border relative" ref={containerRef}>
       <style dangerouslySetInnerHTML={{ __html: scrollTextKeyframes }} />
-      {isWordFlash && autoFitWords && (
+      {isWordFlash && (
         <span ref={measureRef} className={fontClasses[font]} aria-hidden="true" style={{ position: 'fixed', left: '-10000px', top: '-10000px', visibility: 'hidden', whiteSpace: 'nowrap', pointerEvents: 'none', border: 0, textDecoration: 'none', textShadow: 'none', WebkitTextStroke: 0 }}>
           {shownText}
         </span>
