@@ -60,6 +60,16 @@ When changing a preset, compare its tile against the live preview and full-scree
 - Glow uses the active text color and must remain readable rather than becoming a large blurred haze.
 - Typography choices persist locally and apply identically to the editor preview and full-screen display.
 - Auto-fit measurements must include the active letter spacing.
+- On narrow portrait screens, stack each typography label above its control instead of using a compact label column.
+- Mobile typography buttons use at least a 46px height and 14px option labels for comfortable touch and reading; group labels use 15px type.
+- Long treatment names wrap normally instead of shrinking or overflowing.
+- Mobile section titles use 27px type, effect titles use 17px, and supporting descriptions use 14px.
+- Mobile effect rows and switches grow with the typography instead of crowding larger labels into desktop-sized controls.
+- Mobile subsection labels—including Color looks, Animated looks, Typeface, Spacing, Case, and Treatment—share the same 15px bold style.
+- Mobile helper copy uses 12px type, form controls use 15px type, and preset demo text uses a consistent 26px size.
+- Selected states change color, background, border, and weight—not font size—so options never appear typographically mismatched.
+- The mobile message input uses a 92px height, 26px message type, and generous padding so the app's primary action feels appropriately prominent.
+- Mobile treatments use two columns; never compress the full treatment list into three tiny columns.
 
 ## Splash screen
 
@@ -77,6 +87,10 @@ When changing a preset, compare its tile against the live preview and full-scree
 - Do not rely on width alone to classify mobile landscape; real Safari viewports can fall below the tablet breakpoint while emulators do not.
 
 ## Full-screen text fitting
+
+- Tapping the full-screen display highlights the close button with a brief red pulse and shake, teaching users how to exit without making accidental taps dismiss the display.
+- The close-button attention cue must restart on every display tap and respect reduced-motion preferences.
+- Speed-change feedback uses a large, high-contrast panel with an 18px label, prominent numeric badge, and thick progress track so it remains legible at phone-viewing distance.
 
 - Landscape text must fit complete glyphs within the visible viewport; never size it larger than the screen height.
 - Measure `window.visualViewport.height` when available so mobile Safari browser chrome is excluded.

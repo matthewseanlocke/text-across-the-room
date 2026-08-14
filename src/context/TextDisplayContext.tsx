@@ -20,6 +20,7 @@ interface PersistedSettings {
   scrollSpeed: number;
   isWordFlash: boolean;
   autoFitWords: boolean;
+  tapToAdvanceWords: boolean;
   preset: PresetType;
   isRainbowText: boolean;
   darkMode: boolean;
@@ -60,6 +61,8 @@ interface TextDisplayContextType {
   setIsWordFlash: (enabled: boolean) => void;
   autoFitWords: boolean;
   setAutoFitWords: (enabled: boolean) => void;
+  tapToAdvanceWords: boolean;
+  setTapToAdvanceWords: (enabled: boolean) => void;
   isLandscape: boolean;
   preset: PresetType;
   setPreset: (preset: PresetType) => void;
@@ -105,6 +108,8 @@ const defaultContext: TextDisplayContextType = {
   setIsWordFlash: () => {},
   autoFitWords: true,
   setAutoFitWords: () => {},
+  tapToAdvanceWords: false,
+  setTapToAdvanceWords: () => {},
   isLandscape: false,
   preset: "day",
   setPreset: () => {},
@@ -145,6 +150,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [scrollSpeed, setScrollSpeed] = useState<number>(savedSettings.scrollSpeed ?? defaultContext.scrollSpeed);
   const [isWordFlash, setIsWordFlash] = useState<boolean>(savedSettings.isWordFlash ?? defaultContext.isWordFlash);
   const [autoFitWords, setAutoFitWords] = useState<boolean>(savedSettings.autoFitWords ?? defaultContext.autoFitWords);
+  const [tapToAdvanceWords, setTapToAdvanceWords] = useState<boolean>(savedSettings.tapToAdvanceWords ?? defaultContext.tapToAdvanceWords);
   const [isLandscape, setIsLandscape] = useState<boolean>(defaultContext.isLandscape);
   const [preset, setPreset] = useState<PresetType>(savedSettings.preset ?? defaultContext.preset);
   const [isCapitalized, setIsCapitalized] = useState<boolean>(defaultContext.isCapitalized);
@@ -160,13 +166,13 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
   useEffect(() => {
     const settings: PersistedSettings = {
       text, textColor, backgroundColor, font, letterSpacing, textCase, textTreatment, scrollSpeed,
-      isWordFlash, autoFitWords, preset, isRainbowText, darkMode,
+      isWordFlash, autoFitWords, tapToAdvanceWords, preset, isRainbowText, darkMode,
       dualTextMode, isRainbowBackground, isLightningMode, isSirenMode,
       isHeartbeatMode,
     };
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
   }, [text, textColor, backgroundColor, font, letterSpacing, textCase, textTreatment, scrollSpeed,
-    isWordFlash, autoFitWords, preset, isRainbowText, darkMode,
+    isWordFlash, autoFitWords, tapToAdvanceWords, preset, isRainbowText, darkMode,
     dualTextMode, isRainbowBackground, isLightningMode, isSirenMode,
     isHeartbeatMode]);
 
@@ -366,6 +372,8 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setIsWordFlash,
         autoFitWords,
         setAutoFitWords,
+        tapToAdvanceWords,
+        setTapToAdvanceWords,
         isLandscape,
         preset,
         setPreset,

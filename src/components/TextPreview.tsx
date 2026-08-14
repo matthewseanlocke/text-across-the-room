@@ -15,6 +15,7 @@ const TextPreview: React.FC = () => {
     scrollSpeed, 
     isWordFlash,
     autoFitWords,
+    tapToAdvanceWords,
     isLandscape,
     preset,
     isRainbowText,
@@ -61,7 +62,7 @@ const TextPreview: React.FC = () => {
   const styledDisplayText = textCase === 'uppercase' ? displayText.toUpperCase() : displayText;
   const spacingValue = letterSpacing === 'tight' ? '-0.04em' : letterSpacing === 'wide' ? '0.12em' : '0em';
   const words = styledDisplayText.trim().split(/\s+/).filter(Boolean);
-  const shownText = isWordFlash && words.length > 1 ? words[wordIndex % words.length] : displayText;
+  const shownText = isWordFlash && words.length > 1 ? words[wordIndex % words.length] : styledDisplayText;
   useLayoutEffect(() => {
     const span = measureRef.current;
     const container = containerRef.current;
@@ -107,13 +108,13 @@ const TextPreview: React.FC = () => {
 
   useEffect(() => {
     setWordIndex(0);
-    if (!isWordFlash || words.length < 2) return;
+    if (!isWordFlash || tapToAdvanceWords || words.length < 2) return;
     const intervalMs = scrollSpeed <= 10
       ? 1600 - ((scrollSpeed - 1) * 120)
       : 520 - ((scrollSpeed - 10) * 60);
     const timer = window.setInterval(() => setWordIndex((index) => (index + 1) % words.length), intervalMs);
     return () => window.clearInterval(timer);
-  }, [isWordFlash, scrollSpeed, displayText, words.length]);
+  }, [isWordFlash, tapToAdvanceWords, scrollSpeed, styledDisplayText, words.length]);
   const isParty = preset === 'party';
   const isDisco = preset === 'disco' || isRainbowBackground;
   const isLightning = preset === 'lightning' || isLightningMode;

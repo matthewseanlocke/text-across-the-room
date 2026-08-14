@@ -2,6 +2,7 @@ import React, { useEffect, useLayoutEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTextDisplay } from '@/context/TextDisplayContext';
 import { cn } from '@/lib/utils';
+import { X } from 'lucide-react';
 
 const DisplayText: React.FC = () => {
   const { 
@@ -16,6 +17,7 @@ const DisplayText: React.FC = () => {
     setScrollSpeed,
     isWordFlash,
     autoFitWords,
+    tapToAdvanceWords,
     isLandscape,
     preset,
     isRainbowText,
@@ -50,7 +52,7 @@ const DisplayText: React.FC = () => {
     : 2.1 - ((scrollSpeed - 10) * 0.28);
 
   const words = styledDisplayText.trim().split(/\s+/).filter(Boolean);
-  const shownText = isWordFlash && words.length > 1 ? words[wordIndex % words.length] : displayText;
+  const shownText = isWordFlash && words.length > 1 ? words[wordIndex % words.length] : styledDisplayText;
   useLayoutEffect(() => {
     if (!isWordFlash || !autoFitWords || !measureRef.current) {
       setFittedWordSize(null);
@@ -91,13 +93,13 @@ const DisplayText: React.FC = () => {
 
   useEffect(() => {
     setWordIndex(0);
-    if (!isWordFlash || words.length < 2) return;
+    if (!isWordFlash || tapToAdvanceWords || words.length < 2) return;
     const intervalMs = scrollSpeed <= 10
       ? 1600 - ((scrollSpeed - 1) * 120)
       : 520 - ((scrollSpeed - 10) * 60);
     const timer = window.setInterval(() => setWordIndex((index) => (index + 1) % words.length), intervalMs);
     return () => window.clearInterval(timer);
-  }, [isWordFlash, scrollSpeed, displayText, words.length]);
+  }, [isWordFlash, tapToAdvanceWords, scrollSpeed, styledDisplayText, words.length]);
   
   // Animation key to force reset on rotation
   const [animationKey, setAnimationKey] = useState(Date.now());
@@ -108,6 +110,7 @@ const DisplayText: React.FC = () => {
   const didSpeedSwipeRef = useRef(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedbackTimeout, setFeedbackTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [closeAttentionKey, setCloseAttentionKey] = useState(0);
   
   // Update font size based on window size and reset animation
   useEffect(() => {
@@ -353,13 +356,27 @@ const DisplayText: React.FC = () => {
           didSpeedSwipeRef.current = false;
           return;
         }
-        // Navigate back to options page without resetting scroll
-        navigate('/options', { replace: true });
+        if (isWordFlash && tapToAdvanceWords && words.length > 1) {
+          setWordIndex((index) => (index + 1) % words.length);
+        }
+        setCloseAttentionKey((key) => key + 1);
       }}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
+      <button
+        key={closeAttentionKey}
+        type="button"
+        className={cn('display-close-button', closeAttentionKey > 0 && 'display-close-button-attention')}
+        aria-label="Close full-screen display"
+        onClick={(event) => {
+          event.stopPropagation();
+          navigate('/options', { replace: true });
+        }}
+      >
+        <X aria-hidden="true" />
+      </button>
       <style dangerouslySetInnerHTML={{ __html: scrollTextKeyframes }} />
       {isWordFlash && autoFitWords && (
         <span
@@ -432,12 +449,12 @@ const DisplayText: React.FC = () => {
       
       {/* Speed change feedback */}
       {showFeedback && (
-        <div className="fixed bottom-10 left-0 right-0 flex justify-center pointer-events-none">
-          <div className="bg-black/70 text-white px-6 py-3 rounded-full flex items-center space-x-4">
-            <div className="text-sm">Speed: {scrollSpeed}</div>
-            <div className="w-32 h-2 bg-white/30 rounded-full">
+        <div className="display-speed-feedback-wrap">
+          <div className="display-speed-feedback">
+            <div className="display-speed-label">Speed <strong>{scrollSpeed}</strong></div>
+            <div className="display-speed-track">
               <div 
-                className="h-full bg-white rounded-full"
+                className="display-speed-fill"
                 style={{ width: `${(scrollSpeed - 1) / 14 * 100}%` }}
               ></div>
             </div>
