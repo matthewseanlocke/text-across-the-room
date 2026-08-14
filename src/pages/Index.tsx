@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check, ChevronDown, MessageSquareText, Moon, Sparkles, Sun, X } from 'lucide-react';
 import ColorPicker from '@/components/ColorPicker';
@@ -52,7 +52,14 @@ const Index = () => {
     hasBlackOutline, setHasBlackOutline, hasShadow, setHasShadow, hasGlow, setHasGlow,
     scrollSpeed, setScrollSpeed, isWordFlash, setIsWordFlash, tapToAdvanceWords, setTapToAdvanceWords, preset, applyPreset,
     darkMode, toggleDarkMode, dualTextMode, toggleDualTextMode, disableAnimatedLook,
+    scrollPosition, setScrollPosition,
   } = useTextDisplay();
+
+  useLayoutEffect(() => {
+    if (scrollPosition <= 0) return;
+    const frame = window.requestAnimationFrame(() => window.scrollTo({ top: scrollPosition, behavior: 'instant' }));
+    return () => window.cancelAnimationFrame(frame);
+  }, [scrollPosition]);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode);
@@ -78,6 +85,11 @@ const Index = () => {
       {preset === item.id && <Check size={16} aria-hidden="true" />}
     </button>
   );
+
+  const openDisplay = () => {
+    setScrollPosition(window.scrollY);
+    navigate('/display');
+  };
 
   return (
     <main className="studio-shell">
@@ -211,7 +223,7 @@ const Index = () => {
         <aside className="preview-column">
           <div className="preview-sticky">
             <div className="preview-label"><span>LIVE PREVIEW</span><span className="live-dot" /> Ready</div>
-            <button className="preview-frame" type="button" onClick={() => navigate('/display')} disabled={!text.trim()} aria-label="Display message full screen">
+            <button className="preview-frame" type="button" onClick={openDisplay} disabled={!text.trim()} aria-label="Display message full screen">
               <TextPreview />
             </button>
           </div>
