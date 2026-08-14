@@ -217,10 +217,9 @@
   .preset-tile[data-preset="lightning"] .preset-demo-text { color:#fff; text-shadow:none; }
   .preset-tile[data-preset="siren"] .preset-demo-text,
   .preset-tile[data-preset="heartbeat"] .preset-demo-text { color:#fff; }
-  .preset-tile[data-preset="usa"] .preset-demo-text { color:#ef4444; text-shadow:0 0 10px currentColor; }
+  .preset-tile[data-preset="usa"] .preset-demo-text { color:transparent; background:linear-gradient(90deg,#c8102e 0 33%,#fff 33% 66%,#003da5 66% 100%); background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-shadow:none; }
   .animations-on .preset-tile[data-preset="siren"] .preset-swatch { animation:preset-siren 1.2s steps(1,end) infinite; }
   .animations-on .preset-tile[data-preset="heartbeat"] .preset-swatch { animation:preset-heartbeat 1.5s ease-in-out infinite; }
-  .animations-on .preset-tile[data-preset="usa"] .preset-demo-text { animation:preset-usa-text 1.8s steps(1,end) infinite; }
   .animations-on .preset-tile[data-preset="lightning"] .preset-demo-text { animation:preset-lightning-text 1.8s steps(1,end) infinite; }
   @keyframes preset-disco { 0%{background:#f00} 16.6%{background:#ff0} 33.3%{background:#0f0} 50%{background:#0ff} 66.6%{background:#00f} 83.3%{background:#f0f} 100%{background:#f00} }
   @keyframes preset-lightning { 0%,84%,91%,96%,100%{background:#000} 85%,90%,92%,95%,97%,99%{background:#fff} }
@@ -228,7 +227,6 @@
   @keyframes preset-lightning-text { 0%,84%,91%,96%,100%{color:#fff} 85%,90%,92%,95%,97%,99%{color:#000} }
   @keyframes preset-siren { 0%,35%{background:#0000ff} 36%,44%{background:#fff} 45%,80%{background:#ff0000} 81%,89%{background:#fff} 90%,100%{background:#000} }
   @keyframes preset-heartbeat { 0%,100%{background:#800000;transform:scale(1)} 15%,45%{background:#ff0000;transform:scale(1.04)} 30%,60%{background:#800000;transform:scale(1)} }
-  @keyframes preset-usa-text { 0%,33.32%{color:#ef4444} 33.33%,66.65%{color:#fff} 66.66%,100%{color:#3b82f6} }
   .dark .preset-tile { background:#0b1220; border-color:#2b3850; color:#dbe2ee; }
   .text-style-controls { display:grid; gap:9px; margin-top:14px; }
   .text-style-row { display:grid; grid-template-columns:76px minmax(0,1fr); align-items:center; gap:10px; }

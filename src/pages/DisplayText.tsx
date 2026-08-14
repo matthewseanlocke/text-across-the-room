@@ -243,12 +243,6 @@ const DisplayText: React.FC = () => {
       100% { color: #ff0000; }
     }
 
-    @keyframes usaWordCycle {
-      0%, 33.32% { color: #ef4444; }
-      33.33%, 66.65% { color: #ffffff; }
-      66.66%, 100% { color: #3b82f6; }
-    }
-    
     @keyframes rainbowBackground {
       0% { background-color: #ff0000; }
       16.6% { background-color: #ffff00; }
@@ -377,11 +371,12 @@ const DisplayText: React.FC = () => {
       }}
     >
       {isUsa ? (() => {
+        const usaColors = ['#c8102e', '#ffffff', '#003da5'];
         let wordPosition = 0;
         return shownText.split(/(\s+)/).map((part, index) => {
           if (/^\s+$/.test(part)) return part;
           const colorIndex = wordPosition++ + (isWordFlash ? wordIndex : 0);
-          return <span key={`${part}-${index}`} style={{ animation: 'usaWordCycle 1.8s steps(1,end) infinite', animationDelay: `${colorIndex * -0.6}s` }}>{part}</span>;
+          return <span key={`${part}-${index}`} style={{ color: usaColors[colorIndex % usaColors.length] }}>{part}</span>;
         });
       })() : shownText}
     </span>
