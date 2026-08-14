@@ -61,6 +61,7 @@ When changing a preset, compare its tile against the live preview and full-scree
 - Typography choices persist locally and apply identically to the editor preview and full-screen display.
 - Auto-fit measurements must include the active letter spacing.
 - Flash one word at a time always auto-fits each word in both the preview and full-screen display; do not expose a separate auto-fit setting.
+- Emoji-only flashed words receive a small optical upward adjustment in the editor preview because native color-emoji fonts include extra space below the visible glyph.
 - On narrow portrait screens, stack each typography label above its control instead of using a compact label column.
 - Mobile typography buttons use at least a 46px height and 14px option labels for comfortable touch and reading; group labels use 15px type.
 - Long treatment names wrap normally instead of shrinking or overflowing.

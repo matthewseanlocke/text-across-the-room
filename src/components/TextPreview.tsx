@@ -62,6 +62,7 @@ const TextPreview: React.FC = () => {
   const spacingValue = letterSpacing === 'tight' ? '-0.04em' : letterSpacing === 'wide' ? '0.12em' : '0em';
   const words = styledDisplayText.trim().split(/\s+/).filter(Boolean);
   const shownText = isWordFlash && words.length > 1 ? words[wordIndex % words.length] : styledDisplayText;
+  const isEmojiOnly = shownText.trim().length > 0 && /^(?:\p{Extended_Pictographic}|\p{Emoji_Component}|\uFE0F|\u200D)+$/u.test(shownText.trim());
   useLayoutEffect(() => {
     const span = measureRef.current;
     const container = containerRef.current;
@@ -209,7 +210,7 @@ const TextPreview: React.FC = () => {
     top: '50%',
     width: isWordFlash ? '100%' : 'max-content',
     textAlign: isWordFlash ? 'center' as const : undefined,
-    transform: isWordFlash ? 'translateY(-50%)' : undefined,
+    transform: isWordFlash ? `translateY(${isEmojiOnly ? '-59%' : '-50%'})` : undefined,
     overflow: isWordFlash ? 'visible' : undefined,
     zIndex: 10,
     '--preview-start': `${previewWidth}px`

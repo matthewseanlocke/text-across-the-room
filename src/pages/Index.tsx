@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, ChevronDown, MessageSquareText, Moon, Sparkles, Sun } from 'lucide-react';
+import { Check, ChevronDown, MessageSquareText, Moon, Sparkles, Sun, X } from 'lucide-react';
 import ColorPicker from '@/components/ColorPicker';
 import SpeedSlider from '@/components/SpeedSlider';
 import TextPreview from '@/components/TextPreview';
@@ -88,7 +88,8 @@ const Index = () => {
             <div className="section-heading compact-heading"><span className="step-number">1</span><div><h2>Write your message</h2></div></div>
             <div className="message-input-wrap">
               <input id="text-input" value={text} maxLength={80} onChange={(event) => setText(event.target.value)} placeholder="Type something bold…" autoComplete="off" />
-              <span>{text.length}/80</span>
+              {text && <button type="button" className="clear-message-button" onClick={() => setText('')} aria-label="Clear message" title="Clear message"><X size={18} /></button>}
+              <span className="message-count">{text.length}/80</span>
             </div>
             <SpeedSlider value={scrollSpeed} onChange={setScrollSpeed} />
             <div className={`quick-heading ${showAllMessages ? 'is-open' : ''}`}>
