@@ -5,10 +5,13 @@ These decisions define the app's visual language and should be preserved during 
 ## Effect preset tiles
 
 - Presets are visual preview tiles, not labeled menu items. Do not show the preset name inside a tile.
-- Every tile contains the same bold `TEXT` sample so users can compare readability at a glance.
+- Static color-look tiles use the same bold `TEXT` sample for direct comparison.
+- Animated tiles use short descriptive samples: `RAINBOW`, `RAINBOW`, `LIGHTNING`, `POLICE`, `HEARTBEAT`, and `USA`.
+- Descriptive samples must shrink as needed to remain on one line inside the tile.
 - Keep the preset name in `aria-label` and `title` attributes for accessibility and discovery.
 - The selected tile retains a visible checkmark and selection outline.
-- Animate an effect tile only while it is selected. Unselected tiles show a representative still frame.
+- Animate every animated-look tile continuously so users can compare behaviors before selecting one.
+- Respect `prefers-reduced-motion` by showing representative still frames instead.
 - A tile must demonstrate the real preset behavior. Do not substitute decorative gradients, stripes, icons, or unrelated animation.
 
 ## Preset appearance
@@ -55,7 +58,9 @@ When changing a preset, compare its tile against the live preview and full-scree
 - Typography controls live beside Typeface, not in Effects.
 - Spacing offers three intentional choices: Tight (`-0.04em`), Normal (`0`), and Wide (`0.12em`).
 - Case offers As typed and UPPERCASE; never rewrite the user's saved message when changing case.
-- Treatment offers Solid, Outline, and Glow. Solid remains the default.
+- Treatment contains mutually exclusive structural styles; Solid remains the default.
+- Black outline, Shadow, and Glow are independent finishing toggles that can stack with any treatment.
+- Double outline is not offered.
 - Outline uses the active text color as its stroke with a transparent fill.
 - Glow uses the active text color and must remain readable rather than becoming a large blurred haze.
 - Typography choices persist locally and apply identically to the editor preview and full-screen display.

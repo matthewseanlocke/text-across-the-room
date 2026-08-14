@@ -1,11 +1,11 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
-type FontOption = 'display' | 'handwriting' | 'monospace' | 'serif';
+type FontOption = 'display' | 'handwriting' | 'monospace' | 'serif' | 'condensed' | 'rounded' | 'arcade' | 'varsity';
 type LetterSpacingOption = 'tight' | 'normal' | 'wide';
 type TextCaseOption = 'typed' | 'uppercase';
 type TextTreatmentOption = 'solid' | 'outline' | 'black-outline' | 'glow' | 'shadow' | 'chrome' | 'split' | 'hollow-glow' | 'double-outline' | 'retro-3d' | '3d-glasses' | 'pixel';
 
-type PresetType = 'day' | 'night' | 'emergency' | 'party' | 'disco' | 'lightning' | 'siren' | 'heartbeat' | 'custom';
+type PresetType = 'day' | 'night' | 'emergency' | 'party' | 'disco' | 'lightning' | 'siren' | 'heartbeat' | 'usa' | 'custom';
 
 const STORAGE_KEY = 'text-across-the-room-settings';
 
@@ -17,6 +17,9 @@ interface PersistedSettings {
   letterSpacing: LetterSpacingOption;
   textCase: TextCaseOption;
   textTreatment: TextTreatmentOption;
+  hasBlackOutline: boolean;
+  hasShadow: boolean;
+  hasGlow: boolean;
   scrollSpeed: number;
   isWordFlash: boolean;
   tapToAdvanceWords: boolean;
@@ -54,6 +57,12 @@ interface TextDisplayContextType {
   setTextCase: (textCase: TextCaseOption) => void;
   textTreatment: TextTreatmentOption;
   setTextTreatment: (treatment: TextTreatmentOption) => void;
+  hasBlackOutline: boolean;
+  setHasBlackOutline: (enabled: boolean) => void;
+  hasShadow: boolean;
+  setHasShadow: (enabled: boolean) => void;
+  hasGlow: boolean;
+  setHasGlow: (enabled: boolean) => void;
   scrollSpeed: number;
   setScrollSpeed: (speed: number) => void;
   isWordFlash: boolean;
@@ -64,6 +73,7 @@ interface TextDisplayContextType {
   preset: PresetType;
   setPreset: (preset: PresetType) => void;
   applyPreset: (preset: PresetType) => void;
+  disableAnimatedLook: () => void;
   isCapitalized: boolean;
   setIsCapitalized: (capitalized: boolean) => void;
   setRainbowText: () => void;
@@ -99,6 +109,12 @@ const defaultContext: TextDisplayContextType = {
   setTextCase: () => {},
   textTreatment: "solid",
   setTextTreatment: () => {},
+  hasBlackOutline: false,
+  setHasBlackOutline: () => {},
+  hasShadow: false,
+  setHasShadow: () => {},
+  hasGlow: false,
+  setHasGlow: () => {},
   scrollSpeed: 1,
   setScrollSpeed: () => {},
   isWordFlash: false,
@@ -109,6 +125,7 @@ const defaultContext: TextDisplayContextType = {
   preset: "day",
   setPreset: () => {},
   applyPreset: () => {},
+  disableAnimatedLook: () => {},
   isCapitalized: true,
   setIsCapitalized: () => {},
   setRainbowText: () => {},
@@ -141,7 +158,13 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [font, setFont] = useState<FontOption>(savedSettings.font ?? defaultContext.font);
   const [letterSpacing, setLetterSpacing] = useState<LetterSpacingOption>(savedSettings.letterSpacing ?? defaultContext.letterSpacing);
   const [textCase, setTextCase] = useState<TextCaseOption>(savedSettings.textCase ?? defaultContext.textCase);
-  const [textTreatment, setTextTreatment] = useState<TextTreatmentOption>(savedSettings.textTreatment ?? defaultContext.textTreatment);
+  const [textTreatment, setTextTreatment] = useState<TextTreatmentOption>(() => {
+    const saved = savedSettings.textTreatment;
+    return saved === 'black-outline' || saved === 'shadow' || saved === 'glow' || saved === 'double-outline' ? 'solid' : (saved ?? defaultContext.textTreatment);
+  });
+  const [hasBlackOutline, setHasBlackOutline] = useState(savedSettings.hasBlackOutline ?? (savedSettings.textTreatment === 'black-outline' || savedSettings.textTreatment === 'double-outline'));
+  const [hasShadow, setHasShadow] = useState(savedSettings.hasShadow ?? savedSettings.textTreatment === 'shadow');
+  const [hasGlow, setHasGlow] = useState(savedSettings.hasGlow ?? savedSettings.textTreatment === 'glow');
   const [scrollSpeed, setScrollSpeed] = useState<number>(savedSettings.scrollSpeed ?? defaultContext.scrollSpeed);
   const [isWordFlash, setIsWordFlash] = useState<boolean>(savedSettings.isWordFlash ?? defaultContext.isWordFlash);
   const [tapToAdvanceWords, setTapToAdvanceWords] = useState<boolean>(savedSettings.tapToAdvanceWords ?? defaultContext.tapToAdvanceWords);
@@ -159,13 +182,13 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   useEffect(() => {
     const settings: PersistedSettings = {
-      text, textColor, backgroundColor, font, letterSpacing, textCase, textTreatment, scrollSpeed,
+      text, textColor, backgroundColor, font, letterSpacing, textCase, textTreatment, hasBlackOutline, hasShadow, hasGlow, scrollSpeed,
       isWordFlash, tapToAdvanceWords, preset, isRainbowText, darkMode,
       dualTextMode, isRainbowBackground, isLightningMode, isSirenMode,
       isHeartbeatMode,
     };
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-  }, [text, textColor, backgroundColor, font, letterSpacing, textCase, textTreatment, scrollSpeed,
+  }, [text, textColor, backgroundColor, font, letterSpacing, textCase, textTreatment, hasBlackOutline, hasShadow, hasGlow, scrollSpeed,
     isWordFlash, tapToAdvanceWords, preset, isRainbowText, darkMode,
     dualTextMode, isRainbowBackground, isLightningMode, isSirenMode,
     isHeartbeatMode]);
@@ -337,10 +360,28 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setIsHeartbeatMode(true); // This one should be true for heartbeat
         // Keep current scroll speed and text effects
         break;
+      case 'usa':
+        setTextColor('#ffffff');
+        setBackgroundColor('#000000');
+        setIsRainbowText(false);
+        setIsRainbowBackground(false);
+        setIsLightningMode(false);
+        setIsSirenMode(false);
+        setIsHeartbeatMode(false);
+        break;
       case 'custom':
         // Keep current settings - do not modify anything
         break;
     }
+  };
+
+  const disableAnimatedLook = () => {
+    setPreset('custom');
+    setIsRainbowText(false);
+    setIsRainbowBackground(false);
+    setIsLightningMode(false);
+    setIsSirenMode(false);
+    setIsHeartbeatMode(false);
   };
 
   return (
@@ -360,6 +401,12 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setTextCase,
         textTreatment,
         setTextTreatment,
+        hasBlackOutline,
+        setHasBlackOutline,
+        hasShadow,
+        setHasShadow,
+        hasGlow,
+        setHasGlow,
         scrollSpeed,
         setScrollSpeed,
         isWordFlash,
@@ -370,6 +417,7 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
         preset,
         setPreset,
         applyPreset,
+        disableAnimatedLook,
         isCapitalized,
         setIsCapitalized,
         setRainbowText,

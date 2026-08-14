@@ -5,17 +5,19 @@ import { Label } from "@/components/ui/label";
 interface SpeedSliderProps {
   value: number;
   onChange: (value: number) => void;
+  label?: string;
+  disabled?: boolean;
 }
 
-const SpeedSlider: React.FC<SpeedSliderProps> = ({ value, onChange }) => {
+const SpeedSlider: React.FC<SpeedSliderProps> = ({ value, onChange, label = 'Scroll speed', disabled = false }) => {
   const handleChange = (newValue: number[]) => {
     onChange(newValue[0]);
   };
 
   return (
-    <div className="speed-control space-y-4">
+    <div className={`speed-control space-y-4 ${disabled ? 'is-disabled' : ''}`} aria-disabled={disabled}>
       <div className="space-y-2">
-        <Label htmlFor="speed-slider" className="field-label dark:text-gray-300">Scroll speed</Label>
+        <Label htmlFor="speed-slider" className="field-label dark:text-gray-300">{label}</Label>
         <div className="flex items-center space-x-4">
           <span className="speed-end dark:text-gray-300">Slow</span>
           <Slider
@@ -25,6 +27,7 @@ const SpeedSlider: React.FC<SpeedSliderProps> = ({ value, onChange }) => {
             step={1}
             value={[value]}
             onValueChange={handleChange}
+            disabled={disabled}
             className="flex-1"
           />
           <span className="speed-end dark:text-gray-300">Fast</span>

@@ -102,9 +102,13 @@ export default {
 			},
 			fontFamily: {
 				'display': ['Arial', 'sans-serif'],
-				'handwriting': ['Brush Script MT', 'cursive'],
+				'handwriting': ['Permanent Marker', 'Brush Script MT', 'cursive'],
 				'monospace': ['Courier New', 'monospace'],
-				'serif': ['Times New Roman', 'serif']
+				'serif': ['Times New Roman', 'serif'],
+				'condensed': ['Black Ops One', 'Impact', 'sans-serif'],
+				'rounded': ['Fredoka', 'Arial Rounded MT Bold', 'sans-serif'],
+				'arcade': ['Bungee', 'Impact', 'sans-serif'],
+				'varsity': ['Graduate', 'Rockwell', 'serif']
 			}
 		}
 	},

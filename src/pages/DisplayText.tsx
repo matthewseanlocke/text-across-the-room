@@ -13,6 +13,9 @@ const DisplayText: React.FC = () => {
     letterSpacing,
     textCase,
     textTreatment,
+    hasBlackOutline,
+    hasShadow,
+    hasGlow,
     scrollSpeed, 
     setScrollSpeed,
     isWordFlash,
@@ -32,6 +35,7 @@ const DisplayText: React.FC = () => {
   const styledDisplayText = textCase === 'uppercase' ? displayText.toUpperCase() : displayText;
   const spacingValue = letterSpacing === 'tight' ? '-0.04em' : letterSpacing === 'wide' ? '0.12em' : '0em';
   const isParty = preset === 'party';
+  const isUsa = preset === 'usa';
   const isDisco = preset === 'disco' || isRainbowBackground;
   const isLightning = preset === 'lightning' || isLightningMode;
   const isSiren = preset === 'siren' || isSirenMode;
@@ -150,11 +154,17 @@ const DisplayText: React.FC = () => {
   // Handle touch events for swipe gestures
   const handleTouchStart = (e: React.TouchEvent) => {
     didSpeedSwipeRef.current = false;
+    if (isWordFlash && tapToAdvanceWords) {
+      setTouchStartX(null);
+      setTouchStartY(null);
+      return;
+    }
     setTouchStartX(e.touches[0].clientX);
     setTouchStartY(e.touches[0].clientY);
   };
   
   const handleTouchMove = (e: React.TouchEvent) => {
+    if (isWordFlash && tapToAdvanceWords) return;
     if (touchStartX === null || touchStartY === null) return;
     
     const touchX = e.touches[0].clientX;
@@ -210,6 +220,10 @@ const DisplayText: React.FC = () => {
     handwriting: 'font-handwriting',
     monospace: 'font-monospace',
     serif: 'font-serif',
+    condensed: 'font-condensed',
+    rounded: 'font-rounded',
+    arcade: 'font-arcade',
+    varsity: 'font-varsity',
   };
   
   // Create animation styles directly
@@ -227,6 +241,12 @@ const DisplayText: React.FC = () => {
       66.6% { color: #0000ff; }
       83.3% { color: #ff00ff; }
       100% { color: #ff0000; }
+    }
+
+    @keyframes usaWordCycle {
+      0%, 33.32% { color: #ef4444; }
+      33.33%, 66.65% { color: #ffffff; }
+      66.66%, 100% { color: #3b82f6; }
     }
     
     @keyframes rainbowBackground {
@@ -273,15 +293,17 @@ const DisplayText: React.FC = () => {
     }
   `;
   
-  const isHollow = textTreatment === 'outline' || textTreatment === 'hollow-glow' || textTreatment === 'double-outline';
+  const isHollow = textTreatment === 'outline' || textTreatment === 'hollow-glow';
   const treatmentShadow = {
-    glow: '0 0 .14em currentColor, 0 0 .34em currentColor',
-    shadow: '.07em .09em .02em rgba(0,0,0,.7)',
     'hollow-glow': '0 0 .12em currentColor, 0 0 .28em currentColor',
-    'double-outline': '.045em .045em 0 #000, -.045em -.045em 0 #000, .08em .08em 0 currentColor',
     'retro-3d': '.035em .035em 0 #ff3b81, .07em .07em 0 #5b5ce2, .105em .105em 0 #16c7d9',
     '3d-glasses': '-.055em 0 0 rgba(255,32,32,.9), .055em 0 0 rgba(0,220,255,.9)',
   }[textTreatment];
+  const combinedShadow = [
+    treatmentShadow,
+    hasShadow ? '.07em .09em .02em rgba(0,0,0,.7)' : undefined,
+    hasGlow ? '0 0 .14em currentColor, 0 0 .34em currentColor' : undefined,
+  ].filter(Boolean).join(', ') || undefined;
   const treatmentGradient = textTreatment === 'chrome'
     ? 'linear-gradient(180deg,#fff 0%,#9ca3af 38%,#fff 50%,#4b5563 55%,#e5e7eb 100%)'
     : textTreatment === 'split'
@@ -300,9 +322,9 @@ const DisplayText: React.FC = () => {
     fontFamily: textTreatment === 'pixel' ? '"Press Start 2P", monospace' : undefined,
     fontWeight: textTreatment === 'pixel' ? 400 : undefined,
     letterSpacing: spacingValue,
-    WebkitTextStroke: textTreatment === 'black-outline' ? '0.025em #000' : isHollow ? (textTreatment === 'double-outline' ? '0.07em currentColor' : '0.045em currentColor') : undefined,
+    WebkitTextStroke: hasBlackOutline ? '0.025em #000' : isHollow ? '0.045em currentColor' : undefined,
     WebkitTextFillColor: isHollow || treatmentGradient ? 'transparent' : undefined,
-    textShadow: treatmentShadow,
+    textShadow: combinedShadow,
     backgroundImage: treatmentGradient,
     WebkitBackgroundClip: treatmentGradient ? 'text' : undefined,
     backgroundClip: treatmentGradient ? 'text' : undefined,
@@ -345,6 +367,26 @@ const DisplayText: React.FC = () => {
   // Only render text content if there is text to display
   const renderTextContent = displayText.trim().length > 0;
 
+  const renderInteractiveText = () => (
+    <span
+      style={{ display: 'inline-block', cursor: isWordFlash && tapToAdvanceWords ? 'pointer' : 'inherit' }}
+      onClick={(event) => {
+        if (!isWordFlash || !tapToAdvanceWords || words.length < 2) return;
+        event.stopPropagation();
+        setWordIndex((index) => (index + 1) % words.length);
+      }}
+    >
+      {isUsa ? (() => {
+        let wordPosition = 0;
+        return shownText.split(/(\s+)/).map((part, index) => {
+          if (/^\s+$/.test(part)) return part;
+          const colorIndex = wordPosition++ + (isWordFlash ? wordIndex : 0);
+          return <span key={`${part}-${index}`} style={{ animation: 'usaWordCycle 1.8s steps(1,end) infinite', animationDelay: `${colorIndex * -0.6}s` }}>{part}</span>;
+        });
+      })() : shownText}
+    </span>
+  );
+
   return (
     <div 
       ref={containerRef}
@@ -354,9 +396,6 @@ const DisplayText: React.FC = () => {
         if (didSpeedSwipeRef.current) {
           didSpeedSwipeRef.current = false;
           return;
-        }
-        if (isWordFlash && tapToAdvanceWords && words.length > 1) {
-          setWordIndex((index) => (index + 1) % words.length);
         }
         setCloseAttentionKey((key) => key + 1);
       }}
@@ -401,7 +440,7 @@ const DisplayText: React.FC = () => {
               top: '50%'
             }}
           >
-            {shownText}
+            {renderInteractiveText()}
           </div>
         ) : renderTextContent && !isLandscape ? (
           // Portrait mode - show one or two rows of text based on dualTextMode setting
@@ -415,7 +454,7 @@ const DisplayText: React.FC = () => {
                 )}
                 style={topTextStyle}
               >
-                {shownText}
+                {renderInteractiveText()}
               </div>
               <div 
                 className={cn(
@@ -424,7 +463,7 @@ const DisplayText: React.FC = () => {
                 )}
                 style={bottomTextStyle}
               >
-                {shownText}
+                {renderInteractiveText()}
               </div>
             </div>
           ) : (
@@ -440,14 +479,14 @@ const DisplayText: React.FC = () => {
                 top: '50%'
               }}
             >
-              {shownText}
+              {renderInteractiveText()}
             </div>
           )
         ) : null /* No text to display */}
       </div>
       
       {/* Speed change feedback */}
-      {showFeedback && (
+      {showFeedback && !(isWordFlash && tapToAdvanceWords) && (
         <div className="display-speed-feedback-wrap">
           <div className="display-speed-feedback">
             <div className="display-speed-label">Speed <strong>{scrollSpeed}</strong></div>

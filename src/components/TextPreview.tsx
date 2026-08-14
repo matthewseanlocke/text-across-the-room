@@ -12,6 +12,9 @@ const TextPreview: React.FC = () => {
     letterSpacing,
     textCase,
     textTreatment,
+    hasBlackOutline,
+    hasShadow,
+    hasGlow,
     scrollSpeed, 
     isWordFlash,
     tapToAdvanceWords,
@@ -91,15 +94,17 @@ const TextPreview: React.FC = () => {
   }, [shownText, font, textTreatment, isWordFlash, previewWidth, spacingValue]);
 
   const fittedFontSize = isWordFlash ? (fittedWordSize || fontSize) : fontSize;
-  const isHollow = textTreatment === 'outline' || textTreatment === 'hollow-glow' || textTreatment === 'double-outline';
+  const isHollow = textTreatment === 'outline' || textTreatment === 'hollow-glow';
   const treatmentShadow = {
-    glow: '0 0 .14em currentColor, 0 0 .34em currentColor',
-    shadow: '.07em .09em .02em rgba(0,0,0,.7)',
     'hollow-glow': '0 0 .12em currentColor, 0 0 .28em currentColor',
-    'double-outline': '.045em .045em 0 #000, -.045em -.045em 0 #000, .08em .08em 0 currentColor',
     'retro-3d': '.035em .035em 0 #ff3b81, .07em .07em 0 #5b5ce2, .105em .105em 0 #16c7d9',
     '3d-glasses': '-.055em 0 0 rgba(255,32,32,.9), .055em 0 0 rgba(0,220,255,.9)',
   }[textTreatment];
+  const combinedShadow = [
+    treatmentShadow,
+    hasShadow ? '.07em .09em .02em rgba(0,0,0,.7)' : undefined,
+    hasGlow ? '0 0 .14em currentColor, 0 0 .34em currentColor' : undefined,
+  ].filter(Boolean).join(', ') || undefined;
   const treatmentGradient = textTreatment === 'chrome'
     ? 'linear-gradient(180deg,#fff 0%,#9ca3af 38%,#fff 50%,#4b5563 55%,#e5e7eb 100%)'
     : textTreatment === 'split'
@@ -116,6 +121,7 @@ const TextPreview: React.FC = () => {
     return () => window.clearInterval(timer);
   }, [isWordFlash, tapToAdvanceWords, scrollSpeed, styledDisplayText, words.length]);
   const isParty = preset === 'party';
+  const isUsa = preset === 'usa';
   const isDisco = preset === 'disco' || isRainbowBackground;
   const isLightning = preset === 'lightning' || isLightningMode;
   const isSiren = preset === 'siren' || isSirenMode;
@@ -129,13 +135,17 @@ const TextPreview: React.FC = () => {
     handwriting: 'font-handwriting',
     monospace: 'font-monospace',
     serif: 'font-serif',
+    condensed: 'font-condensed',
+    rounded: 'font-rounded',
+    arcade: 'font-arcade',
+    varsity: 'font-varsity',
   };
   
   // Create animation styles directly
   const scrollTextKeyframes = `
     @keyframes previewScrollText {
-      from { transform: translateX(var(--preview-start)) translateY(-50%); }
-      to { transform: translateX(-100%) translateY(-50%); }
+      from { transform: translateX(var(--preview-start)) translateY(var(--preview-y)); }
+      to { transform: translateX(-100%) translateY(var(--preview-y)); }
     }
     
     @keyframes rainbowText {
@@ -146,6 +156,12 @@ const TextPreview: React.FC = () => {
       66.6% { color: #0000ff; }
       83.3% { color: #ff00ff; }
       100% { color: #ff0000; }
+    }
+
+    @keyframes usaWordCycle {
+      0%, 33.32% { color: #ef4444; }
+      33.33%, 66.65% { color: #ffffff; }
+      66.66%, 100% { color: #3b82f6; }
     }
     
     @keyframes rainbowBackground {
@@ -187,7 +203,7 @@ const TextPreview: React.FC = () => {
     }
   `;
   
-  const animationStyle: React.CSSProperties & { '--preview-start': string } = {
+  const animationStyle: React.CSSProperties & { '--preview-start': string; '--preview-y': string } = {
     animation: isWordFlash
       ? (isRainbowText ? 'rainbowText 2s linear infinite' : undefined)
       : `previewScrollText ${scrollDuration}s linear infinite${isRainbowText ? ', rainbowText 2s linear infinite' : ''}`,
@@ -199,9 +215,9 @@ const TextPreview: React.FC = () => {
     fontFamily: textTreatment === 'pixel' ? '"Press Start 2P", monospace' : undefined,
     fontWeight: textTreatment === 'pixel' ? 400 : undefined,
     letterSpacing: spacingValue,
-    WebkitTextStroke: textTreatment === 'black-outline' ? '0.025em #000' : isHollow ? (textTreatment === 'double-outline' ? '0.07em currentColor' : '0.045em currentColor') : undefined,
+    WebkitTextStroke: hasBlackOutline ? '0.025em #000' : isHollow ? '0.045em currentColor' : undefined,
     WebkitTextFillColor: isHollow || treatmentGradient ? 'transparent' : undefined,
-    textShadow: treatmentShadow,
+    textShadow: combinedShadow,
     backgroundImage: treatmentGradient,
     WebkitBackgroundClip: treatmentGradient ? 'text' : undefined,
     backgroundClip: treatmentGradient ? 'text' : undefined,
@@ -213,7 +229,8 @@ const TextPreview: React.FC = () => {
     transform: isWordFlash ? `translateY(${isEmojiOnly ? '-59%' : '-50%'})` : undefined,
     overflow: isWordFlash ? 'visible' : undefined,
     zIndex: 10,
-    '--preview-start': `${previewWidth}px`
+    '--preview-start': `${previewWidth}px`,
+    '--preview-y': isEmojiOnly ? '-62%' : '-50%'
   };
 
   // Get contrasting text color for the watermark based on background
@@ -224,6 +241,25 @@ const TextPreview: React.FC = () => {
   };
 
   const watermarkColor = getContrastColor(backgroundColor);
+
+  const renderEmojiAdjustedText = (value: string) => {
+    if (isEmojiOnly) return value;
+    return value.split(/(\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic})*)/gu).map((part, index) =>
+      /\p{Extended_Pictographic}/u.test(part)
+        ? <span key={`${part}-${index}`} style={{ position: 'relative', top: '-0.12em' }}>{part}</span>
+        : part
+    );
+  };
+
+  const renderShownText = () => {
+    if (!isUsa) return renderEmojiAdjustedText(shownText);
+    let wordPosition = 0;
+    return shownText.split(/(\s+)/).map((part, index) => {
+      if (/^\s+$/.test(part)) return part;
+      const colorIndex = wordPosition++ + (isWordFlash ? wordIndex : 0);
+      return <span key={`${part}-${index}`} style={{ animation: 'usaWordCycle 1.8s steps(1,end) infinite', animationDelay: `${colorIndex * -0.6}s` }}>{renderEmojiAdjustedText(part)}</span>;
+    });
+  };
   
   // Determine container style based on effects
   const containerStyle = {
@@ -271,7 +307,7 @@ const TextPreview: React.FC = () => {
             )}
             style={animationStyle}
           >
-            {shownText}
+            {renderShownText()}
           </div>
         )}
       </div>
