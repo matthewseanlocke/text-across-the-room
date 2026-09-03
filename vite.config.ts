@@ -21,6 +21,7 @@ export default defineConfig(({ mode }) => ({
     __APP_VERSION__: JSON.stringify(appVersion),
   },
   resolve: {
+    dedupe: ["react", "react-dom"],
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },

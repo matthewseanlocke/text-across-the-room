@@ -2,27 +2,31 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { TextDisplayProvider } from "./context/TextDisplayContext";
 import Index from "./pages/Index";
 import DisplayText from "./pages/DisplayText";
 import NotFound from "./pages/NotFound";
 import SplashScreen from "./pages/SplashScreen";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const queryClient = new QueryClient();
 
 // Wrapper component to ensure proper routing
 const AppRoutes = () => {
   const [initialized, setInitialized] = useState(false);
+  const hasSetInitialRoute = useRef(false);
+  const navigate = useNavigate();
   
   useEffect(() => {
-    // Ensure the component mounts before rendering routes
+    if (hasSetInitialRoute.current) return;
+    hasSetInitialRoute.current = true;
+
+    // Every full page load starts at the splash screen. Client-side navigation
+    // continues normally after initialization.
+    navigate('/', { replace: true });
     setInitialized(true);
-    
-    // Clear any cached routes
-    window.history.replaceState({}, '', '/');
-  }, []);
+  }, [navigate]);
   
   if (!initialized) {
     return <div className="min-h-screen bg-background dark:bg-gray-900"></div>;

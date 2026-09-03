@@ -17,25 +17,12 @@ const SplashScreen: React.FC = () => {
     navigationTimer.current = setTimeout(() => navigate('/options'), 350);
   }, [navigate]);
   
-  // Log when the splash screen renders
   useEffect(() => {
-    console.log('SplashScreen rendered');
-    
-    // Apply dark mode to document
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    
-    // Navigate to options screen after a delay
-    const timer = setTimeout(dismissSplash, 2800);
-    
+    document.documentElement.classList.toggle('dark', darkMode);
     return () => {
-      clearTimeout(timer);
       if (navigationTimer.current) clearTimeout(navigationTimer.current);
     };
-  }, [darkMode, dismissSplash]);
+  }, [darkMode]);
   
   // Ensure full rerender by forcing component rerender
   useEffect(() => {
@@ -58,7 +45,7 @@ const SplashScreen: React.FC = () => {
         }
       }}
     >
-      <div className="animate-scale-in px-4">
+      <div className="w-full max-w-[40rem] px-4">
         <AppLogo size="large" showAnimation={true} meta={<div className="splash-version">v{__APP_VERSION__}</div>} />
       </div>
 
@@ -76,15 +63,6 @@ const SplashScreen: React.FC = () => {
       
       <style>
         {`
-          @keyframes scaleIn {
-            0% { opacity: 0; transform: scale(0.9); }
-            30% { opacity: 1; transform: scale(1.1); }
-            60% { transform: scale(0.95); }
-            100% { transform: scale(1); }
-          }
-          .animate-scale-in {
-            animation: scaleIn 1.2s ease-out forwards;
-          }
           .splash-version {
             margin-top: 12px;
             margin-bottom: 12px;

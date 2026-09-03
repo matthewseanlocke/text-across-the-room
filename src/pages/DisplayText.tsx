@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTextDisplay } from '@/context/TextDisplayContext';
 import { cn } from '@/lib/utils';
 import { X } from 'lucide-react';
+import PixelWaveText from '@/components/PixelWaveText';
 
 const DisplayText: React.FC = () => {
   const { 
@@ -40,6 +41,7 @@ const DisplayText: React.FC = () => {
   const isLightning = preset === 'lightning' || isLightningMode;
   const isSiren = preset === 'siren' || isSirenMode;
   const isHeartbeat = preset === 'heartbeat' || isHeartbeatMode;
+  const isPixelWave = preset === 'pixelwave';
   
   const [fontSize, setFontSize] = useState('78dvh');
   const containerRef = useRef<HTMLDivElement>(null);
@@ -422,7 +424,16 @@ const DisplayText: React.FC = () => {
         </span>
       )}
       <div className="relative w-full h-full overflow-hidden">
-        {renderTextContent && isLandscape ? (
+        {renderTextContent && isPixelWave ? (
+          dualTextMode && !isLandscape ? (
+            <>
+              <PixelWaveText text={shownText} animated={false} scrolling={!isWordFlash} scrollDuration={scrollDuration} fit={isWordFlash ? 'contain' : undefined} scale={isWordFlash ? 4 : 1.5} className="pixel-wave-full pixel-wave-full-top" />
+              <PixelWaveText text={shownText} animated={false} scrolling={!isWordFlash} scrollDuration={scrollDuration} fit={isWordFlash ? 'contain' : undefined} scale={isWordFlash ? 4 : 1.5} className="pixel-wave-full pixel-wave-full-bottom" />
+            </>
+          ) : (
+            <PixelWaveText key={`pixel-wave-${animationKey}-${shownText}`} text={shownText} animated={false} scrolling={!isWordFlash} scrollDuration={scrollDuration} fit={isWordFlash ? 'contain' : undefined} scale={isWordFlash ? 4 : (isLandscape ? 2.5 : 2)} className="pixel-wave-full" />
+          )
+        ) : renderTextContent && isLandscape ? (
           // Landscape mode - show one text centered vertically
           <div 
             key={`landscape-${animationKey}`}

@@ -104,6 +104,51 @@
 }
 
 @layer components {
+  .app-logo { width: min(100%, 40rem); }
+  .app-logo-pixels { display:flex; width:100%; height:140px; align-items:center; }
+  .pixel-wave-stage { position:relative; width:100%; height:100%; min-width:0; overflow:visible; }
+  .pixel-wave-stage > .pixel-pulsar-frame { position:relative; height:100%; }
+  .pixel-wave-fit-pending > .pixel-pulsar-frame { visibility:hidden; }
+  .pixel-wave-stage .pixel-text {
+    position:absolute;
+    top:50%;
+    left:50%;
+    scale:none !important;
+    transform:translate(-50%,-50%) scale(
+      calc(var(--text-scale-x) * var(--fit-scale, 1)),
+      calc(var(--text-scale-y) * var(--fit-scale, 1))
+    );
+    transform-origin:center !important;
+  }
+  .pixel-wave-stage .pixel-native-glyph {
+    font-size:calc(var(--cell-size) * 6);
+  }
+  @media (max-width: 420px) {
+    .app-logo-pixels { height:96px; }
+  }
+  .pixel-wave-preview { position:absolute; inset:10px; width:auto; height:auto; z-index:10; }
+  .pixel-wave-full { position:absolute; top:50%; left:8%; width:84%; height:68%; transform:translateY(-50%); }
+  .pixel-wave-full.pixel-wave-full-top { top:25%; height:38%; }
+  .pixel-wave-full.pixel-wave-full-bottom { top:75%; height:38%; }
+  .pixel-wave-scrolling .pixel-text {
+    left:100%;
+    transform-origin:left center !important;
+    animation:pixel-wave-scroll var(--pixel-wave-scroll-duration) linear infinite;
+  }
+  @keyframes pixel-wave-scroll {
+    from {
+      transform:translate(0,-50%) scale(
+        calc(var(--text-scale-x) * var(--fit-scale, 1)),
+        calc(var(--text-scale-y) * var(--fit-scale, 1))
+      );
+    }
+    to {
+      transform:translate(-100%,-50%) scale(
+        calc(var(--text-scale-x) * var(--fit-scale, 1)),
+        calc(var(--text-scale-y) * var(--fit-scale, 1))
+      );
+    }
+  }
   .display-close-button { position:fixed; top:max(14px,env(safe-area-inset-top)); right:max(14px,env(safe-area-inset-right)); z-index:100; width:44px; height:44px; display:grid; place-items:center; border:1px solid rgba(255,255,255,.28); border-radius:50%; background:rgba(0,0,0,.48); color:#fff; backdrop-filter:blur(8px); box-shadow:0 4px 18px rgba(0,0,0,.25); }
   .display-close-button:hover { background:rgba(0,0,0,.7); }
   .display-close-button svg { width:22px; height:22px; }

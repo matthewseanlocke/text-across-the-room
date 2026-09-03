@@ -2,6 +2,7 @@ import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { useTextDisplay } from '@/context/TextDisplayContext';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import PixelWaveText from '@/components/PixelWaveText';
 
 const TextPreview: React.FC = () => {
   const { 
@@ -126,6 +127,7 @@ const TextPreview: React.FC = () => {
   const isLightning = preset === 'lightning' || isLightningMode;
   const isSiren = preset === 'siren' || isSirenMode;
   const isHeartbeat = preset === 'heartbeat' || isHeartbeatMode;
+  const isPixelWave = preset === 'pixelwave';
   
   // Check if there's any text to display
   const hasText = displayText.trim().length > 0;
@@ -294,7 +296,17 @@ const TextPreview: React.FC = () => {
         </div>
         
         {/* Only render text if there is any */}
-        {hasText && (
+        {hasText && isPixelWave ? (
+          <PixelWaveText
+            key={`${shownText}-${scrollSpeed}-${isWordFlash}`}
+            text={shownText}
+            animated={false}
+            scrolling={!isWordFlash}
+            scrollDuration={scrollDuration}
+            scale={isWordFlash ? 0.5 : 0.78}
+            className="pixel-wave-preview"
+          />
+        ) : hasText && (
           <div
             className={cn(
               fontClasses[font],

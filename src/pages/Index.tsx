@@ -25,6 +25,7 @@ const PRESETS = [
   { id: 'siren', label: 'Siren', swatch: '#0000ff' },
   { id: 'heartbeat', label: 'Heartbeat', swatch: '#800000' },
   { id: 'usa', label: 'USA', swatch: '#000000' },
+  { id: 'pixelwave', label: 'Pixel Wave', swatch: 'linear-gradient(135deg,#0f172a,#511010)' },
 ] as const;
 const COLOR_PRESETS = PRESETS.slice(0, 3);
 const ANIMATED_PRESETS = PRESETS.slice(3);
@@ -40,6 +41,7 @@ const PRESET_DEMO_LABELS: Partial<Record<typeof PRESETS[number]['id'], string>> 
   siren: 'POLICE',
   heartbeat: 'HEARTBEAT',
   usa: 'USA',
+  pixelwave: 'PIXEL',
 };
 
 const Index = () => {

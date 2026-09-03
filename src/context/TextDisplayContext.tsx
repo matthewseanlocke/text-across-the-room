@@ -5,7 +5,7 @@ type LetterSpacingOption = 'tight' | 'normal' | 'wide';
 type TextCaseOption = 'typed' | 'uppercase';
 type TextTreatmentOption = 'solid' | 'outline' | 'black-outline' | 'glow' | 'shadow' | 'chrome' | 'split' | 'hollow-glow' | 'double-outline' | 'retro-3d' | '3d-glasses' | 'pixel';
 
-type PresetType = 'day' | 'night' | 'emergency' | 'party' | 'disco' | 'lightning' | 'siren' | 'heartbeat' | 'usa' | 'custom';
+type PresetType = 'day' | 'night' | 'emergency' | 'party' | 'disco' | 'lightning' | 'siren' | 'heartbeat' | 'usa' | 'pixelwave' | 'custom';
 
 const STORAGE_KEY = 'text-across-the-room-settings';
 
@@ -363,6 +363,15 @@ export const TextDisplayProvider: React.FC<{ children: React.ReactNode }> = ({ c
       case 'usa':
         setTextColor('#ffffff');
         setBackgroundColor('#000000');
+        setIsRainbowText(false);
+        setIsRainbowBackground(false);
+        setIsLightningMode(false);
+        setIsSirenMode(false);
+        setIsHeartbeatMode(false);
+        break;
+      case 'pixelwave':
+        setTextColor('#a97aff');
+        setBackgroundColor('#0f172a');
         setIsRainbowText(false);
         setIsRainbowBackground(false);
         setIsLightningMode(false);
