@@ -303,7 +303,7 @@ const TextPreview: React.FC = () => {
             animated={false}
             scrolling={!isWordFlash}
             scrollDuration={scrollDuration}
-            scale={isWordFlash ? 0.5 : 0.78}
+            scale={isWordFlash ? 0.5 : 0.54}
             className="pixel-wave-preview"
           />
         ) : hasText && (
