@@ -123,21 +123,12 @@
   .pixel-wave-stage .pixel-native-glyph {
     font-size:calc(var(--cell-size) * 6);
   }
-  /* iOS browsers all use WebKit, which can cache a filtered glyph while its
-     child pixels animate. Give each logo glyph its own composited layer so the
-     letter outline is repainted consistently throughout the entrance. */
+  /* iOS browsers all use WebKit, which renders a glyph-level drop-shadow
+     inconsistently while its child pixels animate. Keep the animated pixels
+     and their individual outlines, but omit the unstable outer letter shadow. */
   @supports (-webkit-touch-callout: none) {
-    .app-logo-pixel-wave .pixel-glyph {
-      isolation:isolate;
-      -webkit-transform:translateZ(0);
-      transform:translateZ(0);
-      will-change:filter;
-    }
-    .app-logo-pixel-wave .pixel-motion,
-    .app-logo-pixel-wave .pixel-glow,
-    .app-logo-pixel-wave .pixel {
-      -webkit-backface-visibility:hidden;
-      backface-visibility:hidden;
+    .app-logo-pixel-wave .pixel-text.letter-outline .pixel-glyph {
+      filter:none;
     }
   }
   @media (max-width: 420px) {
