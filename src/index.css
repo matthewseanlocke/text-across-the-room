@@ -123,14 +123,6 @@
   .pixel-wave-stage .pixel-native-glyph {
     font-size:calc(var(--cell-size) * 6);
   }
-  /* iOS browsers all use WebKit, which renders a glyph-level drop-shadow
-     inconsistently while its child pixels animate. Keep the animated pixels
-     and their individual outlines, but omit the unstable outer letter shadow. */
-  @supports (-webkit-touch-callout: none) {
-    .app-logo-pixel-wave .pixel-text.letter-outline .pixel-glyph {
-      filter:none;
-    }
-  }
   @media (max-width: 420px) {
     .app-logo-pixels { height:96px; }
   }
