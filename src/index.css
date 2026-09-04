@@ -133,7 +133,7 @@
   .pixel-wave-scrolling .pixel-text {
     left:100%;
     transform-origin:left center !important;
-    animation:pixel-wave-scroll var(--pixel-wave-scroll-duration) linear infinite;
+    animation:pixel-wave-scroll var(--pixel-wave-scroll-duration) linear infinite !important;
   }
   @keyframes pixel-wave-scroll {
     from {
